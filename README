@@ -1,0 +1,20 @@
+# Cat Scratch Fever
+A roadmap-style card game built in Godot.
+
+## Status
+🚧 Early Development - Currently building database systems and UI
+
+## Quick Start
+1. Open in Godot 4.x
+2. Run the project
+
+## Project Structure
+- `/scenes/ui` - UI scenes
+- `/scripts/databases` - Database scripts (song_database.gd)
+- `/assets` - Art, audio, fonts
+
+## Current Work
+- Building song database system
+- Designing card mechanics
+- Implementing card database
+- Working towards MVP
