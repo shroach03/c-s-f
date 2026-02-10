@@ -1,0 +1,5 @@
+# Godot specific files
+*.import/
+.mono/
+build/
+Godot/vscode/
