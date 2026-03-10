@@ -2,19 +2,35 @@
 A roadmap-style card game built in Godot.
 
 ## Status
-🚧 Early Development - Currently building database systems and UI
+🚧 Mid Development 
+
+##MVP: 
+The Minimum Viable Product is a functional and playable strategy game in which the
+user can play for a single "night" from start to finish. In this MVP, the player
+draws a hand of song "cards" collected from a database of songs (initialized as
+metadata) tagged by attributes including title, artist, genre, preference and
+performs a set by choosing songs that best align with that audience. Each song
+selection updates crowd energy, trust, and patience values according to risk 
+calculations, energy fluctuations, and genre alignment. The session concludes after
+either the player successfully performs 5 songs that align enough to achieve the 
+minimum success requirement, or the user fails due to crowd energy, trust, or
+patience sinking below the threshold of success. The MVP will demonstrate a 
+complete gameplay loop, structured data uses, dynamic state updates, and win/lost
+conditions.
 
 ## Quick Start
 1. Open in Godot 4.x
 2. Run the project
 
 ## Project Structure
-- `/scenes/ui` - UI scenes
-- `/scripts/databases` - Database scripts (song_database.gd)
+- `/scenes` - scenes
+- `/scripts -  scripts (song_database.gd)
 - `/assets` - Art, audio, fonts
 
 ## Current Work
-- Building song database system
-- Designing card mechanics
-- Implementing card database
-- Working towards MVP
+- "world" creation
+- Audio/graphics
+- Updated scoring algorithm
+- Dynamic Venues
+- MVP Loop
+- Player Inventory
