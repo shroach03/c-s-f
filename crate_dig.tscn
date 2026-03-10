@@ -1,0 +1,59 @@
+[gd_scene load_steps=3 format=3 uid="uid://ce8e5llucbo1b"]
+
+[ext_resource type="Script" uid="uid://djylssok6u5nb" path="res://scripts/crate_dig_manager.gd" id="1_fbo7i"]
+[ext_resource type="Texture2D" uid="uid://c8h7cqvnhlqfn" path="res://assets/Crate.png" id="2_ga7kb"]
+
+[node name="Crate_dig" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_fbo7i")
+
+[node name="CrateButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 7.9000006
+anchor_top = 3.025
+anchor_right = 20.025002
+anchor_bottom = 10.175
+offset_left = -3.0517578e-05
+offset_top = 2.0
+offset_right = -6.1035156e-05
+
+[node name="Crate" type="Sprite2D" parent="CrateButton"]
+position = Vector2(241, 145.5)
+scale = Vector2(1, 0.6035156)
+texture = ExtResource("2_ga7kb")
+
+[node name="CrateLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 81.0
+offset_top = 56.0
+offset_right = 121.0
+offset_bottom = 79.0
+
+[node name="UnlockedCardDisplay" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 28.825
+anchor_bottom = 16.150002
+offset_top = 407.0
+offset_bottom = -6.1035156e-05
+
+[node name="GoToVenue" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 22.650002
+anchor_top = 1.4000001
+anchor_right = 25.7
+anchor_bottom = 3.075
+offset_left = -8.000061
+
+[node name="goToVenuelabel" type="Label" parent="GoToVenue"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 15.0
+offset_right = 128.0
+offset_bottom = 49.0
+text = "Go To Venue >"

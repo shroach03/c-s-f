@@ -1,0 +1,112 @@
+[gd_scene load_steps=4 format=3 uid="uid://bveheb6piqlux"]
+
+[ext_resource type="Script" uid="uid://dy52xpewdewrf" path="res://scripts/song_card.gd" id="1_6l1gx"]
+[ext_resource type="Theme" uid="uid://cadf0wjc3rkil" path="res://scenes/card_theme.tres" id="1_wf1kf"]
+[ext_resource type="Texture2D" uid="uid://ben7qqx34vpkq" path="res://assets/card_back.png" id="3_qnehr"]
+
+[node name="SongCard" type="Control"]
+custom_minimum_size = Vector2(180, 250)
+layout_mode = 3
+anchors_preset = 0
+offset_left = 43.00001
+offset_top = -43.999966
+offset_right = 223.00002
+offset_bottom = 206.00003
+scale = Vector2(0.18153463, 0.24094062)
+pivot_offset = Vector2(230, 321)
+size_flags_horizontal = 4
+size_flags_vertical = 8
+mouse_filter = 1
+theme = ExtResource("1_wf1kf")
+script = ExtResource("1_6l1gx")
+
+[node name="CardBack" type="Sprite2D" parent="."]
+position = Vector2(92.21155, 121.69111)
+scale = Vector2(1.0501313, 1.0729328)
+texture = ExtResource("3_qnehr")
+
+[node name="Content" type="VBoxContainer" parent="CardBack"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -83.859924
+offset_top = -73.41379
+offset_right = -81.859924
+offset_bottom = -73.41379
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(97.38098, 110.605316)
+mouse_filter = 2
+theme_override_constants/separation = 12
+metadata/_edit_use_anchors_ = true
+
+[node name="TitleLabel" type="HBoxContainer" parent="CardBack/Content"]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+mouse_filter = 2
+theme = ExtResource("1_wf1kf")
+
+[node name="loadTitle" type="Label" parent="CardBack/Content/TitleLabel"]
+layout_mode = 2
+
+[node name="ArtistLabel" type="HBoxContainer" parent="CardBack/Content"]
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+theme = ExtResource("1_wf1kf")
+
+[node name="loadArtist" type="Label" parent="CardBack/Content/ArtistLabel"]
+layout_mode = 2
+
+[node name="GenreLabel" type="HBoxContainer" parent="CardBack/Content"]
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+theme = ExtResource("1_wf1kf")
+
+[node name="loadGenre" type="Label" parent="CardBack/Content/GenreLabel"]
+layout_mode = 2
+
+[node name="EnergyLabel" type="HBoxContainer" parent="CardBack/Content"]
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+theme = ExtResource("1_wf1kf")
+
+[node name="loadEnergy" type="Label" parent="CardBack/Content/EnergyLabel"]
+layout_mode = 2
+
+[node name="RiskLabel" type="HBoxContainer" parent="CardBack/Content"]
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+theme = ExtResource("1_wf1kf")
+
+[node name="loadRisk" type="Label" parent="CardBack/Content/RiskLabel"]
+layout_mode = 2
+
+[node name="TagLabel" type="HBoxContainer" parent="CardBack/Content"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_stretch_ratio = 0.0
+mouse_filter = 2
+theme = ExtResource("1_wf1kf")
+
+[node name="loadTag" type="Label" parent="CardBack/Content/TagLabel"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="CardBack"]
+anchors_preset = -1
+anchor_left = -0.016
+anchor_top = 0.047000002
+anchor_right = 0.98700005
+anchor_bottom = 0.998
+offset_left = -77.90178
+offset_top = -123.173294
+offset_right = -77.794586
+offset_bottom = -123.24249
+button_mask = 7
+
+[connection signal="pressed" from="CardBack/Button" to="." method="_on_button_pressed"]
