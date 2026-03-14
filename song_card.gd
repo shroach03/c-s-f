@@ -37,7 +37,9 @@ func setup_card(song_data: Dictionary) -> void:
 			btn.pressed.connect(_on_button_pressed)
 
 	# Reset visual state in case this card was reused
-	
+	if card_button:
+		card_button.disabled = true
+	modulate = Color.WHITE
 
 
 #
@@ -46,5 +48,4 @@ func _on_button_pressed() -> void:
 	emit_signal("song_selected",self, current_song_data)
 	# Optional: Visual feedback
 	$CardBack/Button.disabled = true 
-	modulate = Color(0.5, 0.5, 0.5) # Darken the card to show it's used
-	
+	modulate = Color(0.5, 0.5, 0.5)
