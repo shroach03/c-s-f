@@ -8,6 +8,11 @@ var selected_songs: Array = []
 const SONG_CARD_SCENE = preload("res://scenes/song_card.tscn")
 
 func _ready():
+	if not start_button.pressed.is_connected(_on_start_show_button_pressed):
+		start_button.pressed.connect(_on_start_show_button_pressed)
+	start_button.disabled = true
+	count_label.text = "Select 5 Songs (0/5)"
+	
 	for child in grid.get_children():
 		child.queue_free()
 
