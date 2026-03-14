@@ -4,10 +4,10 @@ signal new_song_unlocked(song_data)
 signal digging_finished(inventory: Array)
 
 # References (Adjust paths based on your scene tree!)
-@onready var dig_button = $CrateButton
-@onready var status_label = $CrateLabel
+@onready var dig_button = $VBoxContainer/CrateButton
+@onready var status_label = $VBoxContainer/CrateLabel
 @onready var display_area= $UnlockedCardDisplay
-@onready var go_to_venue_button=$GoToVenue
+@onready var go_to_venue_button=$VBoxContainer/GoToVenue
 #@onready var genre_icon=  $VenueGenreIcon
 
 
@@ -86,3 +86,4 @@ func finish_digging_phase():
 		
 	digging_finished.emit(unlocked_inventory.duplicate(true))
 	print("Signal 'digging_finished' emitted with ", unlocked_inventory.size(), " songs.")
+
