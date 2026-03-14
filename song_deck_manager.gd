@@ -1,17 +1,5 @@
-
-
-extends Control
-
-signal song_chosen_for_set(song_data, venue_genre)
-signal card_moved_to_set(card_instance, song_data)
-
-
-	  
-@onready var card_display_area = $Panel/CardDisplayArea 
-@onready var feedback_label = $LastPlayedInfoLabel    
-@onready var venue_genre_label= $VenueGenreLabel
-@onready var score_label= $ScoreLabel
-@onready var genre_indicator=$GenreIndicator
+@onready var score_label= $VBoxContainer/TopBar/ScoreLabel
+@onready var genre_indicator=$VBoxContainer/GenreIndicator
 
 const SONG_CARD_SCENE = preload("res://scenes/song_card.tscn")
 const MAX_SONGS_IN_SET = 5
