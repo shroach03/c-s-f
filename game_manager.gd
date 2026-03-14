@@ -19,6 +19,8 @@ const SELECTION_SCENE= preload("res://scenes/setlist_selection.tscn")
 var active_deck_manager = null
 
 func _ready():
+	if get_path() != NodePath("/root/GameManager"):
+		return
 	if SongDatabase and SongDatabase.SONGS:
 		var all_songs = SongDatabase.SONGS
 		var available_genres: Array = []
@@ -68,8 +70,9 @@ func _handle_song_played(_card_instance, selected_song_data):
 			active_deck_manager.draw_next_hand()
 	
 func start_crate_digging_phase():
-	if is_instance_valid($SongDeckManager):
-		$SongDeckManager.queue_free()
+	var existing_deck_manager = get_node_or_null("SongDeckManager")
+	if is_instance_valid(existing_deck_manager):
+		existing_deck_manager.queue_free()
 	var crate_scene = CRATE_SCENE.instantiate()
 	add_child(crate_scene)
 	crate_scene.digging_finished.connect(on_digging_finished)
@@ -89,6 +92,8 @@ func open_setlist_selection_menu():
 	add_child(selection_menu)
 
 func start_performance_phase():
+	if is_instance_valid(active_deck_manager):
+		active_deck_manager.queue_free()
 	active_deck_manager = PERFORMANCE_SCENE.instantiate()
 	add_child(active_deck_manager)
 	
@@ -147,4 +152,3 @@ func calculate_score_from_song(song_data: Dictionary, venue_genre: String) -> in
 
 	return points
 	
-
