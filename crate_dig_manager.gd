@@ -1,10 +1,9 @@
-# CrateDiggingManager.gd
 extends Control
 
 signal new_song_unlocked(song_data)
 signal digging_finished(inventory: Array)
 
-
+# References (Adjust paths based on your scene tree!)
 @onready var dig_button = $CrateButton
 @onready var status_label = $CrateLabel
 @onready var display_area= $UnlockedCardDisplay
@@ -27,7 +26,7 @@ func _ready():
 	dig_button.pressed.connect(_on_dig_button_pressed)
 	if SongDatabase and SongDatabase.SONGS:
 		master_database = SongDatabase.SONGS.duplicate(true)
-		status_label.text= "Pick Crate! &d picks left" % digs_remaining
+		status_label.text= "Pick Crate! %d picks left" % digs_remaining
 	else:
 		status_label.text="ERROR: database not found"
 		dig_button.disabled= true
@@ -87,4 +86,3 @@ func finish_digging_phase():
 		
 	digging_finished.emit(unlocked_inventory.duplicate(true))
 	print("Signal 'digging_finished' emitted with ", unlocked_inventory.size(), " songs.")
-
