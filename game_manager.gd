@@ -147,3 +147,4 @@ func calculate_score_from_song(song_data: Dictionary, venue_genre: String) -> in
 
 	return points
 	
+
