@@ -1,6 +1,7 @@
+
 extends Control
 
-@onready var grid = $ScrollContainer/GridContainer
+@onready var grid = $VBoxContainer/ScrollContainer/GridContainer
 @onready var start_button = $VBoxContainer/TopBar/StartShow
 @onready var count_label = $VBoxContainer/TopBar/CountLabel
 
@@ -28,7 +29,7 @@ func _populate_collection():
 	for song_data in GameManager.player_collection: 
 		var card= SONG_CARD_SCENE.instantiate()
 		grid.add_child(card)
-		card.setup_card(song_data)
+		card.setup_card(song_data, {"context": "selection"})
 		if not card.song_selected.is_connected(_on_card_clicked):
 			card.song_selected.connect(_on_card_clicked)
 		
