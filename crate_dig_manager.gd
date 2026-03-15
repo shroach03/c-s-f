@@ -1,3 +1,4 @@
+# CrateDiggingManager.gd
 extends Control
 
 signal new_song_unlocked(song_data)
