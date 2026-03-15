@@ -1,18 +1,18 @@
-[gd_scene load_steps=3 format=3 uid="uid://ce8e5llucbo1b"]
+[gd_scene load_steps=2 format=3 uid="uid://ce8e5llucbo1b"]
 
 [ext_resource type="Script" uid="uid://djylssok6u5nb" path="res://scripts/crate_dig_manager.gd" id="1_fbo7i"]
-[ext_resource type="Texture2D" uid="uid://c8h7cqvnhlqfn" path="res://assets/Crate.png" id="2_ga7kb"]
 
 [node name="Crate_dig" type="Control"]
 layout_mode = 3
 anchors_preset = 15
-offset_right = 1.0
-offset_bottom = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_fbo7i")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -31,25 +31,24 @@ text = "Choose a crate to dig."
 [node name="CrateButton" type="Button" parent="VBoxContainer"]
 custom_minimum_size = Vector2(320, 180)
 layout_mode = 2
-text = "Dig Crate
-
-[node name="Crate" type="TextureRect" parent="VBoxContainer/CrateButton"]
-layout_mode = 0
-offset_left = 96.0
-offset_top = 20.0
-offset_right = 224.0
-offset_bottom = 148.0
-texture = ExtResource("2_ga7kb")
-stretch_mode = 5
-
-[node name="UnlockedCardDisplay" type="HBoxContainer" parent="."]
-layout_mode = 1
-custom_minimum_size = Vector2(0, 250)
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 12
+text = "DIG"
 
 [node name="GoToVenue" type="Button" parent="VBoxContainer"]
 custom_minimum_size = Vector2(180, 44)
 layout_mode = 2
 text = "Go To Venue >"
+
+[node name="UnlockedCardDisplay" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.014
+anchor_top = 0.574
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -0.12800026
+offset_top = 0.04800415
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 12
