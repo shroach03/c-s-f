@@ -40,12 +40,9 @@ func _handle_song_played(_card_instance, selected_song_data):
 	if not is_instance_valid(self) or selected_song_data == null:
 		print("ERROR: null song data")
 		return
-	var song_title = selected_song_data.get("title", "Unknown")
-	print("GameManager received: %s" % song_title)
 
 	var score_results = calculate_score_from_song(selected_song_data)
 	var impact = calculate_impact(score_results)
-	
 	set_history.append(selected_song_data)
 	last_played_energy = selected_song_data.get("energy", 0)
 	current_score += score_results.points
@@ -55,8 +52,7 @@ func _handle_song_played(_card_instance, selected_song_data):
 
 	if is_instance_valid(active_deck_manager):
 		var played_count = set_history.size()
-		active_deck_manager.feedback_label.text = "Played %s (+%d). (%d/%d played)" % [selected_song_data.get("title", "Unknown"), score_results.points, played_count, SONGS_IN_SET]
-		active_deck_manager.update_venue_ui()
+		active_deck_manager.show_play_result(selected_song_data, score_results, played_count, SONGS_IN_SET)
 
 	if check_fail_condition():
 		return
@@ -76,7 +72,7 @@ func start_world_phase():
 	if active_world.has_signal("venue_selected"):
 		active_world.venue_selected.connect(_on_world_venue_selected)
 	if active_world.has_method("setup_world"):
-		active_world.setup_world(_build_venue_options(), current_crowd_state)
+		active_world.setup_world(_build_venue_options(), current_crowd_state, current_setlist.size() >= SONGS_IN_SET)
 
 func _build_venue_options() -> Array:
 	var options: Array = []
@@ -96,10 +92,13 @@ func _build_venue_options() -> Array:
 	return options
 
 func _on_world_venue_selected(venue_data: Dictionary):
+	if current_setlist.size() < SONGS_IN_SET:
+		print("Need a full setlist before going to the venue!")
+		return
 	current_venue_genres = venue_data.get("genres", ["Unknown"])
 	current_venue_genre = current_venue_genres[0]
 	print("Crowd wants: %s" % ", ".join(current_venue_genres))
-	start_crate_digging_phase()
+	start_performance_phase()
 	
 func start_crate_digging_phase():
 	_cleanup_phase_nodes()
@@ -109,18 +108,25 @@ func start_crate_digging_phase():
 
 func on_digging_finished(new_finds: Array):
 	player_collection = new_finds.duplicate(true)
-
 	open_setlist_selection_menu()
 
 func open_setlist_selection_menu():
 	var selection_menu = SELECTION_SCENE.instantiate()
 	add_child(selection_menu)
 
+func finalize_setlist(selected_songs: Array):
+	current_setlist = selected_songs.duplicate(true)
+	start_world_phase()
+
 func start_performance_phase():
+	_cleanup_phase_nodes()
 	if is_instance_valid(active_deck_manager):
 		active_deck_manager.queue_free()
 	active_deck_manager = PERFORMANCE_SCENE.instantiate()
 	add_child(active_deck_manager)
+
+	set_history.clear()
+	last_played_energy = -1
 
 	if active_deck_manager.has_signal("song_chosen_for_set"):
 		active_deck_manager.song_chosen_for_set.connect(_handle_song_played)
@@ -132,16 +138,15 @@ func start_performance_phase():
 
 func _cleanup_phase_nodes():
 	for child in get_children():
-		if child.name in ["Crate_dig", "SongDeckManager", "SetListSelection", "Venue"]:
+		if child.name in ["Crate_dig", "SongDeckManager", "SetListSelection", "world", "Venue"]:
 			child.queue_free()
-
-
 
 func calculate_score_from_song(song_data: Dictionary) -> Dictionary:
 	var points = 0
 	var genre_score = 0
 	var risk_score = 0
 	var energy_score = 0
+	var flow_bonus = 0
 	var risk = song_data.get("risk", "Low")
 	var genre = song_data.get("genre", "Unknown")
 	var energy = song_data.get("energy", 0)
@@ -178,12 +183,21 @@ func calculate_score_from_song(song_data: Dictionary) -> Dictionary:
 	else:
 		risk_score -= risk_value * 2
 
-	points = energy_score + genre_score + risk_score
+	if set_history.size() >= 2:
+		var prev_energy = set_history.back().get("energy", energy)
+		var two_back_energy = set_history[set_history.size() - 2].get("energy", prev_energy)
+		if energy >= prev_energy and prev_energy >= two_back_energy:
+			flow_bonus += 2
+		elif energy <= prev_energy and prev_energy <= two_back_energy:
+			flow_bonus += 1
+
+	points = energy_score + genre_score + risk_score + flow_bonus
 	return {
 		"points": points,
 		"energy_score": energy_score,
 		"genre_score": genre_score,
-		"risk_score": risk_score
+		"risk_score": risk_score,
+		"flow_bonus": flow_bonus
 	}
 
 func _risk_to_value(risk: String) -> int:
@@ -207,7 +221,7 @@ func _apply_genre_shift(new_genre: String):
 
 func calculate_impact(score_results: Dictionary) -> Dictionary:
 	return {
-		"energy_change": score_results.energy_score,
+		"energy_change": score_results.energy_score + score_results.flow_bonus,
 		"trust_change": score_results.genre_score,
 		"patience_change": score_results.risk_score
 	}
@@ -223,13 +237,17 @@ func check_fail_condition() -> bool:
 	if current_crowd_state.energy <= 10 or current_crowd_state.trust <= 10 or current_crowd_state.patience <= 10:
 		print("*** NIGHT FAILED: the crowd turned on the set. ***")
 		if is_instance_valid(active_deck_manager):
-			active_deck_manager.feedback_label.text = "Night failed! Crowd state collapsed."
+			active_deck_manager.feedback_label.text = "Night failed! Crowd state collapsed. Returning to world.."
+		_end_night_and_return_world()
 		return true
 	return false
 
 func check_win_condition():
 	print("*** VICTORY! Set Complete! ***")
 	if is_instance_valid(active_deck_manager):
-		active_deck_manager.feedback_label.text = "Set complete! Final score: %d" % current_score
+		active_deck_manager.feedback_label.text = "Set complete! Final score: %d. Returning to world..." % current_score
+	_end_night_and_return_world()
 
-	
+func _end_night_and_return_world():
+	current_setlist.clear()
+	start_world_phase()
