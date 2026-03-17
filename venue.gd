@@ -3,25 +3,24 @@ extends Control
 signal crate_selected
 signal venue_selected(venue_data)
 
-@onready var world_disc = $CenterContainer/WorldDisc
-@onready var crate_button = $CenterContainer/WorldDisc/CrateButton
-@onready var crowd_label = $TopBar/CrowdLabel
+@onready var crate_button = $WorldShell/RecordStore/GoToCrateDig
+@onready var crowd_label = $WorldShell/CrowdSummary
 
 var venue_buttons: Array = []
 var venue_data: Array = []
 var flash_time := 0.0
 
-func _ready() -> void: 
+func _ready() -> void:
 	venue_buttons = [
-		$CenterContainer/WorldDisc/VenueNorth,
-		$CenterContainer/WorldDisc/VenueEast,
-		$CenterContainer/WorldDisc/VenueWest
+		$WorldShell/VenueRoadmap/Venue1Panel/GoToV1,
+		$WorldShell/VenueRoadmap/Venue2Panel/GoToV2,
+		$WorldShell/VenueRoadmap/Venue3Panel/GoToV3
 	]
 	crate_button.pressed.connect(func(): crate_selected.emit())
 	for i in range(venue_buttons.size()):
 		venue_buttons[i].pressed.connect(_on_venue_pressed.bind(i))
 
-func setup_world(options: Array, crowd_state: Dictionary):
+func setup_world(options: Array, crowd_state: Dictionary, can_perform: bool = false):
 	venue_data = options
 	crowd_label.text = "Crowd State  E:%d  T:%d  P:%d" % [crowd_state.energy, crowd_state.trust, crowd_state.patience]
 	for i in range(venue_buttons.size()):
@@ -33,12 +32,14 @@ func setup_world(options: Array, crowd_state: Dictionary):
 		var v = venue_data[i]
 		var genres = v.get("genres", ["Unknown"])
 		button.text = "%s\n%s" % [v.get("name", "Venue"), "/".join(genres)]
+		button.disabled = not can_perform
+		button.tooltip_text = "Pick a venue after building a 5-song setlist." if not can_perform else "Start the show"
 
 func _on_venue_pressed(index: int):
 	if index < venue_data.size():
 		venue_selected.emit(venue_data[index])
 
-func _process(delta: float) -> void: 
+func _process(delta: float) -> void:
 	flash_time += delta * 3.5
 	for i in range(venue_buttons.size()):
 		if i >= venue_data.size():
