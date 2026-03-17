@@ -1,16 +1,19 @@
-
 extends Control
 
 signal song_chosen_for_set(card_instance, song_data)
 signal card_moved_to_set(card_instance, song_data)
 
-
-	  
-@onready var card_display_area = $VBoxContainer/Panel/CardDisplayArea
-@onready var feedback_label = $VBoxContainer/LastPlayedInfoLabel  
-@onready var venue_genre_label= $VBoxContainer/TopBar/VenueGenreLabel
-@onready var score_label= $VBoxContainer/TopBar/ScoreLabel
-@onready var genre_indicator=$VBoxContainer/GenreIndicator
+@onready var card_display_area = $VBoxContainer/PlayArea/Panel/CardDisplayArea
+@onready var feedback_label = $VBoxContainer/LastPlayedInfoLabel
+@onready var venue_genre_label = $VBoxContainer/TopBar/VenueGenreLabel
+@onready var score_label = $VBoxContainer/TopBar/ScoreLabel
+@onready var genre_indicator = $VBoxContainer/GenreIndicator
+@onready var last_title_label = $VBoxContainer/PlayArea/LastCardPanel/LastCardVBox/Title
+@onready var last_artist_label = $VBoxContainer/PlayArea/LastCardPanel/LastCardVBox/Artist
+@onready var last_genre_label = $VBoxContainer/PlayArea/LastCardPanel/LastCardVBox/Genre
+@onready var last_risk_label = $VBoxContainer/PlayArea/LastCardPanel/LastCardVBox/Risk
+@onready var last_energy_label = $VBoxContainer/PlayArea/LastCardPanel/LastCardVBox/Energy
+@onready var last_score_label = $VBoxContainer/PlayArea/LastCardPanel/LastCardVBox/ScoreBreakdown
 
 const SONG_CARD_SCENE = preload("res://scenes/song_card.tscn")
 const MAX_SONGS_IN_SET = 5
@@ -23,19 +26,19 @@ const GENRE_COLORS = {
 	"EDM": Color(0.5, 1.0, 0.0, 0.6)
 }
 
-
 var playable_song_pool: Array = []
 var set_history: Array = []
 var cards_on_display: Array = []
 var current_turn_count: int = 0
 var current_venue_genre: String = "Unknown"
 var current_venue_genres: Array = []
-var flash_t:= 0.0
+var flash_t := 0.0
 
 func _ready():
 	if GameManager and not GameManager.score_updated.is_connected(_on_score_updated):
 		GameManager.score_updated.connect(_on_score_updated)
 	update_venue_ui()
+	_reset_last_card_panel()
 
 func _process(delta: float) -> void:
 	flash_t += delta * 6.0
@@ -88,7 +91,6 @@ func _on_song_selected(card_instance, data: Dictionary):
 	emit_signal("card_moved_to_set", card_instance, data)
 
 	if current_turn_count >= MAX_SONGS_IN_SET:
-		feedback_label.text = "Set Complete!"
 		for card in cards_on_display:
 			card.queue_free()
 		cards_on_display.clear()
@@ -100,6 +102,33 @@ func update_venue_ui():
 		current_venue_genres = [current_venue_genre]
 	if venue_genre_label:
 		venue_genre_label.text = "Genre Preference: %s" % "/".join(current_venue_genres)
+
+func show_play_result(song_data: Dictionary, score_results: Dictionary, played_count: int, songs_in_set: int):
+	feedback_label.text = "Played %s (+%d). (%d/%d played)" % [song_data.get("title", "Unknown"), score_results.points, played_count, songs_in_set]
+	_set_last_card_panel(song_data, score_results)
+	update_venue_ui()
+
+func _set_last_card_panel(song_data: Dictionary, score_results: Dictionary):
+	last_title_label.text = "Title: %s" % song_data.get("title", "Unknown")
+	last_artist_label.text = "Artist: %s" % song_data.get("artist", "Unknown")
+	last_genre_label.text = "Genre: %s" % song_data.get("genre", "Unknown")
+	last_risk_label.text = "Risk: %s" % song_data.get("risk", "Low")
+	last_energy_label.text = "Energy: %d/5" % song_data.get("energy", 0)
+	last_score_label.text = "Δ %s = E:%+d G:%+d R:%+d F:%+d" % [
+		str(score_results.points),
+		score_results.energy_score,
+		score_results.genre_score,
+		score_results.risk_score,
+		score_results.flow_bonus
+	]
+
+func _reset_last_card_panel():
+	last_title_label.text = "Title: —"
+	last_artist_label.text = "Artist: —"
+	last_genre_label.text = "Genre: —"
+	last_risk_label.text = "Risk: —"
+	last_energy_label.text = "Energy: —"
+	last_score_label.text = "Δ Score: waiting for first play"
 
 func _on_score_updated(new_score: int):
 	if score_label:
