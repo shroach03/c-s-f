@@ -47,6 +47,5 @@ func _on_card_clicked(card_instance, song_data):
 	start_button.disabled = (selected_songs.size() != 5)
 
 func _on_start_show_button_pressed():
-	GameManager.current_setlist = selected_songs.duplicate(true)
-	GameManager.start_performance_phase()
+	GameManager.finalize_setlist(selected_songs)
 	queue_free()
