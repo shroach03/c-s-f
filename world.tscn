@@ -122,6 +122,14 @@ offset_right = 590.0
 offset_bottom = 100.0
 text = "Pick your destination! Come back anytime!"
 
+[node name="CrowdSummary" type="Label" parent="WorldShell"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 106.0
+offset_right = 470.0
+offset_bottom = 132.0
+text = "Crowd State  E:50  T:50  P:50"
+
 [node name="RecordStore" type="Panel" parent="WorldShell"]
 layout_mode = 0
 offset_left = 78.0
