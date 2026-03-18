@@ -41,14 +41,14 @@ func _ready() -> void:
 			$WorldShell/VenueRoadmap/Venue3Panel/GenreLights3/GenreLightB
 		]
 	]
-	crate_button.pressed.connect(func(): crate_selected.emit())
+	crate_button.pressed.connect(_on_crate_pressed)
 	setlist_button.pressed.connect(func(): setlist_selected.emit())
 	for i in range(venue_buttons.size()):
 		venue_buttons[i].pressed.connect(_on_venue_pressed.bind(i))
 
 func setup_world(options: Array, crowd_state: Dictionary, can_perform: bool = false):
 	venue_data = options
-	crowd_label.text = "Crowd State  E:%d  T:%d  P:%d" % [crowd_state.energy, crowd_state.trust, crowd_state.patience]
+	#crowd_label.text = "Crowd State  E:%d  T:%d  P:%d" % [crowd_state.energy, crowd_state.trust, crowd_state.patience]
 	for i in range(venue_buttons.size()):
 		var button = venue_buttons[i]
 		if i >= venue_data.size():
@@ -60,8 +60,11 @@ func setup_world(options: Array, crowd_state: Dictionary, can_perform: bool = fa
 		var genres = v.get("genres", ["Unknown"])
 		button.text = "%s\n%s" % [v.get("name", "Venue"), "/".join(genres)]
 		button.disabled = not can_perform
-		button.tooltip_text = "Pick a venue after building a 5-song setlist." if not can_perform else "Start the show"
+		button.tooltip_text = "Pick a venue after building your 5-song setlist!" if not can_perform else "Start the show"
 		_update_light_pair(i, genres)
+
+func _on_crate_pressed() -> void:
+	crate_selected.emit()
 
 func _on_venue_pressed(index: int):
 	if index < venue_data.size():
