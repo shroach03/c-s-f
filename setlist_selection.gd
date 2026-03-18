@@ -19,7 +19,7 @@ func _ready():
 	for child in grid.get_children():
 		child.queue_free()
 
-	_update_grid_columns
+	_update_grid_columns()
 	_populate_collection()
 
 func _populate_collection():
