@@ -17,6 +17,9 @@ var digs_remaining: int = MAX_DIGS
 var master_database: Array = []
 var unlocked_inventory: Array = []
 
+func set_existing_inventory(existing_inventory: Array) -> void:
+	unlocked_inventory = existing_inventory.duplicate(true)
+
 func _ready():
 	go_to_world_button.hide()
 	go_to_world_button.pressed.connect(finish_digging_phase)
@@ -26,7 +29,9 @@ func _ready():
 	_update_grid_columns()
 	if SongDatabase and SongDatabase.SONGS:
 		master_database = SongDatabase.SONGS.duplicate(true)
-		status_label.text = "Pick Crate! %d picks left" % digs_remaining
+		if unlocked_inventory.is_empty() and GameManager != null:
+			unlocked_inventory = GameManager.player_collection.duplicate(true)
+		status_label.text = "Pick Crate! %d picks left | Inventory: %d" % [digs_remaining, unlocked_inventory.size()]
 	else:
 		status_label.text = "ERROR: database not found"
 		dig_button.disabled = true
@@ -45,14 +50,14 @@ func _on_dig_button_pressed():
 	status_label.text = "Searching Crate..."
 	await get_tree().create_timer(0.5).timeout
 	_reveal_crate_contents(5)
-	status_label.text = "Digging... (%d left)" % digs_remaining
+	status_label.text = "Digging... (%d left)| Inventory: %d" % [digs_remaining, unlocked_inventory.size()]
 
 	if digs_remaining > 0:
 		dig_button.disabled = false
-		status_label.text = "Choose your songs, then pick the crate again! (%d picks left)" % digs_remaining
+		status_label.text = "Choose your songs, then pick the crate again! (%d picks left) | Inventory: %d" % [digs_remaining, unlocked_inventory.size()]
 	else:
 		dig_button.disabled = true
-		status_label.text = "Go back to World whenever you're ready!"
+		status_label.text = "Go back to World whenever you're ready! Inventory: %d" % unlocked_inventory.size()
 
 func _reveal_crate_contents(amount: int):
 	var pool = master_database.duplicate(true)
@@ -72,6 +77,9 @@ func _on_card_selected_for_inventory(card_instance, song_data):
 		card_instance.modulate = Color(0.5, 1.0, 0.6)
 		var song_title = song_data.get("title", "Unknown Song")
 		status_label.text = "Added %s to inventory. Total: %d" % [song_title, unlocked_inventory.size()]
+	elif card_instance.modulate != Color(0.5, 1.0, 0.6):
+		card_instance.modulate = Color(0.5, 1.0, 0.6)
+		status_label.text = "Already owned. Inventory total: %d" % unlocked_inventory.size()
 
 func _perform_dig():
 	if master_database.size() > 0:
