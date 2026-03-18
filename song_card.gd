@@ -39,4 +39,6 @@ func setup_card(song_data: Dictionary, options: Dictionary = {}) -> void:
 	modulate = Color.WHITE
 
 func _on_button_pressed() -> void:
+	if GameManager != null:
+		GameManager.play_sfx("place_card")
 	emit_signal("song_selected", self, current_song_data)
