@@ -1,5 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://85vyp5utaiq5"]
-[ext_resource type="Script" path="res://scripts/venue.gd" id="1_world_script"]
+[gd_scene load_steps=4 format=3 uid="uid://85vyp5utaiq5"]
+
+[ext_resource type="Script" uid="uid://cxyyvlhaxwqtf" path="res://scripts/venue.gd" id="1_world_script"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_world_shell"]
 bg_color = Color(0.0431373, 0.0784314, 0.152941, 1)
@@ -8,10 +9,10 @@ border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
 border_color = Color(0.364706, 0.705882, 0.968627, 1)
-corner_radius_top_left = 480
-corner_radius_top_right = 480
-corner_radius_bottom_right = 480
-corner_radius_bottom_left = 480
+corner_radius_top_left = 220
+corner_radius_top_right = 220
+corner_radius_bottom_right = 220
+corner_radius_bottom_left = 220
 shadow_color = Color(0, 0, 0, 0.35)
 shadow_size = 24
 
@@ -26,52 +27,6 @@ corner_radius_top_left = 16
 corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
-
-[sub_resource type="Animation" id="Animation_flash"]
-resource_name = "flash"
-length = 1.2
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Venue1Panel/GenreLights1/PunkLight:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.3, 0.6, 0.9, 1.2),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [Color(1, 0.345098, 0.533333, 1), Color(1, 0.345098, 0.533333, 0.25), Color(1, 0.345098, 0.533333, 1), Color(1, 0.345098, 0.533333, 0.35), Color(1, 0.345098, 0.533333, 1)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Venue1Panel/GenreLights1/FunkLight:modulate")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.3, 0.6, 0.9, 1.2),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [Color(0.462745, 1, 0.521569, 0.3), Color(0.462745, 1, 0.521569, 1), Color(0.462745, 1, 0.521569, 0.3), Color(0.462745, 1, 0.521569, 1), Color(0.462745, 1, 0.521569, 0.3)]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Venue1Panel/GenreLights1/ElectroLight:modulate")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.3, 0.6, 0.9, 1.2),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 0,
-"values": [Color(0.427451, 0.823529, 1, 1), Color(0.427451, 0.823529, 1, 0.3), Color(0.427451, 0.823529, 1, 1), Color(0.427451, 0.823529, 1, 0.3), Color(0.427451, 0.823529, 1, 1)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_e5uuo"]
-_data = {
-&"flash": SubResource("Animation_flash")
-}
 
 [node name="world" type="Control"]
 layout_mode = 3
@@ -110,205 +65,195 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_world_shell")
 [node name="WorldTitle" type="Label" parent="WorldShell"]
 layout_mode = 0
 offset_left = 40.0
-offset_top = 26.0
-offset_right = 468.0
-offset_bottom = 72.0
-theme_override_font_sizes/font_size = 30
-text = "THE WORLD!!!!!!!!!!!!!"
+offset_top = 28.0
+offset_right = 320.0
+offset_bottom = 64.0
+theme_override_font_sizes/font_size = 24
+text = "THE WORLD!!!"
 
 [node name="Subtitle" type="Label" parent="WorldShell"]
 layout_mode = 0
 offset_left = 40.0
-offset_top = 74.0
-offset_right = 590.0
-offset_bottom = 100.0
-text = "Pick your destination! Come back anytime!"
+offset_top = 68.0
+offset_right = 620.0
+offset_bottom = 96.0
+text = "Plan the night, build a set, then pick the venue that fits your crowd."
+autowrap_mode = 3
 
 [node name="CrowdSummary" type="Label" parent="WorldShell"]
 layout_mode = 0
 offset_left = 40.0
-offset_top = 106.0
-offset_right = 470.0
-offset_bottom = 132.0
+offset_top = 108.0
+offset_right = 460.0
+offset_bottom = 134.0
 text = "Crowd State  E:50  T:50  P:50"
 
 [node name="RecordStore" type="Panel" parent="WorldShell"]
 layout_mode = 0
-offset_left = 78.0
-offset_top = 119.0
-offset_right = 374.0
-offset_bottom = 320.0
+offset_left = 40.0
+offset_top = 162.0
+offset_right = 342.0
+offset_bottom = 410.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_building")
 
 [node name="StoreName" type="Label" parent="WorldShell/RecordStore"]
 layout_mode = 0
-offset_left = 18.0
-offset_top = 16.0
-offset_right = 260.0
-offset_bottom = 50.0
+offset_left = 20.0
+offset_top = 18.0
+offset_right = 250.0
+offset_bottom = 48.0
 theme_override_font_sizes/font_size = 24
 text = "The Scratch Post"
 
 [node name="StoreRole" type="Label" parent="WorldShell/RecordStore"]
 layout_mode = 0
-offset_left = 18.0
-offset_top = 58.0
-offset_right = 266.0
-offset_bottom = 108.0
-text = "Come buy some more tunes!"
+offset_left = 20.0
+offset_top = 60.0
+offset_right = 270.0
+offset_bottom = 118.0
+text = "Stock up on records before you lock in tonight's 5-song set."
+autowrap_mode = 3
 
 [node name="GoToCrateDig" type="Button" parent="WorldShell/RecordStore"]
 layout_mode = 0
+offset_left = 20.0
+offset_top = 166.0
+offset_right = 280.0
+offset_bottom = 214.0
+text = "Enter Crate Dig"
+
+[node name="GoToSetlist" type="Button" parent="WorldShell/RecordStore"]
+layout_mode = 0
 offset_left = 18.0
-offset_top = 108.0
+offset_top = 162.0
 offset_right = 278.0
-offset_bottom = 160.0
-text = "Enter Crate Dig Building"
+offset_bottom = 194.0
+text = "Build Setlist"
 
 [node name="VenueRoadmap" type="Panel" parent="WorldShell"]
 layout_mode = 0
-offset_left = 410.0
-offset_top = 150.0
-offset_right = 844.0
-offset_bottom = 502.0
+offset_left = 380.0
+offset_top = 162.0
+offset_right = 920.0
+offset_bottom = 534.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_building")
 
 [node name="RoadmapTitle" type="Label" parent="WorldShell/VenueRoadmap"]
 layout_mode = 0
 offset_left = 20.0
-offset_top = 16.0
-offset_right = 290.0
-offset_bottom = 48.0
+offset_top = 18.0
+offset_right = 260.0
+offset_bottom = 50.0
 theme_override_font_sizes/font_size = 24
 text = "Venue Roadmap"
 
 [node name="RoadmapDescription" type="Label" parent="WorldShell/VenueRoadmap"]
 layout_mode = 0
 offset_left = 20.0
-offset_top = 50.0
-offset_right = 480.0
-offset_bottom = 88.0
-text = "Select a venue lane. Genre indicator lights flash outside."
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="WorldShell/VenueRoadmap"]
-libraries = {
-&"": SubResource("AnimationLibrary_e5uuo")
-}
-autoplay = "flash"
+offset_top = 56.0
+offset_right = 500.0
+offset_bottom = 94.0
+text = "Choose a lane after you finish building a 5-song setlist. Genre lights hint at crowd taste."
+autowrap_mode = 3
 
 [node name="Venue1Panel" type="Panel" parent="WorldShell/VenueRoadmap"]
 layout_mode = 0
-offset_left = 217.0
-offset_top = 88.0
-offset_right = 441.0
-offset_bottom = 167.0
+offset_left = 298.0
+offset_top = 108.0
+offset_right = 504.0
+offset_bottom = 206.0
 
 [node name="GoToV1" type="Button" parent="WorldShell/VenueRoadmap/Venue1Panel"]
-custom_minimum_size = Vector2(150, 44)
+custom_minimum_size = Vector2(160, 46)
 layout_mode = 0
-offset_left = 37.0
-offset_right = 187.0
-offset_bottom = 44.0
-text = "Venue 1
-"
+offset_left = 22.0
+offset_top = 16.0
+offset_right = 182.0
+offset_bottom = 62.0
+text = "Venue 1"
 
 [node name="GenreLights1" type="HBoxContainer" parent="WorldShell/VenueRoadmap/Venue1Panel"]
 layout_mode = 0
-offset_left = 58.0
-offset_top = 44.0
-offset_right = 184.0
-offset_bottom = 74.0
+offset_left = 30.0
+offset_top = 66.0
+offset_right = 156.0
+offset_bottom = 96.0
 theme_override_constants/separation = 18
 
-[node name="PunkLight" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue1Panel/GenreLights1"]
+[node name="GenreLightA" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue1Panel/GenreLights1"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 color = Color(1, 0.345098, 0.533333, 1)
 
-[node name="FunkLight" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue1Panel/GenreLights1"]
+[node name="GenreLightB" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue1Panel/GenreLights1"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 color = Color(0.462745, 1, 0.521569, 1)
 
-[node name="ElectroLight" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue1Panel/GenreLights1"]
-custom_minimum_size = Vector2(30, 30)
-layout_mode = 2
-color = Color(0.427451, 0.823529, 1, 1)
-
 [node name="Venue2Panel" type="Panel" parent="WorldShell/VenueRoadmap"]
 layout_mode = 0
-offset_left = 20.0
-offset_top = 153.0
-offset_right = 217.0
-offset_bottom = 239.0
+offset_left = 82.0
+offset_top = 166.0
+offset_right = 288.0
+offset_bottom = 264.0
 
 [node name="GoToV2" type="Button" parent="WorldShell/VenueRoadmap/Venue2Panel"]
-custom_minimum_size = Vector2(150, 44)
+custom_minimum_size = Vector2(160, 46)
 layout_mode = 0
-offset_left = 20.0
-offset_top = 14.0
-offset_right = 170.0
-offset_bottom = 58.0
+offset_left = 22.0
+offset_top = 16.0
+offset_right = 182.0
+offset_bottom = 62.0
 text = "Venue 2"
 
 [node name="GenreLights2" type="HBoxContainer" parent="WorldShell/VenueRoadmap/Venue2Panel"]
 layout_mode = 0
-offset_left = 40.0
-offset_top = 63.0
-offset_right = 166.0
-offset_bottom = 93.0
+offset_left = 22.0
+offset_top = 16.0
+offset_right = 182.0
+offset_bottom = 62.0
 theme_override_constants/separation = 18
 
-[node name="PunkLight" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue2Panel/GenreLights2"]
+[node name="GenreLightA" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue2Panel/GenreLights2"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 color = Color(1, 0.345098, 0.533333, 1)
 
-[node name="FunkLight" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue2Panel/GenreLights2"]
+[node name="GenreLightB" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue2Panel/GenreLights2"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 color = Color(0.462745, 1, 0.521569, 1)
-
-[node name="ElectroLight" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue2Panel/GenreLights2"]
-custom_minimum_size = Vector2(30, 30)
-layout_mode = 2
-color = Color(0.427451, 0.823529, 1, 1)
 
 [node name="Venue3Panel" type="Panel" parent="WorldShell/VenueRoadmap"]
 layout_mode = 0
-offset_left = 234.0
-offset_top = 248.0
-offset_right = 405.0
-offset_bottom = 341.0
+offset_left = 246.0
+offset_top = 264.0
+offset_right = 452.0
+offset_bottom = 362.0
 
 [node name="GoToV3" type="Button" parent="WorldShell/VenueRoadmap/Venue3Panel"]
-custom_minimum_size = Vector2(150, 44)
+custom_minimum_size = Vector2(160, 46)
 layout_mode = 0
+offset_left = 22.0
 offset_top = 16.0
-offset_right = 160.0
-offset_bottom = 60.0
-text = "Venue 3
-"
+offset_right = 182.0
+offset_bottom = 62.0
+text = "Venue 3"
 
 [node name="GenreLights3" type="HBoxContainer" parent="WorldShell/VenueRoadmap/Venue3Panel"]
 layout_mode = 0
-offset_left = 20.0
-offset_top = 83.0
-offset_right = 146.0
-offset_bottom = 113.0
+offset_left = 30.0
+offset_top = 66.0
+offset_right = 156.0
+offset_bottom = 96.0
 theme_override_constants/separation = 18
 
-[node name="PunkLight" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue3Panel/GenreLights3"]
+[node name="GenreLightA" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue3Panel/GenreLights3"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 color = Color(1, 0.345098, 0.533333, 1)
 
-[node name="FunkLight" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue3Panel/GenreLights3"]
+[node name="GenreLightB" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue3Panel/GenreLights3"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 color = Color(0.462745, 1, 0.521569, 1)
-
-[node name="ElectroLight" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue3Panel/GenreLights3"]
-custom_minimum_size = Vector2(30, 30)
-layout_mode = 2
-color = Color(0.427451, 0.823529, 1, 1)
