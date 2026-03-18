@@ -1,12 +1,12 @@
 extends Control
 signal song_selected(card_instance, card_data_played)
 
-@onready var title_label = $CardBack/Content/TitleLabel/loadTitle
-@onready var artist_label = $CardBack/Content/ArtistLabel/loadArtist
-@onready var genre_label = $CardBack/Content/GenreLabel/loadGenre
-@onready var risk_label = $CardBack/Content/RiskLabel/loadRisk
-@onready var energy_label = $CardBack/Content/EnergyLabel/loadEnergy
-@onready var tag_label = $CardBack/Content/TagLabel/loadTag
+@onready var title_label = $CardBack/Content/VBoxContainer/TitleLabel/loadTitle
+@onready var artist_label = $CardBack/Content/VBoxContainer/ArtistLabel/loadArtist
+@onready var genre_label = $CardBack/Content/VBoxContainer/GenreLabel/loadGenre
+@onready var risk_label = $CardBack/Content/VBoxContainer/RiskLabel/loadRisk
+@onready var energy_label = $CardBack/Content/VBoxContainer/EnergyLabel/loadEnergy
+@onready var tag_label = $CardBack/Content/VBoxContainer/TagLabel/loadTag
 @onready var card_button = $CardBack/Button
 var current_song_data: Dictionary = {}
 
@@ -25,7 +25,7 @@ func setup_card(song_data: Dictionary, options: Dictionary = {}) -> void:
 	if context == "performance":
 		card_button.tooltip_text = "Play this track"
 	elif context == "selection":
-		card_button.tooltip_text = "Add/remove from setlist"
+		card_button.tooltip_text = "Add or remove from setlist"
 	else:
 		card_button.tooltip_text = "Inspect"
 
@@ -33,9 +33,10 @@ func setup_card(song_data: Dictionary, options: Dictionary = {}) -> void:
 		card_button.pressed.connect(_on_button_pressed)
 	card_button.disabled = not show_button
 	card_button.visible = show_button
+	card_button.focus_mode = Control.FOCUS_ALL
+	mouse_filter = Control.MOUSE_FILTER_STOP
+	card_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	modulate = Color.WHITE
 
 func _on_button_pressed() -> void:
 	emit_signal("song_selected", self, current_song_data)
-	
-
