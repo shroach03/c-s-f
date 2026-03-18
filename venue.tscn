@@ -1,14 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://c6lhdyi4s8pkj"]
-
-[ext_resource type="Script" uid="uid://bdpiw3r1v60vi" path="res://scripts/song_database.gd" id="1_q753v"]
-[ext_resource type="Script" uid="uid://cdgqf411lx7pn" path="res://scripts/game_manager.gd" id="1_sugp2"]
-[ext_resource type="PackedScene" uid="uid://xrgbab5yrpj3" path="res://scenes/song_deck_manager.tscn" id="2_0wfyh"]
+[gd_scene format=3 uid="uid://c6lhdyi4s8pkj"]
 
 [node name="Venue" type="Node2D" groups=["game_managers"]]
 metadata/_edit_vertical_guides_ = [2.0]
 
-[node name="SongDatabase" type="Node" parent="."]
-script = ExtResource("1_q753v")
 
 [node name="VenueManager" type="Node" parent="."]
 
@@ -111,12 +105,3 @@ offset_top = 4.951996
 offset_right = -31.11206
 offset_bottom = 4.751953
 
-[node name="GameManager" type="Node2D" parent="."]
-script = ExtResource("1_sugp2")
-
-[node name="SongDeckManager" parent="GameManager" instance=ExtResource("2_0wfyh")]
-offset_left = -5.0
-offset_top = -1.0
-offset_right = 1171.0
-offset_bottom = 705.0
-metadata/_edit_use_anchors_ = true
