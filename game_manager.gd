@@ -71,6 +71,8 @@ func start_world_phase():
 		active_world.crate_selected.connect(start_crate_digging_phase)
 	if active_world.has_signal("venue_selected"):
 		active_world.venue_selected.connect(_on_world_venue_selected)
+	if active_world.has_signal("setlist_selected"):
+		active_world.setlist_selected.connect(open_setlist_selection_menu)
 	if active_world.has_method("setup_world"):
 		active_world.setup_world(_build_venue_options(), current_crowd_state, current_setlist.size() >= SONGS_IN_SET)
 
@@ -108,7 +110,7 @@ func start_crate_digging_phase():
 
 func on_digging_finished(new_finds: Array):
 	player_collection = new_finds.duplicate(true)
-	open_setlist_selection_menu()
+	start_world_phase()
 
 func open_setlist_selection_menu():
 	var selection_menu = SELECTION_SCENE.instantiate()
@@ -137,9 +139,12 @@ func start_performance_phase():
 	active_deck_manager.feedback_label.text = "The show is starting! Pick your first song."
 
 func _cleanup_phase_nodes():
+	var phase_children: Array = []
 	for child in get_children():
-		if child.name in ["Crate_dig", "SongDeckManager", "SetListSelection", "world", "Venue"]:
-			child.queue_free()
+		if child.name in ["crate_dig", "SongDeckManager", "SetListSelection", "world", "Venue"]:
+			phase_children.append(child)
+	for child in phase_children:
+		child.free()
 
 func calculate_score_from_song(song_data: Dictionary) -> Dictionary:
 	var points = 0
@@ -247,6 +252,10 @@ func check_win_condition():
 	if is_instance_valid(active_deck_manager):
 		active_deck_manager.feedback_label.text = "Set complete! Final score: %d. Returning to world..." % current_score
 	_end_night_and_return_world()
+
+func _end_night_and_return_world():
+	current_setlist.clear()
+	start_world_phase()
 
 func _end_night_and_return_world():
 	current_setlist.clear()
