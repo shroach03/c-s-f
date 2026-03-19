@@ -4,7 +4,7 @@ signal continue_pressed
 
 @onready var title_label: Label = $BackgroundLayer/Shell/VBox/TitleBlock/Title
 @onready var subtitle_label: Label = $BackgroundLayer/Shell/VBox/TitleBlock/Subtitle
-@onready var score_value_label: Label = $BackgroundLayer/Shell/VBox/Stats/ScoreCard/ScoreValue
+@onready var score_value_label: Label = $BackgroundLayer/Shell/VBox/Stats/ScoreCard/ScoreVBox/ScoreValue
 @onready var venue_value_label: Label = $BackgroundLayer/Shell/VBox/Stats/InfoColumn/VenueValue
 @onready var genre_value_label: Label = $BackgroundLayer/Shell/VBox/Stats/InfoColumn/GenreValue
 @onready var crowd_value_label: Label = $BackgroundLayer/Shell/VBox/Stats/InfoColumn/CrowdValue
