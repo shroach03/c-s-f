@@ -192,6 +192,9 @@ func finalize_setlist(selected_songs: Array):
 	current_setlist = selected_songs.duplicate(true)
 	start_world_phase()
 
+func return_to_world() -> void:
+	start_world_phase()
+	
 func start_performance_phase():
 	_cleanup_phase_nodes()
 	if is_instance_valid(active_deck_manager):
