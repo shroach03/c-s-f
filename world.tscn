@@ -77,7 +77,7 @@ offset_left = 40.0
 offset_top = 68.0
 offset_right = 720.0
 offset_bottom = 100.0
-text = "Build a five-song set, then play at one of tonight's venues!.
+text = "Build a five-song set, then play at one of tonight's venues!"
 autowrap_mode = 3
 
 [node name="CrowdSummary" type="Label" parent="WorldShell"]
