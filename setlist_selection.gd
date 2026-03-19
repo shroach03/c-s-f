@@ -2,6 +2,7 @@ extends Control
 
 @onready var grid = $Shell/VBoxContainer/CollectionPanel/ScrollContainer/GridContainer
 @onready var start_button = $Shell/VBoxContainer/TopBar/StartShow
+@onready var back_button = $Shell/VBoxContainer/TopBar/BackToWorld
 @onready var count_label = $Shell/VBoxContainer/TopBar/CountLabel
 
 var selected_songs: Array = []
@@ -11,6 +12,8 @@ const TARGET_CARD_WIDTH := 176.0
 func _ready():
 	if not start_button.pressed.is_connected(_on_start_show_button_pressed):
 		start_button.pressed.connect(_on_start_show_button_pressed)
+	if back_button and not back_button.pressed.is_connected(_on_back_to_world_pressed):
+		back_button.pressed.connect(_on_back_to_world_pressed)
 	if not resized.is_connected(_update_grid_columns):
 		resized.connect(_update_grid_columns)
 	start_button.disabled = true
@@ -50,3 +53,8 @@ func _on_card_clicked(card_instance, song_data):
 
 func _on_start_show_button_pressed():
 	GameManager.finalize_setlist(selected_songs)
+
+func _on_back_to_world_pressed() -> void:
+	if GameManager != null:
+		GameManager.return_to_world()
+
