@@ -6,6 +6,7 @@ var last_played_energy: int = -1
 var current_song_inventory: Array = []
 var current_venue_genre: String = ""
 var current_venue_genres: Array = []
+var venue_preferences: Array = []
 var set_history: Array = []
 var player_collection: Array = []
 var current_setlist: Array = []
@@ -23,7 +24,8 @@ const SELECTION_SCENE = preload("res://scenes/setlist_selection.tscn")
 const SFX_FILES = {
 	"place_card": "place_card.wav",
 	"record_store_open": "record_store_open.wav",
-	"venue_open": "venue_open.wav"
+	"venue_open": "venue_open.wav",
+	"click_button": "click_button.wav"
 }
 
 var active_deck_manager = null
@@ -35,6 +37,7 @@ func _ready():
 		return
 	_initialize_sfx()
 	_initialize_available_genres()
+	_initialize_venue_preferences()
 	start_world_phase()
 
 func _initialize_sfx() -> void:
@@ -131,22 +134,30 @@ func start_world_phase():
 	if active_world.has_method("setup_world"):
 		active_world.setup_world(_build_venue_options(), current_crowd_state, current_setlist.size() >= SONGS_IN_SET)
 
-func _build_venue_options() -> Array:
-	var options: Array = []
+func _initialize_venue_preferences() -> void:
+	venue_preferences.clear()
 	for index in range(3):
-		if available_genres.is_empty():
-			options.append({"name": "Venue %d" % (index + 1), "genres": ["Unknown"]})
-			continue
-		var first = available_genres.pick_random()
-		var second = first
-		if available_genres.size() > 1 and randi() % 100 > 60:
-			while second == first:
-				second = available_genres.pick_random()
-		var genres = [first]
-		if second != first:
-			genres.append(second)
-		options.append({"name": "Venue %d" % (index + 1), "genres": genres})
-	return options
+		venue_preferences.append({
+			"name": "Venue %d" % (index + 1),
+			"genres": _generate_venue_genres()
+		})
+
+func _generate_venue_genres() -> Array:
+	if available_genres.is_empty():
+		return ["Unknown"]
+
+	var genres := [available_genres.pick_random()]
+	if available_genres.size() > 1 and randi() % 2 == 0:
+		var second_genre := genres[0]
+		while second_genre == genres[0]:
+			second_genre = available_genres.pick_random()
+		genres.append(second_genre)
+	return genres
+
+func _build_venue_options() -> Array:
+	if venue_preferences.is_empty():
+		_initialize_venue_preferences()
+	return venue_preferences.duplicate(true)
 
 func _on_world_venue_selected(venue_data: Dictionary):
 	if current_setlist.size() < SONGS_IN_SET:
@@ -173,6 +184,7 @@ func on_digging_finished(new_finds: Array):
 	start_world_phase()
 
 func open_setlist_selection_menu():
+	_cleanup_phase_nodes()
 	var selection_menu = SELECTION_SCENE.instantiate()
 	add_child(selection_menu)
 
