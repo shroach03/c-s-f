@@ -148,7 +148,7 @@ func _generate_venue_genres() -> Array:
 
 	var genres := [available_genres.pick_random()]
 	if available_genres.size() > 1 and randi() % 2 == 0:
-		var second_genre := genres[0]
+		var second_genre: Variant = genres[0]
 		while second_genre == genres[0]:
 			second_genre = available_genres.pick_random()
 		genres.append(second_genre)
