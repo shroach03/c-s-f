@@ -57,4 +57,3 @@ func _on_start_show_button_pressed():
 func _on_back_to_world_pressed() -> void:
 	if GameManager != null:
 		GameManager.return_to_world()
-
