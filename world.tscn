@@ -75,25 +75,25 @@ text = "THE WORLD!!!"
 layout_mode = 0
 offset_left = 40.0
 offset_top = 68.0
-offset_right = 620.0
-offset_bottom = 96.0
-text = "Plan the night, build a set, then pick the venue that fits your crowd."
+offset_right = 720.0
+offset_bottom = 100.0
+text = "Build a five-song set, then play at one of tonight's venues!.
 autowrap_mode = 3
 
 [node name="CrowdSummary" type="Label" parent="WorldShell"]
 layout_mode = 0
 offset_left = 40.0
 offset_top = 108.0
-offset_right = 460.0
-offset_bottom = 134.0
-text = "Crowd State  E:50  T:50  P:50"
+offset_right = 520.0
+offset_bottom = 138.0
+text = "Crowd Readiness  E:50  T:50  P:50"
 
 [node name="RecordStore" type="Panel" parent="WorldShell"]
 layout_mode = 0
 offset_left = 40.0
 offset_top = 162.0
-offset_right = 342.0
-offset_bottom = 410.0
+offset_right = 332.0
+offset_bottom = 530.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_building")
 
 [node name="StoreName" type="Label" parent="WorldShell/RecordStore"]
@@ -109,33 +109,35 @@ text = "The Scratch Post"
 layout_mode = 0
 offset_left = 20.0
 offset_top = 60.0
-offset_right = 270.0
-offset_bottom = 118.0
-text = "Stock up on records before you lock in tonight's 5-song set."
+offset_right = 332.0
+offset_bottom = 530.0
+text = "Get records to make your set"
 autowrap_mode = 3
 
-[node name="GoToCrateDig" type="Button" parent="WorldShell/RecordStore"]
+[node name="ButtonColumn" type="VBoxContainer" parent="WorldShell/RecordStore"]
 layout_mode = 0
 offset_left = 20.0
-offset_top = 166.0
-offset_right = 280.0
-offset_bottom = 214.0
+offset_top = 206.0
+offset_right = 270.0
+offset_bottom = 330.0
+theme_override_constants/separation = 14
+
+[node name="GoToCrateDig" type="Button" parent="WorldShell/RecordStore/ButtonColumn"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
 text = "Enter Crate Dig"
 
-[node name="GoToSetlist" type="Button" parent="WorldShell/RecordStore"]
-layout_mode = 0
-offset_left = 18.0
-offset_top = 162.0
-offset_right = 278.0
-offset_bottom = 194.0
+[node name="GoToSetlist" type="Button" parent="WorldShell/RecordStore/ButtonColumn"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
 text = "Build Setlist"
 
 [node name="VenueRoadmap" type="Panel" parent="WorldShell"]
 layout_mode = 0
-offset_left = 380.0
+offset_left = 360.0
 offset_top = 162.0
-offset_right = 920.0
-offset_bottom = 534.0
+offset_right = 930.0
+offset_bottom = 560.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_building")
 
 [node name="RoadmapTitle" type="Label" parent="WorldShell/VenueRoadmap"]
@@ -151,33 +153,43 @@ text = "Venue Roadmap"
 layout_mode = 0
 offset_left = 20.0
 offset_top = 56.0
-offset_right = 500.0
-offset_bottom = 94.0
-text = "Choose a lane after you finish building a 5-song setlist. Genre lights hint at crowd taste."
+offset_right = 520.0
+offset_bottom = 96.0
+text = "Choose a venue! THe genre lights tell you what they're gonna want to hear!"
 autowrap_mode = 3
 
 [node name="Venue1Panel" type="Panel" parent="WorldShell/VenueRoadmap"]
 layout_mode = 0
-offset_left = 298.0
-offset_top = 108.0
-offset_right = 504.0
-offset_bottom = 206.0
+offset_left = 26.0
+offset_top = 122.0
+offset_right = 544.0
+offset_bottom = 202.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_building")
 
 [node name="GoToV1" type="Button" parent="WorldShell/VenueRoadmap/Venue1Panel"]
-custom_minimum_size = Vector2(160, 46)
+custom_minimum_size = Vector2(180, 46)
 layout_mode = 0
-offset_left = 22.0
-offset_top = 16.0
-offset_right = 182.0
-offset_bottom = 62.0
-text = "Venue 1"
+offset_left = 18.0
+offset_top = 18.0
+offset_right = 198.0
+offset_bottom = 64.0
+text = "Nyan Alley"
+
+[node name="VenueCopy1" type="Label" parent="WorldShell/VenueRoadmap/Venue1Panel"]
+layout_mode = 0
+offset_left = 220.0
+offset_top = 12.0
+offset_right = 494.0
+offset_bottom = 64.0
+text = "Pop-up neon lane with a pixel parade overhead."
+autowrap_mode = 3
 
 [node name="GenreLights1" type="HBoxContainer" parent="WorldShell/VenueRoadmap/Venue1Panel"]
 layout_mode = 0
-offset_left = 30.0
-offset_top = 66.0
-offset_right = 156.0
-offset_bottom = 96.0
+offset_left = 18.0
+offset_top = 68.0
+offset_right = 168.0
+offset_bottom = 98.0
 theme_override_constants/separation = 18
 
 [node name="GenreLightA" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue1Panel/GenreLights1"]
@@ -192,26 +204,36 @@ color = Color(0.462745, 1, 0.521569, 1)
 
 [node name="Venue2Panel" type="Panel" parent="WorldShell/VenueRoadmap"]
 layout_mode = 0
-offset_left = 82.0
-offset_top = 166.0
-offset_right = 288.0
-offset_bottom = 264.0
+offset_left = 26.0
+offset_top = 220.0
+offset_right = 544.0
+offset_bottom = 300.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_building")
 
 [node name="GoToV2" type="Button" parent="WorldShell/VenueRoadmap/Venue2Panel"]
-custom_minimum_size = Vector2(160, 46)
+custom_minimum_size = Vector2(180, 46)
 layout_mode = 0
-offset_left = 22.0
-offset_top = 16.0
-offset_right = 182.0
-offset_bottom = 62.0
-text = "Venue 2"
+offset_left = 18.0
+offset_top = 18.0
+offset_right = 198.0
+offset_bottom = 64.0
+text = "Burmese Beach"
+
+[node name="VenueCopy2" type="Label" parent="WorldShell/VenueRoadmap/Venue2Panel"]
+layout_mode = 0
+offset_left = 220.0
+offset_top = 5.0
+offset_right = 494.0
+offset_bottom = 64.0
+text = "Salt-air boardwalk where sunset synths never leave the tide."
+autowrap_mode = 3
 
 [node name="GenreLights2" type="HBoxContainer" parent="WorldShell/VenueRoadmap/Venue2Panel"]
 layout_mode = 0
-offset_left = 22.0
-offset_top = 16.0
-offset_right = 182.0
-offset_bottom = 62.0
+offset_left = 18.0
+offset_top = 68.0
+offset_right = 168.0
+offset_bottom = 98.0
 theme_override_constants/separation = 18
 
 [node name="GenreLightA" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue2Panel/GenreLights2"]
@@ -226,26 +248,36 @@ color = Color(0.462745, 1, 0.521569, 1)
 
 [node name="Venue3Panel" type="Panel" parent="WorldShell/VenueRoadmap"]
 layout_mode = 0
-offset_left = 246.0
-offset_top = 264.0
-offset_right = 452.0
-offset_bottom = 362.0
+offset_left = 26.0
+offset_top = 318.0
+offset_right = 544.0
+offset_bottom = 398.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_building")
 
 [node name="GoToV3" type="Button" parent="WorldShell/VenueRoadmap/Venue3Panel"]
-custom_minimum_size = Vector2(160, 46)
+custom_minimum_size = Vector2(180, 46)
 layout_mode = 0
-offset_left = 22.0
+offset_left = 18.0
+offset_top = 18.0
+offset_right = 198.0
+offset_bottom = 64.0
+text = "Biggie's Alley."
+
+[node name="VenueCopy3" type="Label" parent="WorldShell/VenueRoadmap/Venue3Panel"]
+layout_mode = 0
+offset_left = 220.0
 offset_top = 16.0
-offset_right = 182.0
-offset_bottom = 62.0
-text = "Venue 3"
+offset_right = 494.0
+offset_bottom = 64.0
+text = "Brick-wall cipher packed with late-night swagger and soul."
+autowrap_mode = 3
 
 [node name="GenreLights3" type="HBoxContainer" parent="WorldShell/VenueRoadmap/Venue3Panel"]
 layout_mode = 0
-offset_left = 30.0
-offset_top = 66.0
-offset_right = 156.0
-offset_bottom = 96.0
+offset_left = 18.0
+offset_top = 68.0
+offset_right = 168.0
+offset_bottom = 98.0
 theme_override_constants/separation = 18
 
 [node name="GenreLightA" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue3Panel/GenreLights3"]
