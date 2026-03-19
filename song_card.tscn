@@ -1,8 +1,22 @@
-[gd_scene load_steps=4 format=3 uid="uid://bveheb6piqlux"]
+[gd_scene load_steps=3 format=3 uid="uid://bveheb6piqlux"]
 
 [ext_resource type="Script" uid="uid://dy52xpewdewrf" path="res://scripts/song_card.gd" id="1_6l1gx"]
 [ext_resource type="Theme" uid="uid://cadf0wjc3rkil" path="res://scenes/card_theme.tres" id="3_pyvlt"]
 [ext_resource type="Texture2D" uid="uid://ben7qqx34vpkq" path="res://assets/card_back.png" id="3_qnehr"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.101961, 0.145098, 0.262745, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.615686, 0.784314, 1, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 8
 
 [node name="SongCard" type="Control"]
 clip_contents = true
@@ -14,15 +28,14 @@ size_flags_vertical = 4
 mouse_filter = 1
 script = ExtResource("1_6l1gx")
 
-[node name="CardBack" type="TextureRect" parent="."]
+[node name="CardBack" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_qnehr")
-stretch_mode = 6
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 
 [node name="Content" type="MarginContainer" parent="CardBack"]
 layout_mode = 1
@@ -39,7 +52,7 @@ mouse_filter = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CardBack/Content"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 alignment = 1
 
 [node name="TitleLabel" type="HBoxContainer" parent="CardBack/Content/VBoxContainer"]
@@ -49,8 +62,6 @@ alignment = 1
 [node name="loadTitle" type="Label" parent="CardBack/Content/VBoxContainer/TitleLabel"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 1
-theme = ExtResource("3_pyvlt")
 horizontal_alignment = 1
 autowrap_mode = 3
 max_lines_visible = 3
@@ -62,8 +73,6 @@ alignment = 1
 [node name="loadArtist" type="Label" parent="CardBack/Content/VBoxContainer/ArtistLabel"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 1
-theme = ExtResource("3_pyvlt")
 horizontal_alignment = 1
 autowrap_mode = 3
 max_lines_visible = 2
@@ -75,8 +84,6 @@ alignment = 1
 [node name="loadGenre" type="Label" parent="CardBack/Content/VBoxContainer/GenreLabel"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 1
-theme = ExtResource("3_pyvlt")
 horizontal_alignment = 1
 autowrap_mode = 3
 
@@ -90,8 +97,6 @@ alignment = 1
 [node name="loadRisk" type="Label" parent="CardBack/Content/VBoxContainer/RiskLabel"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 1
-theme = ExtResource("3_pyvlt")
 horizontal_alignment = 1
 
 [node name="EnergyLabel" type="HBoxContainer" parent="CardBack/Content/VBoxContainer"]
@@ -101,8 +106,6 @@ alignment = 1
 [node name="loadEnergy" type="Label" parent="CardBack/Content/VBoxContainer/EnergyLabel"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 1
-theme = ExtResource("3_pyvlt")
 horizontal_alignment = 1
 
 [node name="TagLabel" type="HBoxContainer" parent="CardBack/Content/VBoxContainer"]
@@ -112,8 +115,6 @@ alignment = 1
 [node name="loadTag" type="Label" parent="CardBack/Content/VBoxContainer/TagLabel"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 1
-theme = ExtResource("3_pyvlt")
 horizontal_alignment = 1
 autowrap_mode = 3
 max_lines_visible = 2
