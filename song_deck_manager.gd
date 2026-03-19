@@ -38,6 +38,8 @@ var flash_t := 0.0
 func _ready():
 	if GameManager and not GameManager.score_updated.is_connected(_on_score_updated):
 		GameManager.score_updated.connect(_on_score_updated)
+	if back_button and not back_button.pressed.is_connected(_on_back_to_world_pressed):
+		back_button.pressed.connect(_on_back_to_world_pressed)
 	if not resized.is_connected(_update_grid_columns):
 		resized.connect(_update_grid_columns)
 	_update_grid_columns()
@@ -141,3 +143,7 @@ func _reset_last_card_panel():
 func _on_score_updated(new_score: int):
 	if score_label:
 		score_label.text = "Score: %d" % new_score
+
+func _on_back_to_world_pressed() -> void:
+	if GameManager != null:
+		GameManager.return_to_world()
