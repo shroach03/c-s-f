@@ -1,10 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://xrgbab5yrpj3"]
+[gd_scene load_steps=4 format=3 uid="uid://xrgbab5yrpj3"]
 
 [ext_resource type="Script" uid="uid://du3rl714jue1q" path="res://scripts/song_deck_manager.gd" id="1_vbqqs"]
 [ext_resource type="Script" uid="uid://bdpiw3r1v60vi" path="res://scripts/song_database.gd" id="2_8u0yk"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_show_shell"]
-bg_color = Color(0.0392157, 0.0627451, 0.121569, 0.99)
+bg_color = Color(0.0392157, 0.0627451, 0.121569, 0.92)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -18,7 +18,7 @@ shadow_color = Color(0, 0, 0, 0.45)
 shadow_size = 24
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_show_section"]
-bg_color = Color(0.0784314, 0.113725, 0.203922, 0.94)
+bg_color = Color(0.0784314, 0.113725, 0.203922, 0.90)
 corner_radius_top_left = 18
 corner_radius_top_right = 18
 corner_radius_bottom_right = 18
@@ -33,7 +33,16 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_vbqqs")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="VenueBackdrop" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BackdropColor" type="ColorRect" parent="VenueBackdrop"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -42,9 +51,14 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.0156863, 0.0235294, 0.0509804, 1)
 
-[node name="SongDatabase" type="Node2D" parent="."]
-position = Vector2(579, 352)
-script = ExtResource("2_8u0yk")
+[node name="BackdropAccents" type="Control" parent="VenueBackdrop"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [node name="Shell" type="Panel" parent="."]
 layout_mode = 1
@@ -76,18 +90,42 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="VenueGenreLabel" type="Label" parent="Shell/VBoxContainer/TopBar"]
+[node name="TitleBlock" type="VBoxContainer" parent="Shell/VBoxContainer/TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Genre Preference:"
+theme_override_constants/separation = 4
+
+[node name="VenueNameLabel" type="Label" parent="Shell/VBoxContainer/TopBar/TitleBlock"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Tonight's Venue"
+
+[node name="VenueGenreLabel" type="Label" parent="Shell/VBoxContainer/TopBar/TitleBlock"]
+layout_mode = 2
+text = "Genres:"
 vertical_alignment = 1
 
+[node name="VenueAttributeLabel" type="Label" parent="Shell/VBoxContainer/TopBar/TitleBlock"]
+layout_mode = 2
+text = "Read the room and sequence the best five-track run."
+autowrap_mode = 3
+
 [node name="ScoreLabel" type="Label" parent="Shell/VBoxContainer/TopBar"]
-custom_minimum_size = Vector2(140, 40)
+custom_minimum_size = Vector2(160, 40)
 layout_mode = 2
 text = "Score: 0"
 horizontal_alignment = 2
 vertical_alignment = 1
+
+[node name="BackButton" type="Button" parent="Shell/VBoxContainer/TopBar"]
+custom_minimum_size = Vector2(150, 42)
+layout_mode = 2
+text = "Back to World"
+
+[node name="BackToWorld" type="Button" parent="Shell/VBoxContainer/TopBar"]
+custom_minimum_size = Vector2(180, 40)
+layout_mode = 2
+text = "Back to World"
 
 [node name="PlayArea" type="HBoxContainer" parent="Shell/VBoxContainer"]
 layout_mode = 2
@@ -120,7 +158,7 @@ text = "Performance Hand"
 
 [node name="HandSubtitle" type="Label" parent="Shell/VBoxContainer/PlayArea/Panel/HandVBox"]
 layout_mode = 2
-text = "Cards are arranged in a readable grid. Click one song per turn to play the set in order."
+text = " Click on the cards to make your set order!"
 autowrap_mode = 3
 
 [node name="HandScroll" type="ScrollContainer" parent="Shell/VBoxContainer/PlayArea/Panel/HandVBox"]
