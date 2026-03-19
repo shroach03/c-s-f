@@ -23,6 +23,7 @@ const WORLD_SCENE = preload("res://scenes/world.tscn")
 const CRATE_SCENE = preload("res://scenes/crate_dig.tscn")
 const PERFORMANCE_SCENE = preload("res://scenes/song_deck_manager.tscn")
 const SELECTION_SCENE = preload("res://scenes/setlist_selection.tscn")
+const RESULT_SCENE = preload("res://scenes/result.tscn")
 const SFX_FILES = {
 	"place_card": "place_card.wav",
 	"record_store_open": "record_store_open.wav",
