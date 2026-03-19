@@ -211,8 +211,8 @@ func _layout_backdrop() -> void:
 		var columns := 5.0
 		var margin_x := venue_backdrop.size.x * 0.08
 		var margin_y := venue_backdrop.size.y * 0.14
-		var x_step := (venue_backdrop.size.x - margin_x * 2.0) / max(1.0, columns - 1.0)
-		var y_step := (venue_backdrop.size.y - margin_y * 2.0) / max(1.0, rows - 1.0)
+		var x_step: float = (venue_backdrop.size.x - margin_x * 2.0) / max(1.0, columns - 1.0)
+		var y_step: float = (venue_backdrop.size.y - margin_y * 2.0) / max(1.0, rows - 1.0)
 		for item in nyan_sprites:
 			var node: TextureRect = item["node"]
 			var row: int = item["row"]
