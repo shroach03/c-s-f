@@ -7,6 +7,7 @@ signal card_moved_to_set(card_instance, song_data)
 @onready var feedback_label = $Shell/VBoxContainer/LastPlayedInfoLabel
 @onready var venue_genre_label = $Shell/VBoxContainer/TopBar/VenueGenreLabel
 @onready var score_label = $Shell/VBoxContainer/TopBar/ScoreLabel
+@onready var back_button: Button = get_node_or_null("Shell/VBoxContainer/TopBar/BackButton") as Button
 @onready var genre_indicator = $Shell/VBoxContainer/GenreIndicator
 @onready var last_title_label = $Shell/VBoxContainer/PlayArea/LastCardPanel/LastCardVBox/Title
 @onready var last_artist_label = $Shell/VBoxContainer/PlayArea/LastCardPanel/LastCardVBox/Artist
