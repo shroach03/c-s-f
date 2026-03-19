@@ -21,8 +21,8 @@ func set_existing_inventory(existing_inventory: Array) -> void:
 	unlocked_inventory = existing_inventory.duplicate(true)
 
 func _ready():
-	go_to_world_button.hide()
-	go_to_world_button.pressed.connect(finish_digging_phase)
+	go_to_world_button.show()
+	go_to_world_button.pressed.connect(_on_go_to_world_pressed)
 	dig_button.pressed.connect(_on_dig_button_pressed)
 	if not resized.is_connected(_update_grid_columns):
 		resized.connect(_update_grid_columns)
@@ -41,6 +41,8 @@ func _update_grid_columns() -> void:
 	display_area.columns = max(2, int(floor(available_width / TARGET_CARD_WIDTH)))
 
 func _on_dig_button_pressed():
+	if GameManager != null:
+		GameManager.play_sfx("click_button")
 	if digs_remaining <= 0:
 		return
 	digs_remaining -= 1
@@ -69,7 +71,6 @@ func _reveal_crate_contents(amount: int):
 		display_area.add_child(card_visual)
 		card_visual.setup_card(song_data, {"context": "selection"})
 		card_visual.song_selected.connect(_on_card_selected_for_inventory)
-	go_to_world_button.show()
 
 func _on_card_selected_for_inventory(card_instance, song_data):
 	if not unlocked_inventory.has(song_data):
@@ -77,6 +78,7 @@ func _on_card_selected_for_inventory(card_instance, song_data):
 		card_instance.modulate = Color(0.5, 1.0, 0.6)
 		var song_title = song_data.get("title", "Unknown Song")
 		status_label.text = "Added %s to inventory. Total: %d" % [song_title, unlocked_inventory.size()]
+		new_song_unlocked.emit(song_data)
 	elif card_instance.modulate != Color(0.5, 1.0, 0.6):
 		card_instance.modulate = Color(0.5, 1.0, 0.6)
 		status_label.text = "Already owned. Inventory total: %d" % unlocked_inventory.size()
@@ -88,6 +90,11 @@ func _perform_dig():
 		status_label.text = "Discovered %s" % newly_unlocked_song.get("title", "Unknown")
 	else:
 		status_label.text = "Crate is empty"
+
+func _on_go_to_world_pressed() -> void:
+	if GameManager != null:
+		GameManager.play_sfx("click_button")
+	finish_digging_phase()
 
 func _on_go_to_world_phase():
 	if unlocked_inventory.size() < 5:
