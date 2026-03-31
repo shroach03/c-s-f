@@ -18,12 +18,13 @@ signal score_updated(new_score)
 signal crowd_state_updated(new_state)
 
 const SONGS_IN_SET = 5
+const NIGHT_PASS_SCORE_THRESHOLD = 20
 const DEFAULT_CROWD_STATE = {"energy": 50, "trust": 50, "patience": 50}
 const WORLD_SCENE = preload("res://scenes/world.tscn")
+const RESULT_SCENE = preload("res://scenes/result.tscn")
 const CRATE_SCENE = preload("res://scenes/crate_dig.tscn")
 const PERFORMANCE_SCENE = preload("res://scenes/song_deck_manager.tscn")
 const SELECTION_SCENE = preload("res://scenes/setlist_selection.tscn")
-const RESULT_SCENE = preload("res://scenes/result.tscn")
 const SFX_FILES = {
 	"place_card": "place_card.wav",
 	"record_store_open": "record_store_open.wav",
@@ -35,24 +36,24 @@ const PERMANENT_VENUES = [
 	{
 		"name": "Nyan Alley",
 		"genres": ["Pop", "EDM"],
-		"tagline": "Meow meow moew moewmoew moewmoewow.",
-		"attribute": "Meow.",
+		"tagline": "",
+		"attribute": "",
 		"background_type": "nyan_alley",
 		"backdrop_color": Color(0.101961, 0.0588235, 0.184314, 1.0)
 	},
 	{
 		"name": "Burmese Beach",
 		"genres": ["Euro"],
-		"tagline": "The europeans. they're everywhere. roll with it",
-		"attribute": "They do love their americans! the home of Taylor Swift",
+		"tagline": "",
+		"attribute": "",
 		"background_type": "beach_glow",
 		"backdrop_color": Color(0.0392157, 0.164706, 0.243137, 1.0)
 	},
 	{
-		"name": "Biggie's Alley.",
+		"name": "Biggie's Lounge.",
 		"genres": ["Hiphop", "RnB"],
-		"tagline": "They can't hate from this side of the club.",
-		"attribute": "Everything low-key welcome. do it right though.",
+		"tagline": "",
+		"attribute": "",
 		"background_type": "brick_pulse",
 		"backdrop_color": Color(0.117647, 0.054902, 0.0666667, 1.0)
 	}
@@ -259,44 +260,35 @@ func calculate_score_from_song(song_data: Dictionary) -> Dictionary:
 	var energy = song_data.get("energy", 0)
 	var energy_diff = 0
 	var energy_correct = true
+	var energy_trend = 0
 
 	if last_played_energy >= 0:
 		energy_diff = abs(energy - last_played_energy)
 		if energy_diff == 1:
 			energy_score += 3
+		elif energy_diff == 0:
+			energy_score += 1
+		elif energy_diff == 2:
+			energy_correct = false
+			penalty_count += 1
+			energy_score -= 1
 		else:
 			energy_correct = false
 			penalty_count += 1
-			if energy_diff == 0:
-				energy_score -= 2
-			elif energy_diff == 2:
-				energy_score -= 3
-			else:
-				energy_score -= 5
+			energy_score -= 3
+		energy_trend = sign(energy - last_played_energy)
 	else:
-		energy_score += 1
+		energy_score += 2
 
 	var genre_match = current_venue_genres.has(genre)
 	if genre_match:
 		genre_score += 5
 		if set_history.size() > 0 and set_history.back().get("genre", "") == genre:
-			genre_score += 2
+			genre_score +- 1
 	else:
-		genre_score -= 5
+		genre_score -= 3
 		penalty_count += 1
 
-	var risk_value = _risk_to_value(risk)
-	var off_genre = not genre_match
-	var energy_jump = last_played_energy >= 0 and energy_diff >= 2
-	var risk_success = (risk_value == 1 and not off_genre) or (risk_value == 2 and (off_genre or energy_jump)) or (risk_value == 3 and off_genre and energy_jump)
-
-	if risk_success:
-		risk_score += risk_value * 3
-		if risk_value == 3 and off_genre:
-			_apply_genre_shift(genre)
-	else:
-		penalty_count += 1
-		risk_score -= max(3, risk_value * 3)
 
 	if set_history.size() >= 2:
 		var prev_energy = set_history.back().get("energy", energy)
@@ -306,8 +298,15 @@ func calculate_score_from_song(song_data: Dictionary) -> Dictionary:
 		elif energy <= prev_energy and prev_energy <= two_back_energy:
 			flow_bonus += 1
 
-	if penalty_count >= 2:
-		flow_bonus -= penalty_count
+	var risk_details = _calculate_risk_outcome(song_data, genre_match, energy_correct, energy_diff, energy_trend, flow_bonus)
+	risk_score = risk_details.score
+	if not risk_details.success:
+		penalty_count += 1
+	if risk_details.genre_shift:
+		_apply_genre_shift(genre)
+
+	if penalty_count >= 3:
+		flow_bonus -= penalty_count - 1
 
 	points = energy_score + genre_score + risk_score + flow_bonus
 	return {
@@ -318,7 +317,9 @@ func calculate_score_from_song(song_data: Dictionary) -> Dictionary:
 		"flow_bonus": flow_bonus,
 		"energy_correct": energy_correct,
 		"genre_match": genre_match,
-		"risk_success": risk_success,
+		"risk_success": risk_details.success,
+		"risk_readiness": risk_details.readiness,
+		"risk_label": risk_details.label,
 		"penalty_count": penalty_count
 	}
 
@@ -331,6 +332,84 @@ func _risk_to_value(risk: String) -> int:
 		"High":
 			return 3
 	return 1
+
+func _calculate_risk_outcome(song_data: Dictionary, genre_match: bool, energy_correct: bool, energy_diff: int, energy_trend: int, flow_bonus: int) -> Dictionary:
+	var risk_value = _risk_to_value(song_data.get("risk", "Low"))
+	var readiness = 0
+	var crowd_heat = int(round((current_crowd_state["energy"] + current_crowd_state["trust"] + current_crowd_state["patience"]) / 30.0))
+	var off_genre = not genre_match
+	var energy_jump = last_played_energy >= 0 and energy_diff >= 2
+	var steady_transition = last_played_energy < 0 or energy_diff <= 1
+	var success = true
+	var score = 0
+	var genre_shift = false
+	var label = "Landed"
+
+	if genre_match:
+		readiness += 2
+	else:
+		readiness -= 1
+
+	if energy_correct:
+		readiness += 2
+	elif energy_diff == 2:
+		readiness += 0
+	else:
+		readiness -= 1
+
+	if flow_bonus > 0:
+		readiness += 1
+	if crowd_heat >= 5:
+		readiness += 1
+	if current_crowd_state["trust"] >= 55:
+		readiness += 1
+	if current_crowd_state["patience"] >= 55:
+		readiness += 1
+	if energy_trend != 0:
+		readiness += 1
+	if last_played_energy < 0:
+		readiness += 1
+
+	match risk_value:
+		1:
+			score = 2 + maxi(0, readiness)
+			if off_genre and not energy_correct:
+				success = false
+				score = -2
+				label = "Too safe for a mismatch"
+		2:
+			if readiness >= 3:
+				score = 3 + readiness
+				label = "Crowd bought the twist"
+			elif genre_match or steady_transition:
+				score = 1
+				label = "Playable, but not a spike"
+			else:
+				success = false
+				score = -2
+				label = "The crowd hesitated"
+		3:
+			if readiness >= 5:
+				score = 4 + readiness
+				genre_shift = off_genre
+				label = "Big swing, big pop"
+			elif readiness >= 3:
+				score = 2
+				label = "Almost there"
+			else:
+				success = false
+				score = -3
+				label = "Too much too soon"
+
+	return {
+		"score": score,
+		"success": success,
+		"genre_shift": genre_shift,
+		"readiness": readiness,
+		"label": label,
+		"off_genre": off_genre,
+		"energy_jump": energy_jump
+	}
 
 func _apply_genre_shift(new_genre: String) -> void:
 	if current_venue_genres.has(new_genre):
@@ -347,18 +426,18 @@ func _apply_genre_shift(new_genre: String) -> void:
 
 func calculate_impact(score_results: Dictionary) -> Dictionary:
 	var impact = {
-		"energy_change": score_results.energy_score + score_results.flow_bonus,
-		"trust_change": score_results.genre_score,
-		"patience_change": score_results.risk_score
+		"energy_change": int(round(score_results.energy_score + score_results.flow_bonus * 0.5)),
+		"trust_change":  int(round(score_results.genre_score + min(score_results.risk_score, 3) * 0.35)),
+		"patience_change":  int(round(score_results.risk_score * 0.7))
 	}
 	if not score_results.energy_correct:
-		impact["energy_change"] -= 2
+		impact["energy_change"] -= 1
 		impact["patience_change"] -= 1
 	if not score_results.genre_match:
-		impact["trust_change"] -= 2
+		impact["trust_change"] -= 1
 		impact["energy_change"] -= 1
 	if not score_results.risk_success:
-		impact["patience_change"] -= 2
+		impact["patience_change"] -= 1
 		impact["trust_change"] -= 1
 	return impact
 
@@ -377,8 +456,13 @@ func check_fail_condition() -> bool:
 	return false
 
 func check_win_condition() -> void:
-	print("*** VICTORY! Set Complete! ***")
-	_show_result_scene(true, "Set Complete!", "You landed the room and closed the night strong.")
+	if current_score >= NIGHT_PASS_SCORE_THRESHOLD:
+		print("*** VICTORY! Set Complete! ***")
+		_show_result_scene(true, "Set Complete!", "You landed the room and closed the night strong.")
+		return
+
+	print("*** NIGHT FAILED: final score below %d. ***" % NIGHT_PASS_SCORE_THRESHOLD)
+	_show_result_scene(false, "Night Over", "Your final score was below %d." % NIGHT_PASS_SCORE_THRESHOLD)
 
 func _show_result_scene(victory: bool, headline: String, summary: String) -> void:
 	_cleanup_phase_nodes()
