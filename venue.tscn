@@ -1,8 +1,13 @@
-[gd_scene format=3 uid="uid://c6lhdyi4s8pkj"]
+[gd_scene load_steps=6 format=3 uid="uid://c6lhdyi4s8pkj"]
+
+[ext_resource type="Texture2D" uid="uid://duolt0hlc3n53" path="res://assets/Tilesheets/concert_C.png" id="1_wttuf"]
+[ext_resource type="Texture2D" uid="uid://pj8wjv4bsv72" path="res://assets/sprites/avatar/black cat with text.png" id="2_s1xkn"]
+[ext_resource type="Texture2D" uid="uid://brfos7a8r4f43" path="res://assets/sprites/avatar/cat 2 (64х64).png" id="3_j16ra"]
+[ext_resource type="Texture2D" uid="uid://bve4asfyceka7" path="res://assets/sprites/avatar/cat 3 (64х64).png" id="4_qo0oe"]
+[ext_resource type="Texture2D" uid="uid://4ui31do0vdiu" path="res://assets/sprites/avatar/white cat with text.png" id="5_o1mbd"]
 
 [node name="Venue" type="Node2D" groups=["game_managers"]]
 metadata/_edit_vertical_guides_ = [2.0]
-
 
 [node name="VenueManager" type="Node" parent="."]
 
@@ -104,3 +109,34 @@ offset_left = -31.223999
 offset_top = 4.951996
 offset_right = -31.11206
 offset_bottom = 4.751953
+
+[node name="DJSetup" type="Sprite2D" parent="."]
+position = Vector2(324.95764, 298.25)
+scale = Vector2(1.9173728, 1.3670213)
+texture = ExtResource("1_wttuf")
+region_enabled = true
+region_rect = Rect2(109.41743, 671.86005, 120.2105, 94.25592)
+
+[node name="BlackCat_Waiting" type="Sprite2D" parent="."]
+position = Vector2(858, 168)
+texture = ExtResource("2_s1xkn")
+region_enabled = true
+region_rect = Rect2(424.1078, 4149.9023, 74.38043, 77.686035)
+
+[node name="OrangeCat_Waiting" type="Sprite2D" parent="."]
+position = Vector2(567, 177)
+texture = ExtResource("3_j16ra")
+region_enabled = true
+region_rect = Rect2(133.41443, 4154.761, 54.641296, 72.02734)
+
+[node name="GreyCat_Waiting" type="Sprite2D" parent="."]
+position = Vector2(664, 254)
+texture = ExtResource("4_qo0oe")
+region_enabled = true
+region_rect = Rect2(132.01047, 4161.0674, 56.007355, 59.422363)
+
+[node name="WhiteCat_Waiting" type="Sprite2D" parent="."]
+position = Vector2(467, 182)
+texture = ExtResource("5_o1mbd")
+region_enabled = true
+region_rect = Rect2(433.39313, 4162.8193, 55.32434, 52.592285)
