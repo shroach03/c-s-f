@@ -1,6 +1,7 @@
 extends Control
 
-@onready var grid = $Shell/VBoxContainer/CollectionPanel/ScrollContainer/GridContainer
+@onready var grid = $Shell/VBoxContainer/Split/CollectionPanel/CollectionVBox/ScrollContainer/GridContainer
+@onready var selected_grid = $Shell/VBoxContainer/Split/SelectedPanel/SelectedVBox/SelectedScroll/SelectedGrid
 @onready var start_button = $Shell/VBoxContainer/TopBar/StartShow
 @onready var back_button = $Shell/VBoxContainer/TopBar/BackToWorld
 @onready var count_label = $Shell/VBoxContainer/TopBar/CountLabel
@@ -19,15 +20,17 @@ func _ready():
 	start_button.disabled = true
 	count_label.text = "Select 5 Songs (0/5)"
 	selected_songs.clear()
-	for child in grid.get_children():
-		child.queue_free()
-
+	_clear_grid(grid)
+	_clear_grid(selected_grid)
 	_update_grid_columns()
 	_populate_collection()
 
+func _clear_grid(target: GridContainer) -> void:
+	for child in target.get_children():
+		child.queue_free()
+
 func _populate_collection():
 	if GameManager == null:
-		print("GM REFERENCE MISSING")
 		return
 	for song_data in GameManager.player_collection:
 		var card = SONG_CARD_SCENE.instantiate()
@@ -37,8 +40,10 @@ func _populate_collection():
 			card.song_selected.connect(_on_card_clicked)
 
 func _update_grid_columns() -> void:
-	var available_width = max(size.x - 120.0, TARGET_CARD_WIDTH)
-	grid.columns = max(2, int(floor(available_width / TARGET_CARD_WIDTH)))
+	var available_width = max(size.x * 0.45 - 50.0, TARGET_CARD_WIDTH)
+	var columns = max(1, int(floor(available_width / TARGET_CARD_WIDTH)))
+	grid.columns = columns
+	selected_grid.columns = columns
 
 func _on_card_clicked(card_instance, song_data):
 	if selected_songs.has(song_data):
@@ -47,9 +52,16 @@ func _on_card_clicked(card_instance, song_data):
 	elif selected_songs.size() < 5:
 		selected_songs.append(song_data)
 		card_instance.modulate = Color(0.5, 0.95, 1.0)
-
+	_refresh_selected_grid()
 	count_label.text = "Select 5 Songs (%d/5)" % selected_songs.size()
 	start_button.disabled = (selected_songs.size() != 5)
+
+func _refresh_selected_grid() -> void:
+	_clear_grid(selected_grid)
+	for song_data in selected_songs:
+		var card = SONG_CARD_SCENE.instantiate()
+		selected_grid.add_child(card)
+		card.setup_card(song_data, {"context": "collection", "show_button": false})
 
 func _on_start_show_button_pressed():
 	GameManager.finalize_setlist(selected_songs)
