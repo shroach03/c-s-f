@@ -56,11 +56,11 @@ func _ready() -> void:
 
 func setup_world(options: Array, crowd_state: Dictionary, can_perform: bool = false) -> void:
 	venue_data = options
-	crowd_label.text = "Crowd Readiness  E:%d  T:%d  P:%d" % [
-		crowd_state.get("energy", 50),
-		crowd_state.get("trust", 50),
-		crowd_state.get("patience", 50)
-	]
+#	crowd_label.text = "Crowd Readiness  E:%d  T:%d  P:%d" % [
+#		crowd_state.get("energy", 50),
+#		crowd_state.get("trust", 50),
+#		crowd_state.get("patience", 50)
+#	]
 	for i in range(venue_buttons.size()):
 		var button: Button = venue_buttons[i]
 		var tagline: Label = venue_taglines[i]
@@ -121,10 +121,6 @@ func _animate_light_pair(index: int, genres: Array) -> void:
 			continue
 		var pulse = 0.45 + 0.55 * (0.5 + 0.5 * sin(flash_time * (1.1 + j * 0.2) + index + j))
 		light.color = _genre_color(genres[j], pulse)
-
-func _genre_color(genre: String, alpha: float) -> Color:
-	var base: Color = GENRE_COLORS.get(genre, Color.WHITE)
-	return Color(base.r, base.g, base.b, alpha)
 
 func _genre_color(genre: String, alpha: float) -> Color:
 	var base: Color = GENRE_COLORS.get(genre, Color.WHITE)
