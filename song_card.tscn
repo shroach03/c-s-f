@@ -4,27 +4,23 @@
 [ext_resource type="Theme" uid="uid://cadf0wjc3rkil" path="res://scenes/card_theme.tres" id="3_pyvlt"]
 [ext_resource type="Texture2D" uid="uid://ben7qqx34vpkq" path="res://assets/card_back.png" id="3_qnehr"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
-bg_color = Color(0.101961, 0.145098, 0.262745, 0.98)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_usb"]
+bg_color = Color(0.0823529, 0.113725, 0.188235, 0.98)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.615686, 0.784314, 1, 1)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
+border_color = Color(0.145098, 0.92549, 0.592157, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 shadow_color = Color(0, 0, 0, 0.35)
 shadow_size = 8
 
 [node name="SongCard" type="Control"]
-clip_contents = true
-custom_minimum_size = Vector2(160, 236)
+custom_minimum_size = Vector2(170, 148)
 layout_mode = 3
-anchors_preset = 0
-size_flags_horizontal = 4
-size_flags_vertical = 4
 mouse_filter = 1
 script = ExtResource("1_6l1gx")
 
@@ -35,101 +31,83 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+theme_override_styles/panel = SubResource("StyleBoxFlat_usb")
 
-[node name="Content" type="MarginContainer" parent="CardBack"]
+[node name="VBox" type="VBoxContainer" parent="CardBack"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 18.0
-offset_top = 18.0
-offset_right = -18.0
-offset_bottom = -18.0
+offset_left = 12.0
+offset_top = 10.0
+offset_right = -12.0
+offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
+theme_override_constants/separation = 5
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CardBack/Content"]
+[node name="FileType" type="Label" parent="CardBack/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 8
-alignment = 1
+text = "MP3 FILE"
+theme_override_colors/font_color = Color(0.4, 1, 0.73, 1)
 
-[node name="TitleLabel" type="HBoxContainer" parent="CardBack/Content/VBoxContainer"]
+[node name="loadTitle" type="Label" parent="CardBack/VBox"]
 layout_mode = 2
-alignment = 1
-
-[node name="loadTitle" type="Label" parent="CardBack/Content/VBoxContainer/TitleLabel"]
-layout_mode = 2
-size_flags_horizontal = 3
-horizontal_alignment = 1
-autowrap_mode = 3
-max_lines_visible = 3
-
-[node name="ArtistLabel" type="HBoxContainer" parent="CardBack/Content/VBoxContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="loadArtist" type="Label" parent="CardBack/Content/VBoxContainer/ArtistLabel"]
-layout_mode = 2
-size_flags_horizontal = 3
-horizontal_alignment = 1
 autowrap_mode = 3
 max_lines_visible = 2
+
+[node name="loadArtist" type="Label" parent="CardBack/VBox"]
+layout_mode = 2
+autowrap_mode = 3
+max_lines_visible = 2
+theme_override_colors/font_color = Color(0.8, 0.88, 1, 1)
 
 [node name="GenreLabel" type="HBoxContainer" parent="CardBack/Content/VBoxContainer"]
 layout_mode = 2
-alignment = 1
+theme_override_constants/separation = 8
 
-[node name="loadGenre" type="Label" parent="CardBack/Content/VBoxContainer/GenreLabel"]
+[node name="loadGenre" type="Label" parent="CardBack/VBox/MetaRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-horizontal_alignment = 1
-autowrap_mode = 3
 
-[node name="GenreLabel2" type="HBoxContainer" parent="CardBack/Content/VBoxContainer"]
+[node name="loadRisk" type="Label" parent="CardBack/VBox/MetaRow"]
 layout_mode = 2
 
-[node name="RiskLabel" type="HBoxContainer" parent="CardBack/Content/VBoxContainer"]
+[node name="EnergyBars" type="HBoxContainer" parent="CardBack/VBox"]
 layout_mode = 2
-alignment = 1
 
-[node name="loadRisk" type="Label" parent="CardBack/Content/VBoxContainer/RiskLabel"]
+[node name="Bar1" type="ColorRect" parent="CardBack/VBox/EnergyBars"]
+custom_minimum_size = Vector2(8, 8)
 layout_mode = 2
-size_flags_horizontal = 3
-horizontal_alignment = 1
+color = Color(0.22, 1, 0.45, 1
 
-[node name="EnergyLabel" type="HBoxContainer" parent="CardBack/Content/VBoxContainer"]
+[node name="Bar2" type="ColorRect" parent="CardBack/VBox/EnergyBars"]
+custom_minimum_size = Vector2(8, 12)
 layout_mode = 2
-alignment = 1
+color = Color(0.22, 1, 0.45, 1)
 
-[node name="loadEnergy" type="Label" parent="CardBack/Content/VBoxContainer/EnergyLabel"]
+[node name="Bar3" type="ColorRect" parent="CardBack/VBox/EnergyBars"]
+custom_minimum_size = Vector2(8, 16)
 layout_mode = 2
-size_flags_horizontal = 3
-horizontal_alignment = 1
+color = Color(0.22, 1, 0.45, 1)
 
-[node name="TagLabel" type="HBoxContainer" parent="CardBack/Content/VBoxContainer"]
+[node name="Bar4" type="ColorRect" parent="CardBack/VBox/EnergyBars"]
+custom_minimum_size = Vector2(8, 20)
 layout_mode = 2
-alignment = 1
+color = Color(0.22, 1, 0.45, 1)
 
-[node name="loadTag" type="Label" parent="CardBack/Content/VBoxContainer/TagLabel"]
+[node name="Bar5" type="ColorRect" parent="CardBack/VBox/EnergyBars"]
+custom_minimum_size = Vector2(8, 24)
 layout_mode = 2
-size_flags_horizontal = 3
-horizontal_alignment = 1
-autowrap_mode = 3
-max_lines_visible = 2
+color = Color(0.22, 1, 0.45, 1)
 
 [node name="Button" type="Button" parent="CardBack"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 4.0
-offset_right = -5.0
 grow_horizontal = 2
 grow_vertical = 2
-action_mode = 0
-button_mask = 7
 flat = true
 
 [connection signal="pressed" from="CardBack/Button" to="." method="_on_button_pressed"]
