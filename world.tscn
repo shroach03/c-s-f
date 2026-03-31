@@ -80,14 +80,6 @@ offset_bottom = 100.0
 text = "Build a five-song set, then play at one of tonight's venues!"
 autowrap_mode = 3
 
-[node name="CrowdSummary" type="Label" parent="WorldShell"]
-layout_mode = 0
-offset_left = 40.0
-offset_top = 108.0
-offset_right = 520.0
-offset_bottom = 138.0
-text = "Crowd Readiness  E:50  T:50  P:50"
-
 [node name="RecordStore" type="Panel" parent="WorldShell"]
 layout_mode = 0
 offset_left = 40.0
@@ -155,7 +147,7 @@ offset_left = 20.0
 offset_top = 56.0
 offset_right = 520.0
 offset_bottom = 96.0
-text = "Choose a venue! THe genre lights tell you what they're gonna want to hear!"
+text = "Choose a venue! The genre lights tell you what they're gonna want to hear!"
 autowrap_mode = 3
 
 [node name="Venue1Panel" type="Panel" parent="WorldShell/VenueRoadmap"]
@@ -261,7 +253,7 @@ offset_left = 18.0
 offset_top = 18.0
 offset_right = 198.0
 offset_bottom = 64.0
-text = "Biggie's Alley."
+text = "Biggie's Lounge"
 
 [node name="VenueCopy3" type="Label" parent="WorldShell/VenueRoadmap/Venue3Panel"]
 layout_mode = 0
