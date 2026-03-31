@@ -45,6 +45,8 @@ var flash_t := 0.0
 var backdrop_t := 0.0
 var backdrop_style := "default"
 var nyan_sprites: Array = []
+var nyan_hero_sprite: TextureRect = null
+var nyan_hero_trails: Array = []
 var backdrop_dirty := true
 
 func _ready() -> void:
@@ -141,6 +143,8 @@ func _configure_backdrop() -> void:
 	for child in backdrop_accents.get_children():
 		child.queue_free()
 	nyan_sprites.clear()
+	nyan_hero_trails.clear()
+	nyan_hero_sprite = null
 	if backdrop_style == "nyan_alley":
 		_spawn_nyan_backdrop()
 	elif backdrop_style == "beach_glow":
@@ -158,14 +162,15 @@ func _configure_backdrop() -> void:
 	backdrop_dirty = true
 
 func _spawn_nyan_backdrop() -> void:
-	for row in range(4):
-		for column in range(5):
+	for row in range(3):
+		for column in range(4):
 			var sprite := TextureRect.new()
 			sprite.texture = CAT_TEXTURE
 			sprite.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			sprite.size = Vector2(92, 54)
-			sprite.modulate = Color(1, 1, 1, 0.18)
+			sprite.size = Vector2(82, 48)
+			sprite.modulate = Color(1, 1, 1, 0.14)
+			sprite.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			backdrop_accents.add_child(sprite)
 			nyan_sprites.append({
 				"node": sprite,
@@ -173,9 +178,37 @@ func _spawn_nyan_backdrop() -> void:
 				"column": column,
 				"direction": 1 if row % 2 == 0 else -1,
 				"phase": float(column) * 0.35 + float(row) * 0.6,
-				"base": Vector2.ZERO
+				"base": Vector2.ZERO,
+				"drift_scale": 18.0 + row * 4.0,
+				"bounce_scale": 6.0 + column * 0.8
 			})
+	var rainbow_colors := [
+		Color(1.0, 0.30, 0.42, 0.22),
+		Color(1.0, 0.60, 0.20, 0.2),
+		Color(0.98, 0.86, 0.28, 0.18),
+		Color(0.35, 1.0, 0.60, 0.18),
+		Color(0.34, 0.76, 1.0, 0.18),
+		Color(0.78, 0.44, 1.0, 0.2)
+	]
+	nyan_hero_trails.clear()
+	for stripe_index in range(rainbow_colors.size()):
+		var stripe := ColorRect.new()
+		stripe.color = rainbow_colors[stripe_index]
+		stripe.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		stripe.size = Vector2(170.0, 8.0)
+		backdrop_accents.add_child(stripe)
+		nyan_hero_trails.append(stripe)
 
+	nyan_hero_sprite = TextureRect.new()
+	nyan_hero_sprite.texture = CAT_TEXTURE
+	nyan_hero_sprite.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	nyan_hero_sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	nyan_hero_sprite.size = Vector2(176, 104)
+	nyan_hero_sprite.modulate = Color(1, 1, 1, 0.95)
+	nyan_hero_sprite.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	backdrop_accents.add_child(nyan_hero_sprite)
+
+	
 func _spawn_color_bands(colors: Array) -> void:
 	for i in range(colors.size()):
 		var band := ColorRect.new()
@@ -195,9 +228,29 @@ func _animate_backdrop() -> void:
 			var base: Vector2 = item["base"]
 			var direction: float = item["direction"]
 			var phase: float = item["phase"]
-			var drift = sin(backdrop_t * 1.6 + phase) * 26.0 * direction
-			var bounce = sin(backdrop_t * 4.0 + phase * 2.0) * 8.0
+			var drift_scale: float = item["drift_scale"]
+			var bounce_scale: float = item["bounce_scale"]
+			var drift = sin(backdrop_t * 1.2 + phase) * drift_scale * direction
+			var bounce = sin(backdrop_t * 3.4 + phase * 2.0) * bounce_scale
 			node.position = base + Vector2(drift, bounce)
+
+		if nyan_hero_sprite != null:
+			var hero_origin = Vector2(venue_backdrop.size.x * 0.5, venue_backdrop.size.y * 0.62)
+			var hero_patrol = sin(backdrop_t * 0.75) * venue_backdrop.size.x * 0.25
+			var hero_jump = abs(sin(backdrop_t * 2.6)) * 52.0
+			var hero_tilt = sin(backdrop_t * 3.2) * 0.08
+			var hero_scale = 1.0 + abs(sin(backdrop_t * 2.6 + 0.4)) * 0.08
+			var hero_position = hero_origin + Vector2(hero_patrol, -hero_jump) - nyan_hero_sprite.size * 0.5
+			nyan_hero_sprite.position = hero_position
+			nyan_hero_sprite.rotation = hero_tilt
+			nyan_hero_sprite.scale = Vector2(hero_scale, hero_scale)
+
+			for stripe_index in range(nyan_hero_trails.size()):
+				var stripe: ColorRect = nyan_hero_trails[stripe_index]
+				var stripe_offset = float(stripe_index) * 8.0
+				stripe.size.x = clamp(120.0 + abs(hero_patrol) * 0.4, 120.0, 230.0)
+				stripe.position = Vector2(hero_position.x - stripe.size.x + 18.0, hero_position.y + 34.0 + stripe_offset)
+
 	else:
 		for index in range(backdrop_accents.get_child_count()):
 			var band := backdrop_accents.get_child(index)
@@ -207,10 +260,10 @@ func _animate_backdrop() -> void:
 func _layout_backdrop() -> void:
 	backdrop_dirty = false
 	if backdrop_style == "nyan_alley":
-		var rows := 4.0
-		var columns := 5.0
-		var margin_x := venue_backdrop.size.x * 0.08
-		var margin_y := venue_backdrop.size.y * 0.14
+		var rows := 3.0
+		var columns := 4.0
+		var margin_x := venue_backdrop.size.x * 0.1
+		var margin_y := venue_backdrop.size.y * 0.16
 		var x_step: float = (venue_backdrop.size.x - margin_x * 2.0) / max(1.0, columns - 1.0)
 		var y_step: float = (venue_backdrop.size.y - margin_y * 2.0) / max(1.0, rows - 1.0)
 		for item in nyan_sprites:
@@ -237,7 +290,7 @@ func _set_last_card_panel(song_data: Dictionary, score_results: Dictionary) -> v
 	last_title_label.text = "Title: %s" % song_data.get("title", "Unknown")
 	last_artist_label.text = "Artist: %s" % song_data.get("artist", "Unknown")
 	last_genre_label.text = "Genre: %s" % song_data.get("genre", "Unknown")
-	last_risk_label.text = "Risk: %s" % song_data.get("risk", "Low")
+	last_risk_label.text = "Risk: %s • %s" % [song_data.get("risk", "Low"), score_results.get("risk_label", "Landed")]
 	last_energy_label.text = "Energy: %d/5" % song_data.get("energy", 0)
 	last_score_label.text = "Score %s = Energy:%+d Genre:%+d Risk:%+d Flow:%+d" % [
 		str(score_results.points),
