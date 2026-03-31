@@ -13,6 +13,12 @@ var player_collection: Array = []
 var current_setlist: Array = []
 var available_genres: Array = []
 var sfx_streams := {}
+var performance_timer: Timer = null
+var performance_time_left := 90
+var seconds_since_last_pick := 0
+var momentum := 0.0
+
+signal performance_time_updated(seconds_left)
 
 signal score_updated(new_score)
 signal crowd_state_updated(new_state)
@@ -146,6 +152,8 @@ func _handle_song_played(_card_instance, selected_song_data: Dictionary) -> void
 	set_history.append(selected_song_data)
 	last_played_energy = selected_song_data.get("energy", 0)
 	current_score += score_results.points
+	seconds_since_last_pick = 0
+	momentum = clamp(float(score_results.points) * 0.65, -4.0, 8.0)
 
 	update_crowd_state(impact)
 	score_updated.emit(current_score)
@@ -158,6 +166,7 @@ func _handle_song_played(_card_instance, selected_song_data: Dictionary) -> void
 		return
 
 	if set_history.size() >= SONGS_IN_SET:
+		_stop_performance_timer()
 		check_win_condition()
 	elif is_instance_valid(active_deck_manager):
 		active_deck_manager.draw_next_hand()
@@ -210,6 +219,7 @@ func finalize_setlist(selected_songs: Array) -> void:
 	start_world_phase()
 
 func return_to_world() -> void:
+	_stop_performance_timer()
 	start_world_phase()
 	
 func start_performance_phase() -> void:
@@ -224,6 +234,10 @@ func start_performance_phase() -> void:
 
 	set_history.clear()
 	last_played_energy = -1
+	performance_time_left = 90
+	seconds_since_last_pick = 0
+	momentum = 0.0
+	_start_performance_timer()
 
 	if active_deck_manager.has_signal("song_chosen_for_set"):
 		active_deck_manager.song_chosen_for_set.connect(_handle_song_played)
@@ -233,6 +247,45 @@ func start_performance_phase() -> void:
 	active_deck_manager.update_venue_ui()
 	active_deck_manager.initialize_deck_from_inventory(current_setlist)
 	active_deck_manager.feedback_label.text = "The show is starting! Pick your first song."
+	if active_deck_manager.has_method("update_timer_display"):
+		active_deck_manager.update_timer_display(performance_time_left)
+
+func _start_performance_timer() -> void:
+	_stop_performance_timer()
+	performance_timer = Timer.new()
+	performance_timer.wait_time = 1.0
+	performance_timer.one_shot = false
+	performance_timer.autostart = true
+	add_child(performance_timer)
+	performance_timer.timeout.connect(_on_performance_timer_tick)
+
+func _stop_performance_timer() -> void:
+	if performance_timer != null:
+		performance_timer.stop()
+		performance_timer.queue_free()
+		performance_timer = null
+
+func _on_performance_timer_tick() -> void:
+	performance_time_left -= 1
+	seconds_since_last_pick += 1
+	if seconds_since_last_pick <= 4:
+		momentum = max(momentum * 0.9, -2.0)
+		current_score += int(round(momentum))
+	else:
+		momentum = max(momentum - 0.6, -3.0)
+		current_score += int(floor(momentum))
+		update_crowd_state({"energy_change": -1, "trust_change": 0, "patience_change": -1})
+	current_score = max(current_score, 0)
+	score_updated.emit(current_score)
+	if is_instance_valid(active_deck_manager) and active_deck_manager.has_method("update_timer_display"):
+		active_deck_manager.update_timer_display(performance_time_left)
+	performance_time_updated.emit(performance_time_left)
+	if check_fail_condition():
+		return
+	if performance_time_left <= 0:
+		_stop_performance_timer()
+		_show_result_scene(false, "Night Over", "Time ran out before the 5-song set was complete.")
+
 
 func _cleanup_phase_nodes() -> void:
 	var phase_children: Array = []
@@ -450,6 +503,7 @@ func update_crowd_state(impact: Dictionary) -> void:
 
 func check_fail_condition() -> bool:
 	if current_crowd_state["energy"] <= 10 or current_crowd_state["trust"] <= 10 or current_crowd_state["patience"] <= 10:
+		_stop_performance_timer()
 		print("*** NIGHT FAILED: the crowd turned on the set. ***")
 		_show_result_scene(false, "Night Over", "The crowd flatlined before the closer.")
 		return true
@@ -478,6 +532,7 @@ func _on_result_continue() -> void:
 	start_world_phase()
 
 func _prepare_next_night(reset_score: bool = true) -> void:
+	_stop_performance_timer()
 	current_crowd_state = DEFAULT_CROWD_STATE.duplicate(true)
 	crowd_state_updated.emit(current_crowd_state.duplicate(true))
 	if reset_score:
