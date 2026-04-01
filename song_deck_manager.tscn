@@ -133,21 +133,18 @@ alignment = 1
 [node name="ColorCat_Waiting1" type="TextureRect" parent="Shell/RootSplit/RightPane/AudienceRow"]
 custom_minimum_size = Vector2(110, 90)
 layout_mode = 2
-texture = ExtResource("3_cat1")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="ColorCat_Waiting2" type="TextureRect" parent="Shell/RootSplit/RightPane/AudienceRow"]
 custom_minimum_size = Vector2(110, 90)
 layout_mode = 2
-texture = ExtResource("4_cat2")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="ColorCat_Waiting3" type="TextureRect" parent="Shell/RootSplit/RightPane/AudienceRow"]
 custom_minimum_size = Vector2(110, 90)
 layout_mode = 2
-texture = ExtResource("3_cat1")
 expand_mode = 1
 stretch_mode = 5
 
@@ -185,6 +182,5 @@ columns = 2
 [node name="DJSetup" type="TextureRect" parent="Shell/RootSplit/RightPane"]
 custom_minimum_size = Vector2(0, 220)
 layout_mode = 2
-texture = ExtResource("2_dj")
 expand_mode = 1
 stretch_mode = 6
