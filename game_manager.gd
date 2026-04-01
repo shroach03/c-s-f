@@ -37,7 +37,6 @@ const SFX_FILES = {
 	"venue_open": "venue_open.wav",
 	"click_button": "click_button.wav"
 }
-
 const PERMANENT_VENUES = [
 	{
 		"name": "Nyan Alley",
