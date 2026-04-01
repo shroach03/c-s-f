@@ -79,7 +79,7 @@ layout_mode = 2
 [node name="Bar1" type="ColorRect" parent="CardBack/VBox/EnergyBars"]
 custom_minimum_size = Vector2(8, 8)
 layout_mode = 2
-color = Color(0.22, 1, 0.45, 1
+color = Color(0.22, 1, 0.45, 1)
 
 [node name="Bar2" type="ColorRect" parent="CardBack/VBox/EnergyBars"]
 custom_minimum_size = Vector2(8, 12)
