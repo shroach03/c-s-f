@@ -1,10 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://c6lhdyi4s8pkj"]
 
 [ext_resource type="Texture2D" uid="uid://duolt0hlc3n53" path="res://assets/Tilesheets/concert_C.png" id="1_wttuf"]
-[ext_resource type="Texture2D" uid="uid://pj8wjv4bsv72" path="res://assets/sprites/avatar/black cat with text.png" id="2_s1xkn"]
-[ext_resource type="Texture2D" uid="uid://brfos7a8r4f43" path="res://assets/sprites/avatar/cat 2 (64х64).png" id="3_j16ra"]
-[ext_resource type="Texture2D" uid="uid://bve4asfyceka7" path="res://assets/sprites/avatar/cat 3 (64х64).png" id="4_qo0oe"]
-[ext_resource type="Texture2D" uid="uid://4ui31do0vdiu" path="res://assets/sprites/avatar/white cat with text.png" id="5_o1mbd"]
 
 [node name="Venue" type="Node2D" groups=["game_managers"]]
 metadata/_edit_vertical_guides_ = [2.0]
