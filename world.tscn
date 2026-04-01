@@ -1,13 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://85vyp5utaiq5"]
 
 [ext_resource type="Script" uid="uid://cxyyvlhaxwqtf" path="res://scripts/venue.gd" id="1_world_script"]
-[ext_resource type="Texture2D" path="res://assets/Tilesheets/world.png" id="2_world"]
-[ext_resource type="Texture2D" path="res://assets/sprites/avatar/black cat with text.png" id="3_cat_a"]
-[ext_resource type="Texture2D" path="res://assets/sprites/avatar/white cat with text.png" id="4_cat_b"]
-[ext_resource type="Texture2D" path="res://assets/sprites/avatar/ginger cat with text.png" id="5_cat_c"]
-[ext_resource type="Texture2D" path="res://assets/sprites/avatar/cat 1 (64х64).png" id="6_scratch"]
-[ext_resource type="Texture2D" path="res://assets/sprites/avatar/cat 2 (64х64).png" id="7_bowl"]
-
+[ext_resource type="Texture2D" uid="uid://bn0v8pr7v6t31" path="res://assets/Tilesheets/world.png" id="2_world"]
 
 [node name="world" type="Control"]
 layout_mode = 3
@@ -25,7 +19,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.03, 0.03, 0.06, 1)
+color = Color(0.50044835, 0.6575178, 1, 1)
 
 [node name="WorldShell" type="Control" parent="."]
 layout_mode = 1
@@ -48,9 +42,9 @@ offset_right = 500.0
 offset_bottom = 320.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_world")
 expand_mode = 1
 stretch_mode = 5
+mouse_filter = 2
 
 [node name="CrowdSummary" type="Label" parent="WorldShell"]
 layout_mode = 0
@@ -61,7 +55,7 @@ offset_bottom = 40.0
 text = "Crowd State"
 
 [node name="RecordStore" type="Control" parent="WorldShell"]
-layout_mode = 0
+anchors_preset = 0
 offset_left = 80.0
 offset_top = 250.0
 offset_right = 360.0
@@ -69,11 +63,10 @@ offset_bottom = 530.0
 
 [node name="ScratchIcon" type="TextureRect" parent="WorldShell/RecordStore"]
 layout_mode = 0
-offset_left = 6.0
-offset_top = 10.0
-offset_right = 134.0
-offset_bottom = 196.0
-texture = ExtResource("6_scratch")
+offset_left = -80.0
+offset_top = -15.0
+offset_right = 48.0
+offset_bottom = 171.0
 expand_mode = 1
 stretch_mode = 5
 
@@ -102,40 +95,38 @@ layout_mode = 2
 text = "Find new songs"
 
 [node name="BuildSetBuilding" type="Control" parent="WorldShell"]
-layout_mode = 0
+anchors_preset = 0
 offset_left = 300.0
-offset_top = 268.0
+offset_top = 88.0
 offset_right = 580.0
-offset_bottom = 530.0
+offset_bottom = 350.0
 
 [node name="BowlIcon" type="TextureRect" parent="WorldShell/BuildSetBuilding"]
 layout_mode = 0
-offset_left = 10.0
-offset_top = 20.0
-offset_right = 150.0
-offset_bottom = 190.0
-texture = ExtResource("7_bowl")
+offset_left = -300.0
+offset_right = -160.0
+offset_bottom = 170.0
 expand_mode = 1
 stretch_mode = 5
 
 [node name="GoToSetlist" type="Button" parent="WorldShell/BuildSetBuilding"]
 custom_minimum_size = Vector2(150, 48)
 layout_mode = 0
-offset_left = 156.0
-offset_top = 70.0
-offset_right = 306.0
-offset_bottom = 118.0
+offset_left = -84.0
+offset_top = 128.0
+offset_right = 66.0
+offset_bottom = 176.0
 text = "Build Setlist"
 
 [node name="VenueRoadmap" type="Control" parent="WorldShell"]
-layout_mode = 0
+anchors_preset = 0
 offset_left = 580.0
 offset_top = 170.0
 offset_right = 1120.0
 offset_bottom = 560.0
 
 [node name="Venue1Panel" type="Control" parent="WorldShell/VenueRoadmap"]
-layout_mode = 0
+anchors_preset = 0
 offset_left = 10.0
 offset_top = 22.0
 offset_right = 530.0
@@ -143,11 +134,8 @@ offset_bottom = 140.0
 
 [node name="Cat1" type="TextureRect" parent="WorldShell/VenueRoadmap/Venue1Panel"]
 layout_mode = 0
-offset_left = 0.0
-offset_top = 0.0
 offset_right = 120.0
 offset_bottom = 114.0
-texture = ExtResource("3_cat_a")
 expand_mode = 1
 stretch_mode = 5
 
@@ -165,8 +153,8 @@ offset_left = 300.0
 offset_top = 20.0
 offset_right = 520.0
 offset_bottom = 76.0
-autowrap_mode = 3
 text = "Neon lane"
+autowrap_mode = 3
 
 [node name="GenreLights1" type="HBoxContainer" parent="WorldShell/VenueRoadmap/Venue1Panel"]
 layout_mode = 0
@@ -183,9 +171,8 @@ layout_mode = 2
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 
-
 [node name="Venue2Panel" type="Control" parent="WorldShell/VenueRoadmap"]
-layout_mode = 0
+anchors_preset = 0
 offset_left = 10.0
 offset_top = 150.0
 offset_right = 530.0
@@ -193,11 +180,8 @@ offset_bottom = 268.0
 
 [node name="Cat2" type="TextureRect" parent="WorldShell/VenueRoadmap/Venue2Panel"]
 layout_mode = 0
-offset_left = 0.0
-offset_top = 0.0
 offset_right = 120.0
 offset_bottom = 114.0
-texture = ExtResource("4_cat_b")
 expand_mode = 1
 stretch_mode = 5
 
@@ -215,8 +199,8 @@ offset_left = 300.0
 offset_top = 20.0
 offset_right = 520.0
 offset_bottom = 76.0
-autowrap_mode = 3
 text = "Beach stage"
+autowrap_mode = 3
 
 [node name="GenreLights2" type="HBoxContainer" parent="WorldShell/VenueRoadmap/Venue2Panel"]
 layout_mode = 0
@@ -234,7 +218,7 @@ custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 
 [node name="Venue3Panel" type="Control" parent="WorldShell/VenueRoadmap"]
-layout_mode = 0
+anchors_preset = 0
 offset_left = 10.0
 offset_top = 278.0
 offset_right = 530.0
@@ -242,11 +226,8 @@ offset_bottom = 396.0
 
 [node name="Cat3" type="TextureRect" parent="WorldShell/VenueRoadmap/Venue3Panel"]
 layout_mode = 0
-offset_left = 0.0
-offset_top = 0.0
 offset_right = 120.0
 offset_bottom = 114.0
-texture = ExtResource("5_cat_c")
 expand_mode = 1
 stretch_mode = 5
 
@@ -264,8 +245,8 @@ offset_left = 300.0
 offset_top = 20.0
 offset_right = 520.0
 offset_bottom = 76.0
-autowrap_mode = 3
 text = "Lounge crowd"
+autowrap_mode = 3
 
 [node name="GenreLights3" type="HBoxContainer" parent="WorldShell/VenueRoadmap/Venue3Panel"]
 layout_mode = 0
