@@ -2,11 +2,6 @@
 
 [ext_resource type="Script" uid="uid://du3rl714jue1q" path="res://scripts/song_deck_manager.gd" id="1_vbqqs"]
 [ext_resource type="Script" uid="uid://bdpiw3r1v60vi" path="res://scripts/song_database.gd" id="2_8u0yk"]
-[ext_resource type="Texture2D" path="res://assets/Tilesheets/concert_extra.png" id="2_dj"]
-[ext_resource type="Texture2D" path="res://res://assets/sprites/avatar/cat 1 (64х64).png" id="3_cat1"]
-[ext_resource type="Texture2D" path="res://assets/sprites/avatar/cat 2 (64x64).png" id="4_cat2"]
-
-
 
 [node name="SongDeckManager" type="Control" groups=["game_managers"]]
 layout_mode = 3
@@ -71,6 +66,8 @@ autowrap_mode = 3
 [node name="ScoreLabel" type="Label" parent="Shell/RootSplit/LeftPane"]
 layout_mode = 2
 text = "Score: 0"
+
+[node name="TimerLabel" type="Label" parent="Shell/RootSplit/LeftPane"]
 layout_mode = 2
 text = "Time Left: 90"
 
