@@ -5,7 +5,7 @@ signal setlist_selected
 signal venue_selected(venue_data)
 
 @onready var crate_button: Button = $WorldShell/RecordStore/ButtonColumn/GoToCrateDig
-@onready var setlist_button: Button = $WorldShell/RecordStore/ButtonColumn/GoToSetlist
+@onready var setlist_button: Button = $WorldShell/BuildSetBuilding/GoToSetlist
 @onready var crowd_label: Label = $WorldShell/CrowdSummary
 
 var venue_buttons: Array = []
