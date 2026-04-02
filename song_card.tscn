@@ -1,8 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bveheb6piqlux"]
 
 [ext_resource type="Script" uid="uid://dy52xpewdewrf" path="res://scripts/song_card.gd" id="1_6l1gx"]
-[ext_resource type="Theme" uid="uid://cadf0wjc3rkil" path="res://scenes/card_theme.tres" id="3_pyvlt"]
-[ext_resource type="Texture2D" uid="uid://ben7qqx34vpkq" path="res://assets/card_back.png" id="3_qnehr"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_usb"]
 bg_color = Color(0.0823529, 0.113725, 0.188235, 0.98)
@@ -15,12 +13,14 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
+corner_detail = 6
 shadow_color = Color(0, 0, 0, 0.35)
 shadow_size = 8
 
 [node name="SongCard" type="Control"]
-custom_minimum_size = Vector2(170, 148)
+custom_minimum_size = Vector2(170, 160)
 layout_mode = 3
+anchors_preset = 0
 mouse_filter = 1
 script = ExtResource("1_6l1gx")
 
@@ -46,11 +46,6 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 5
 
-[node name="FileType" type="Label" parent="CardBack/VBox"]
-layout_mode = 2
-text = "MP3 FILE"
-theme_override_colors/font_color = Color(0.4, 1, 0.73, 1)
-
 [node name="loadTitle" type="Label" parent="CardBack/VBox"]
 layout_mode = 2
 autowrap_mode = 3
@@ -58,11 +53,11 @@ max_lines_visible = 2
 
 [node name="loadArtist" type="Label" parent="CardBack/VBox"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.88, 1, 1)
 autowrap_mode = 3
 max_lines_visible = 2
-theme_override_colors/font_color = Color(0.8, 0.88, 1, 1)
 
-[node name="GenreLabel" type="HBoxContainer" parent="CardBack/Content/VBoxContainer"]
+[node name="MetaRow" type="HBoxContainer" parent="CardBack/VBox"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
@@ -75,6 +70,7 @@ layout_mode = 2
 
 [node name="EnergyBars" type="HBoxContainer" parent="CardBack/VBox"]
 layout_mode = 2
+alignment = 1
 
 [node name="Bar1" type="ColorRect" parent="CardBack/VBox/EnergyBars"]
 custom_minimum_size = Vector2(8, 8)
