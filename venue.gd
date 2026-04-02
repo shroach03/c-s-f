@@ -54,15 +54,20 @@ func _ready() -> void:
 	_apply_button_styles()
  
 ## Called by GameManager immediately after instantiating the world scene.
-func setup_world(options: Array, crowd_state: Dictionary, can_perform: bool) -> void:
+func setup_world(options: Array, crowd_state: Dictionary, can_perform: bool, has_inventory: bool, setlist_count: int) -> void:
 	_venue_data = options
- 
+
 	crowd_label.text = "Crowd Readiness  E:%d  T:%d  P:%d" % [
 		crowd_state.get("energy",   50),
 		crowd_state.get("trust",    50),
 		crowd_state.get("patience", 50)
 	]
- 
+	setlist_button.disabled = not has_inventory
+	setlist_button.text = "Build Setlist (%d/5)" % setlist_count
+	setlist_button.tooltip_text = (
+		"Dig for songs first!" if not has_inventory
+		else "Choose your 5-song set"
+	)
 	for i in range(venue_buttons.size()):
 		if i >= _venue_data.size():
 			venue_buttons[i].hide()
@@ -97,6 +102,7 @@ func _on_setlist_pressed() -> void:
  
 func _on_venue_pressed(index: int) -> void:
 	if index < _venue_data.size():
+		GameManager.play_sfx("click_button")
 		venue_selected.emit(_venue_data[index])
  
 # ════════════════════════════════════════════════════════════════════════════
