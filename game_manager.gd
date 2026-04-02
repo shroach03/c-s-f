@@ -101,7 +101,9 @@ func start_world_phase() -> void:
 	world.setup_world(
 		PERMANENT_VENUES.duplicate(true),
 		current_crowd_state.duplicate(true),
-		current_setlist.size() >= SONGS_IN_SET
+		current_setlist.size() >= SONGS_IN_SET,
+		player_collection.size() > 0,
+		current_setlist.size()
 	)
  
 func start_crate_digging_phase() -> void:
@@ -110,13 +112,12 @@ func start_crate_digging_phase() -> void:
 	var crate := _active_scene
 	crate.set_existing_inventory(player_collection)
 	crate.digging_finished.connect(_on_digging_finished)
-	crate.go_to_world_pressed.connect(return_to_world)
  
 func open_setlist_selection() -> void:
 	_swap_scene(SELECTION_SCENE.instantiate())
 	var sel := _active_scene
+	sel.set_initial_selection(current_setlist)
 	sel.setlist_confirmed.connect(_on_setlist_confirmed)
-	sel.go_to_world_pressed.connect(return_to_world)
  
 func start_performance_phase() -> void:
 	play_sfx("venue_open")
