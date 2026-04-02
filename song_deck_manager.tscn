@@ -1,7 +1,20 @@
-[gd_scene load_steps=4 format=3 uid="uid://xrgbab5yrpj3"]
+[gd_scene load_steps=2 format=3 uid="uid://xrgbab5yrpj3"]
 
 [ext_resource type="Script" uid="uid://du3rl714jue1q" path="res://scripts/song_deck_manager.gd" id="1_vbqqs"]
-[ext_resource type="Script" uid="uid://bdpiw3r1v60vi" path="res://scripts/song_database.gd" id="2_8u0yk"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.0823529, 0.113725, 0.188235, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.145098, 0.92549, 0.592157, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 8
 
 [node name="SongDeckManager" type="Control" groups=["game_managers"]]
 layout_mode = 3
@@ -12,147 +25,164 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_vbqqs")
 
-[node name="BackdropColor" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.03, 0.03, 0.06, 1)
+color = Color(0.03, 0.02, 0.08, 1)
 
-[node name="Shell" type="Panel" parent="."]
+[node name="RootSplit" type="HSplitContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
 grow_horizontal = 2
 grow_vertical = 2
+split_offset = 400
 
-[node name="RootSplit" type="HSplitContainer" parent="Shell"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 12.0
-offset_top = 12.0
-offset_right = -12.0
-offset_bottom = -12.0
-grow_horizontal = 2
-grow_vertical = 2
-split_offset = 430
-
-[node name="LeftPane" type="VBoxContainer" parent="Shell/RootSplit"]
+[node name="LeftPane" type="VBoxContainer" parent="RootSplit"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 10
 
-[node name="VenueNameLabel" type="Label" parent="Shell/RootSplit/LeftPane"]
+[node name="VenueNameLabel" type="Label" parent="RootSplit/LeftPane"]
 layout_mode = 2
 text = "Tonight's Venue"
 
-[node name="VenueGenreLabel" type="Label" parent="Shell/RootSplit/LeftPane"]
+[node name="VenueGenreLabel" type="Label" parent="RootSplit/LeftPane"]
 layout_mode = 2
 text = "Genres:"
 
-[node name="VenueAttributeLabel" type="Label" parent="Shell/RootSplit/LeftPane"]
-layout_mode = 2
-text = "Read the room and sequence the best five-track run."
-autowrap_mode = 3
-
-[node name="ScoreLabel" type="Label" parent="Shell/RootSplit/LeftPane"]
+[node name="ScoreLabel" type="Label" parent="RootSplit/LeftPane"]
 layout_mode = 2
 text = "Score: 0"
 
-[node name="TimerLabel" type="Label" parent="Shell/RootSplit/LeftPane"]
+[node name="TimerLabel" type="Label" parent="RootSplit/LeftPane"]
 layout_mode = 2
 text = "Time Left: 90"
 
-[node name="LastCardPanel" type="Panel" parent="Shell/RootSplit/LeftPane"]
+[node name="LastCardPanel" type="Panel" parent="RootSplit/LeftPane"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 
-[node name="LastCardVBox" type="VBoxContainer" parent="Shell/RootSplit/LeftPane/LastCardPanel"]
+[node name="LastCardVBox" type="VBoxContainer" parent="RootSplit/LeftPane/LastCardPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = 10.0
-offset_right = -10.0
-offset_bottom = -10.0
+offset_left = 14.0
+offset_top = 14.0
+offset_right = -14.0
+offset_bottom = -14.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 8
 
-[node name="Title" type="Label" parent="Shell/RootSplit/LeftPane/LastCardPanel/LastCardVBox"]
+[node name="Title" type="Label" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox"]
 layout_mode = 2
 text = "—"
 
-[node name="Artist" type="Label" parent="Shell/RootSplit/LeftPane/LastCardPanel/LastCardVBox"]
+[node name="Artist" type="Label" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox"]
 layout_mode = 2
 text = "—"
+theme_override_colors/font_color = Color(0.8, 0.88, 1, 1)
 
-[node name="Genre" type="Label" parent="Shell/RootSplit/LeftPane/LastCardPanel/LastCardVBox"]
+[node name="Genre" type="Label" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox"]
 layout_mode = 2
 text = "Genre: —"
 
-[node name="Risk" type="Label" parent="Shell/RootSplit/LeftPane/LastCardPanel/LastCardVBox"]
+[node name="Risk" type="Label" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox"]
 layout_mode = 2
 text = "LOW RISK"
 
-[node name="Energy" type="Label" parent="Shell/RootSplit/LeftPane/LastCardPanel/LastCardVBox"]
-custom_minimum_size = Vector2(290, 0)
+[node name="EnergyBars" type="HBoxContainer" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox"]
 layout_mode = 2
-text = "Energy"
+alignment = 1
 
-[node name="ScoreBreakdown" type="Label" parent="Shell/RootSplit/LeftPane/LastCardPanel/LastCardVBox"]
+[node name="Bar1" type="ColorRect" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox/EnergyBars"]
+custom_minimum_size = Vector2(10, 8)
+layout_mode = 2
+color = Color(0.22, 1, 0.45, 1)
+
+[node name="Bar2" type="ColorRect" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox/EnergyBars"]
+custom_minimum_size = Vector2(10, 14)
+layout_mode = 2
+color = Color(0.22, 1, 0.45, 1)
+
+[node name="Bar3" type="ColorRect" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox/EnergyBars"]
+custom_minimum_size = Vector2(10, 20)
+layout_mode = 2
+color = Color(0.22, 1, 0.45, 1)
+
+[node name="Bar4" type="ColorRect" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox/EnergyBars"]
+custom_minimum_size = Vector2(10, 26)
+layout_mode = 2
+color = Color(0.22, 1, 0.45, 1)
+
+[node name="Bar5" type="ColorRect" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox/EnergyBars"]
+custom_minimum_size = Vector2(10, 32)
+layout_mode = 2
+color = Color(0.22, 1, 0.45, 1)
+
+[node name="ScoreBreakdown" type="Label" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox"]
 layout_mode = 2
 autowrap_mode = 3
 text = "Score: waiting for first play"
 
-[node name="LastPlayedInfoLabel" type="Label" parent="Shell/RootSplit/LeftPane"]
+[node name="FeedbackLabel" type="Label" parent="RootSplit/LeftPane"]
 layout_mode = 2
 text = "The show is starting! Pick your first song."
 autowrap_mode = 3
 
-[node name="BackButton" type="Button" parent="Shell/RootSplit/LeftPane"]
+[node name="BackButton" type="Button" parent="RootSplit/LeftPane"]
 layout_mode = 2
 text = "Back to World"
 
-[node name="RightPane" type="VBoxContainer" parent="Shell/RootSplit"]
+[node name="RightPane" type="VBoxContainer" parent="RootSplit"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 0
 
-[node name="AudienceRow" type="HBoxContainer" parent="Shell/RootSplit/RightPane"]
+[node name="AudienceRow" type="HBoxContainer" parent="RootSplit/RightPane"]
 layout_mode = 2
+custom_minimum_size = Vector2(0, 120)
 alignment = 1
 
-[node name="ColorCat_Waiting1" type="TextureRect" parent="Shell/RootSplit/RightPane/AudienceRow"]
-custom_minimum_size = Vector2(110, 90)
+[node name="ColorCat_Waiting1" type="TextureRect" parent="RootSplit/RightPane/AudienceRow"]
+custom_minimum_size = Vector2(100, 110)
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ColorCat_Waiting2" type="TextureRect" parent="Shell/RootSplit/RightPane/AudienceRow"]
-custom_minimum_size = Vector2(110, 90)
+[node name="ColorCat_Waiting2" type="TextureRect" parent="RootSplit/RightPane/AudienceRow"]
+custom_minimum_size = Vector2(80, 110)
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ColorCat_Waiting3" type="TextureRect" parent="Shell/RootSplit/RightPane/AudienceRow"]
-custom_minimum_size = Vector2(110, 90)
+[node name="ColorCat_Waiting3" type="TextureRect" parent="RootSplit/RightPane/AudienceRow"]
+custom_minimum_size = Vector2(80, 110)
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HandPanel" type="Panel" parent="Shell/RootSplit/RightPane"]
+[node name="DJSetup" type="TextureRect" parent="RootSplit/RightPane"]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="HandPanel" type="Panel" parent="RootSplit/RightPane"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HandVBox" type="VBoxContainer" parent="Shell/RootSplit/RightPane/HandPanel"]
+[node name="HandVBox" type="VBoxContainer" parent="RootSplit/RightPane/HandPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -164,23 +194,17 @@ offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HandTitle" type="Label" parent="Shell/RootSplit/RightPane/HandPanel/HandVBox"]
+[node name="HandTitle" type="Label" parent="RootSplit/RightPane/HandPanel/HandVBox"]
 layout_mode = 2
-text = "Available:"
+text = "Choose Next Track:"
 
-[node name="HandScroll" type="ScrollContainer" parent="Shell/RootSplit/RightPane/HandPanel/HandVBox"]
+[node name="HandScroll" type="ScrollContainer" parent="RootSplit/RightPane/HandPanel/HandVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="CardDisplayArea" type="GridContainer" parent="Shell/RootSplit/RightPane/HandPanel/HandVBox/HandScroll"]
+[node name="CardDisplayArea" type="GridContainer" parent="RootSplit/RightPane/HandPanel/HandVBox/HandScroll"]
 layout_mode = 2
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
 columns = 2
-
-[node name="DJSetup" type="TextureRect" parent="Shell/RootSplit/RightPane"]
-custom_minimum_size = Vector2(0, 220)
-layout_mode = 2
-expand_mode = 1
-stretch_mode = 6
