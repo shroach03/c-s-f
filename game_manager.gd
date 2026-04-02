@@ -267,7 +267,7 @@ func _swap_scene(new_scene: Node) -> void:
 		_active_scene.queue_free()
 		_active_scene = null
 	_active_scene = new_scene
-	add_child(_active_scene)
+	get_tree().root.add_child(_active_scene)
  
 # ════════════════════════════════════════════════════════════════════════════
 # Performance timer
