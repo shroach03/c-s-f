@@ -3,7 +3,6 @@
 extends Control
  
 signal setlist_confirmed(selected_songs: Array)
-signal go_to_world_pressed
  
 # ── Node refs ────────────────────────────────────────────────────────────────
 @onready var collection_grid : GridContainer = $Shell/VBoxContainer/Split/CollectionPanel/CollectionVBox/ScrollContainer/GridContainer
@@ -17,21 +16,21 @@ const TARGET_CARD_WIDTH := 176.0
 const SET_SIZE          := 5
  
 var selected_songs : Array = []
+var initial_selection : Array = []
  
 # ════════════════════════════════════════════════════════════════════════════
- 
+func set_initial_selection(existing_selection: Array) -> void:
+	initial_selection = existing_selection.duplicate(true) 
+
 func _ready() -> void:
 	start_button.pressed.connect(_on_start_pressed)
 	back_button.pressed.connect(_on_back_pressed)
 	resized.connect(_update_grid_columns)
- 
-	start_button.disabled = true
-	count_label.text = "Select %d Songs (0/%d)" % [SET_SIZE, SET_SIZE]
-	selected_songs.clear()
- 
+	selected_songs = initial_selection.duplicate(true)
 	_update_grid_columns()
 	_populate_collection()
- 
+	_refresh_selected_grid()
+	_refresh_header()
 # ════════════════════════════════════════════════════════════════════════════
  
 func _populate_collection() -> void:
@@ -53,8 +52,7 @@ func _on_collection_card_clicked(card_instance, song_data: Dictionary) -> void:
 		card_instance.modulate = Color(0.5, 0.95, 1.0)
  
 	_refresh_selected_grid()
-	count_label.text = "Select %d Songs (%d/%d)" % [SET_SIZE, selected_songs.size(), SET_SIZE]
-	start_button.disabled = (selected_songs.size() != SET_SIZE)
+	_refresh_header()
  
 func _refresh_selected_grid() -> void:
 	_clear_grid(selected_grid)
@@ -67,7 +65,7 @@ func _on_start_pressed() -> void:
 	setlist_confirmed.emit(selected_songs.duplicate(true))
  
 func _on_back_pressed() -> void:
-	go_to_world_pressed.emit()
+	setlist_confirmed.emit(selected_songs.duplicate(true))
  
 func _update_grid_columns() -> void:
 	var w : int = max(size.x * 0.45 - 50.0, TARGET_CARD_WIDTH)
@@ -78,3 +76,7 @@ func _update_grid_columns() -> void:
 func _clear_grid(target: GridContainer) -> void:
 	for child in target.get_children():
 		child.queue_free()
+
+func _refresh_header() -> void:
+	count_label.text = "Select %d Songs (%d/%d)" % [SET_SIZE, selected_songs.size(), SET_SIZE]
+	start_button.disabled = (selected_songs.size() != SET_SIZE)
