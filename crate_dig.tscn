@@ -1,34 +1,38 @@
-[gd_scene load_steps=4 format=3 uid="uid://ce8e5llucbo1b"]
+[gd_scene load_steps=2 format=3 uid="uid://crate_dig_scene"]
 
-[ext_resource type="Script" path="res://scripts/crate_dig_manager.gd" id="1_crate_script"]
-[ext_resource type="Texture2D" path="res://assets/Tilesheets/concert_extra.png" id="2_bg"]
+[ext_resource type="Script" path="res://scripts/crate_dig_manager.gd" id="1_crate"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_shell"]
-bg_color = Color(0.05, 0.07, 0.11, 0.94)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.0823529, 0.113725, 0.188235, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.145098, 0.92549, 0.592157, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 8
 
-[node name="Crate_dig" type="Control"]
+[node name="CrateDigManager" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_crate_script")
+script = ExtResource("1_crate")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_bg")
-expand_mode = 1
-stretch_mode = 6
+color = Color(0.05, 0.04, 0.10, 1)
 
 [node name="Shell" type="Panel" parent="."]
 layout_mode = 1
@@ -41,17 +45,16 @@ offset_right = -20.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_shell")
 
 [node name="MainSplit" type="HSplitContainer" parent="Shell"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 14.0
-offset_top = 14.0
-offset_right = -14.0
-offset_bottom = -14.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
 grow_horizontal = 2
 grow_vertical = 2
 split_offset = 560
@@ -62,31 +65,26 @@ theme_override_constants/separation = 10
 
 [node name="CrateLabel" type="Label" parent="Shell/MainSplit/LeftPanel"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "USB Imports"
-
-[node name="InstructionLabel" type="Label" parent="Shell/MainSplit/LeftPanel"]
-layout_mode = 2
-text = "Click the songs you want to keep! Continue until you have at least 5 songs."
-autowrap_mode = 3
+text = "Pick Crate!"
 
 [node name="ButtonRow" type="HBoxContainer" parent="Shell/MainSplit/LeftPanel"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
 [node name="CrateButton" type="Button" parent="Shell/MainSplit/LeftPanel/ButtonRow"]
-custom_minimum_size = Vector2(200, 42)
+custom_minimum_size = Vector2(160, 48)
 layout_mode = 2
 text = "Dig Crate"
 
 [node name="GoToWorld" type="Button" parent="Shell/MainSplit/LeftPanel/ButtonRow"]
-custom_minimum_size = Vector2(180, 42)
+custom_minimum_size = Vector2(160, 48)
 layout_mode = 2
-text = "Go back to world!"
+text = "Back to World"
 
 [node name="CardPanel" type="Panel" parent="Shell/MainSplit/LeftPanel"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Shell/MainSplit/LeftPanel/CardPanel"]
 layout_mode = 1
@@ -103,59 +101,44 @@ horizontal_scroll_mode = 0
 
 [node name="UnlockedCardDisplay" type="GridContainer" parent="Shell/MainSplit/LeftPanel/CardPanel/ScrollContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/h_separation = 10
-theme_override_constants/v_separation = 10
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
 columns = 3
 
 [node name="RightPanel" type="VBoxContainer" parent="Shell/MainSplit"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 10
 
-[node name="ComputerFrame" type="Panel" parent="Shell/MainSplit/RightPanel"]
-custom_minimum_size = Vector2(460, 330)
+[node name="ComputerLabel" type="Label" parent="Shell/MainSplit/RightPanel"]
 layout_mode = 2
-size_flags_vertical = 3
-
-[node name="CrateDig_Computer" type="TextureRect" parent="Shell/MainSplit/RightPanel/ComputerFrame"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = 10.0
-offset_right = -10.0
-offset_bottom = -10.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_bg")
-expand_mode = 1
-stretch_mode = 6
+text = "NOW LOADING"
 
 [node name="InfoPanel" type="Panel" parent="Shell/MainSplit/RightPanel"]
-custom_minimum_size = Vector2(0, 180)
 layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="InfoVBox" type="VBoxContainer" parent="Shell/MainSplit/RightPanel/InfoPanel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 12.0
-offset_top = 12.0
-offset_right = -12.0
-offset_bottom = -12.0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = -24.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 14
 
 [node name="NowPlayingTitle" type="Label" parent="Shell/MainSplit/RightPanel/InfoPanel/InfoVBox"]
 layout_mode = 2
-text = "No file selected"
+text = "—"
 
 [node name="NowPlayingArtist" type="Label" parent="Shell/MainSplit/RightPanel/InfoPanel/InfoVBox"]
 layout_mode = 2
-text = "--"
+text = "—"
+theme_override_colors/font_color = Color(0.8, 0.88, 1, 1)
 
 [node name="NowPlayingRisk" type="Label" parent="Shell/MainSplit/RightPanel/InfoPanel/InfoVBox"]
 layout_mode = 2
@@ -163,29 +146,29 @@ text = "LOW RISK"
 
 [node name="EnergyBars" type="HBoxContainer" parent="Shell/MainSplit/RightPanel/InfoPanel/InfoVBox"]
 layout_mode = 2
-theme_override_constants/separation = 4
+alignment = 1
 
 [node name="Bar1" type="ColorRect" parent="Shell/MainSplit/RightPanel/InfoPanel/InfoVBox/EnergyBars"]
-custom_minimum_size = Vector2(10, 8)
+custom_minimum_size = Vector2(18, 18)
 layout_mode = 2
-color = Color(0.2, 1, 0.4, 1)
+color = Color(0.22, 1, 0.45, 1)
 
 [node name="Bar2" type="ColorRect" parent="Shell/MainSplit/RightPanel/InfoPanel/InfoVBox/EnergyBars"]
-custom_minimum_size = Vector2(10, 12)
+custom_minimum_size = Vector2(18, 28)
 layout_mode = 2
-color = Color(0.2, 1, 0.4, 1)
+color = Color(0.22, 1, 0.45, 1)
 
 [node name="Bar3" type="ColorRect" parent="Shell/MainSplit/RightPanel/InfoPanel/InfoVBox/EnergyBars"]
-custom_minimum_size = Vector2(10, 16)
+custom_minimum_size = Vector2(18, 38)
 layout_mode = 2
-color = Color(0.2, 1, 0.4, 1)
+color = Color(0.22, 1, 0.45, 1)
 
 [node name="Bar4" type="ColorRect" parent="Shell/MainSplit/RightPanel/InfoPanel/InfoVBox/EnergyBars"]
-custom_minimum_size = Vector2(10, 20)
+custom_minimum_size = Vector2(18, 48)
 layout_mode = 2
-color = Color(0.2, 1, 0.4, 1)
+color = Color(0.22, 1, 0.45, 1)
 
 [node name="Bar5" type="ColorRect" parent="Shell/MainSplit/RightPanel/InfoPanel/InfoVBox/EnergyBars"]
-custom_minimum_size = Vector2(10, 24)
+custom_minimum_size = Vector2(18, 58)
 layout_mode = 2
-color = Color(0.2, 1, 0.4, 1)
+color = Color(0.22, 1, 0.45, 1)
