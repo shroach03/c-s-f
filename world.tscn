@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://85vyp5utaiq5"]
+[gd_scene load_steps=5 format=3 uid="uid://85vyp5utaiq5"]
 
 [ext_resource type="Script" uid="uid://cxyyvlhaxwqtf" path="res://scripts/venue.gd" id="1_world_script"]
 [ext_resource type="Texture2D" uid="uid://bn0v8pr7v6t31" path="res://assets/Tilesheets/world.png" id="2_world"]
+[ext_resource type="Texture2D" uid="uid://6hq1inu2b3op" path="res://assets/Tilesheets/RetroCatsFree.png" id="3_4wyf3"]
+
+[sub_resource type="SystemFont" id="SystemFont_k0juu"]
 
 [node name="world" type="Control"]
 layout_mode = 3
@@ -19,241 +22,164 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.50044835, 0.6575178, 1, 1)
+color = Color(0.3195157, 0.5081371, 0.9976205, 1)
 
-[node name="WorldShell" type="Control" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Planet" type="TextureRect" parent="WorldShell"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="World" type="Sprite2D" parent="."]
+position = Vector2(510, 494)
+scale = Vector2(1.8115383, 1.6565932)
 texture = ExtResource("2_world")
-expand_mode = 1
-stretch_mode = 6
-mouse_filter = 2
 
-[node name="CrowdSummary" type="Label" parent="WorldShell"]
+[node name="Venue1Building" type="Sprite2D" parent="."]
+position = Vector2(623, 180)
+scale = Vector2(2.7, 2.152174)
+texture = ExtResource("3_4wyf3")
+region_enabled = true
+region_rect = Rect2(116, 257, 25, 46)
+
+[node name="Venue2Building" type="Sprite2D" parent="."]
+position = Vector2(772, 267.00003)
+scale = Vector2(2.9, 2.130435)
+texture = ExtResource("3_4wyf3")
+region_enabled = true
+region_rect = Rect2(148, 258, 25, 46)
+
+[node name="Venue3Building" type="Sprite2D" parent="."]
+position = Vector2(847.99994, 446)
+scale = Vector2(2.98, 2.0652175)
+texture = ExtResource("3_4wyf3")
+region_enabled = true
+region_rect = Rect2(179, 257, 25, 46)
+
+[node name="WorldTitle" type="Label" parent="."]
 layout_mode = 0
-offset_left = 24.0
-offset_top = 12.0
-offset_right = 480.0
-offset_bottom = 40.0
-text = "Crowd State"
+offset_left = 347.0
+offset_top = 8.0
+offset_right = 745.0
+offset_bottom = 65.0
+theme_override_colors/font_color = Color(1, 0.20784314, 1, 1)
+theme_override_fonts/font = SubResource("SystemFont_k0juu")
+theme_override_font_sizes/font_size = 41
+text = "CAT SCRATCH FEVER"
 
-[node name="RecordStore" type="Control" parent="WorldShell"]
-anchors_preset = 0
-offset_left = 80.0
-offset_top = 250.0
-offset_right = 360.0
-offset_bottom = 530.0
-
-[node name="ScratchIcon" type="TextureRect" parent="WorldShell/RecordStore"]
+[node name="Label" type="Label" parent="WorldTitle"]
 layout_mode = 0
-offset_left = -80.0
-offset_top = -15.0
-offset_right = 48.0
-offset_bottom = 171.0
-expand_mode = 1
-stretch_mode = 5
+offset_left = -63.0
+offset_top = 57.0
+offset_right = 500.0
+offset_bottom = 99.0
+text = "Get your songs from the record store, build your setlist, then hit a venue!"
 
-[node name="StoreName" type="Label" parent="WorldShell/RecordStore"]
+[node name="CrateDigBuilding" type="Sprite2D" parent="."]
+position = Vector2(125, 407.00003)
+rotation = -0.53930676
+scale = Vector2(1, 0.99714285)
+texture = ExtResource("3_4wyf3")
+region_enabled = true
+region_rect = Rect2(6, 256, 85, 175)
+
+[node name="GoToCrateDig" type="Button" parent="."]
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 0
-offset_left = 136.0
-offset_top = 20.0
-offset_right = 284.0
-offset_bottom = 52.0
-text = "Scratch Post"
+offset_left = 21.0
+offset_top = 266.0
+offset_right = 190.12872
+offset_bottom = 318.0
+text = "Go to Record Store"
 
-[node name="ButtonColumn" type="VBoxContainer" parent="WorldShell/RecordStore"]
+[node name="GoToSetlist" type="Button" parent="."]
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 0
-offset_left = 136.0
-offset_top = 62.0
-offset_right = 278.0
-offset_bottom = 190.0
-
-[node name="GoToCrateDig" type="Button" parent="WorldShell/RecordStore/ButtonColumn"]
-custom_minimum_size = Vector2(140, 40)
-layout_mode = 2
-text = "Enter Crate Dig"
-
-[node name="StoreRole" type="Label" parent="WorldShell/RecordStore/ButtonColumn"]
-layout_mode = 2
-text = "Find new songs"
-
-[node name="BuildSetBuilding" type="Control" parent="WorldShell"]
-anchors_preset = 0
-offset_left = 300.0
-offset_top = 88.0
-offset_right = 580.0
-offset_bottom = 350.0
-
-[node name="BowlIcon" type="TextureRect" parent="WorldShell/BuildSetBuilding"]
-layout_mode = 0
-offset_left = -300.0
-offset_right = -160.0
-offset_bottom = 170.0
-expand_mode = 1
-stretch_mode = 5
-
-[node name="GoToSetlist" type="Button" parent="WorldShell/BuildSetBuilding"]
-custom_minimum_size = Vector2(150, 48)
-layout_mode = 0
-offset_left = -84.0
-offset_top = 128.0
-offset_right = 66.0
-offset_bottom = 176.0
+offset_left = 200.0
+offset_top = 121.0
+offset_right = 324.0
+offset_bottom = 173.00003
 text = "Build Setlist"
 
-[node name="VenueRoadmap" type="Control" parent="WorldShell"]
-anchors_preset = 0
-offset_left = 580.0
-offset_top = 170.0
-offset_right = 1120.0
-offset_bottom = 560.0
+[node name="GoToSetBuilding" type="Sprite2D" parent="."]
+position = Vector2(274.99994, 204.99997)
+rotation = -0.53930676
+scale = Vector2(2.0151515, 1.3064516)
+texture = ExtResource("3_4wyf3")
+region_enabled = true
+region_rect = Rect2(216, 267, 33, 62)
 
-[node name="Venue1Panel" type="Control" parent="WorldShell/VenueRoadmap"]
-anchors_preset = 0
-offset_left = 10.0
-offset_top = 22.0
-offset_right = 530.0
-offset_bottom = 140.0
-
-[node name="Cat1" type="TextureRect" parent="WorldShell/VenueRoadmap/Venue1Panel"]
+[node name="GoToV2" type="Button" parent="."]
+custom_minimum_size = Vector2(180, 46)
 layout_mode = 0
-offset_right = 120.0
-offset_bottom = 114.0
-expand_mode = 1
-stretch_mode = 5
-
-[node name="GoToV1" type="Button" parent="WorldShell/VenueRoadmap/Venue1Panel"]
-layout_mode = 0
-offset_left = 130.0
-offset_top = 26.0
-offset_right = 290.0
-offset_bottom = 72.0
-text = "Nyan Alley"
-
-[node name="VenueCopy1" type="Label" parent="WorldShell/VenueRoadmap/Venue1Panel"]
-layout_mode = 0
-offset_left = 300.0
-offset_top = 20.0
-offset_right = 520.0
-offset_bottom = 76.0
-text = "Neon lane"
-autowrap_mode = 3
-
-[node name="GenreLights1" type="HBoxContainer" parent="WorldShell/VenueRoadmap/Venue1Panel"]
-layout_mode = 0
-offset_left = 130.0
-offset_top = 78.0
-offset_right = 214.0
-offset_bottom = 108.0
-
-[node name="GenreLightA" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue1Panel/GenreLights1"]
-custom_minimum_size = Vector2(24, 24)
-layout_mode = 2
-
-[node name="GenreLightB" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue1Panel/GenreLights1"]
-custom_minimum_size = Vector2(24, 24)
-layout_mode = 2
-
-[node name="Venue2Panel" type="Control" parent="WorldShell/VenueRoadmap"]
-anchors_preset = 0
-offset_left = 10.0
-offset_top = 150.0
-offset_right = 530.0
-offset_bottom = 268.0
-
-[node name="Cat2" type="TextureRect" parent="WorldShell/VenueRoadmap/Venue2Panel"]
-layout_mode = 0
-offset_right = 120.0
-offset_bottom = 114.0
-expand_mode = 1
-stretch_mode = 5
-
-[node name="GoToV2" type="Button" parent="WorldShell/VenueRoadmap/Venue2Panel"]
-layout_mode = 0
-offset_left = 130.0
-offset_top = 26.0
-offset_right = 290.0
-offset_bottom = 72.0
+offset_left = 745.0
+offset_top = 205.0
+offset_right = 925.0
+offset_bottom = 251.0
 text = "Burmese Beach"
 
-[node name="VenueCopy2" type="Label" parent="WorldShell/VenueRoadmap/Venue2Panel"]
+[node name="GenreLights2" type="HBoxContainer" parent="."]
 layout_mode = 0
-offset_left = 300.0
-offset_top = 20.0
-offset_right = 520.0
-offset_bottom = 76.0
-text = "Beach stage"
-autowrap_mode = 3
+offset_left = 856.0
+offset_top = 255.0
+offset_right = 1006.0
+offset_bottom = 285.0
+theme_override_constants/separation = 18
 
-[node name="GenreLights2" type="HBoxContainer" parent="WorldShell/VenueRoadmap/Venue2Panel"]
-layout_mode = 0
-offset_left = 130.0
-offset_top = 78.0
-offset_right = 214.0
-offset_bottom = 108.0
-
-[node name="GenreLightA" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue2Panel/GenreLights2"]
-custom_minimum_size = Vector2(24, 24)
+[node name="GenreLightA" type="ColorRect" parent="GenreLights2"]
+custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
+color = Color(1, 0.345098, 0.533333, 1)
 
-[node name="GenreLightB" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue2Panel/GenreLights2"]
-custom_minimum_size = Vector2(24, 24)
+[node name="GenreLightB" type="ColorRect" parent="GenreLights2"]
+custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
+color = Color(0.462745, 1, 0.521569, 1)
 
-[node name="Venue3Panel" type="Control" parent="WorldShell/VenueRoadmap"]
-anchors_preset = 0
-offset_left = 10.0
-offset_top = 278.0
-offset_right = 530.0
-offset_bottom = 396.0
-
-[node name="Cat3" type="TextureRect" parent="WorldShell/VenueRoadmap/Venue3Panel"]
+[node name="GoToV1" type="Button" parent="."]
+custom_minimum_size = Vector2(180, 46)
 layout_mode = 0
-offset_right = 120.0
-offset_bottom = 114.0
-expand_mode = 1
-stretch_mode = 5
+offset_left = 587.0
+offset_top = 107.0
+offset_right = 767.0
+offset_bottom = 153.0
+text = "Nyan Alley"
 
-[node name="GoToV3" type="Button" parent="WorldShell/VenueRoadmap/Venue3Panel"]
+[node name="GenreLights1" type="HBoxContainer" parent="."]
 layout_mode = 0
-offset_left = 130.0
-offset_top = 26.0
-offset_right = 290.0
-offset_bottom = 72.0
-text = "Biggie's Lounge"
+offset_left = 693.0
+offset_top = 156.0
+offset_right = 771.0
+offset_bottom = 186.0
+theme_override_constants/separation = 18
 
-[node name="VenueCopy3" type="Label" parent="WorldShell/VenueRoadmap/Venue3Panel"]
-layout_mode = 0
-offset_left = 300.0
-offset_top = 20.0
-offset_right = 520.0
-offset_bottom = 76.0
-text = "Lounge crowd"
-autowrap_mode = 3
-
-[node name="GenreLights3" type="HBoxContainer" parent="WorldShell/VenueRoadmap/Venue3Panel"]
-layout_mode = 0
-offset_left = 130.0
-offset_top = 78.0
-offset_right = 214.0
-offset_bottom = 108.0
-
-[node name="GenreLightA" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue3Panel/GenreLights3"]
-custom_minimum_size = Vector2(24, 24)
+[node name="GenreLightA" type="ColorRect" parent="GenreLights1"]
+custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
+color = Color(1, 0.345098, 0.533333, 1)
 
-[node name="GenreLightB" type="ColorRect" parent="WorldShell/VenueRoadmap/Venue3Panel/GenreLights3"]
-custom_minimum_size = Vector2(24, 24)
+[node name="GenreLightB" type="ColorRect" parent="GenreLights1"]
+custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
+color = Color(0.462745, 1, 0.521569, 1)
+
+[node name="GoToV3" type="Button" parent="."]
+custom_minimum_size = Vector2(180, 46)
+layout_mode = 0
+offset_left = 856.0
+offset_top = 389.0
+offset_right = 1036.0
+offset_bottom = 435.0
+text = "Biggie's Alley."
+
+[node name="GenreLights3" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 964.0
+offset_top = 435.0
+offset_right = 1066.0
+offset_bottom = 465.0
+theme_override_constants/separation = 18
+
+[node name="GenreLightA" type="ColorRect" parent="GenreLights3"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+color = Color(1, 0.345098, 0.533333, 1)
+
+[node name="GenreLightB" type="ColorRect" parent="GenreLights3"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+color = Color(0.462745, 1, 0.521569, 1)
