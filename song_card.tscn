@@ -1,109 +1,101 @@
-[gd_scene load_steps=3 format=3 uid="uid://bveheb6piqlux"]
+[gd_scene load_steps=6 format=3 uid="uid://bveheb6piqlux"]
 
 [ext_resource type="Script" uid="uid://dy52xpewdewrf" path="res://scripts/song_card.gd" id="1_6l1gx"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_usb"]
-bg_color = Color(0.0823529, 0.113725, 0.188235, 0.98)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.145098, 0.92549, 0.592157, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-corner_detail = 6
-shadow_color = Color(0, 0, 0, 0.35)
-shadow_size = 8
+[sub_resource type="Theme" id="Theme_6l1gx"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wf1kf"]
+bg_color = Color(0.3854925, 0.3854925, 0.38549235, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qnehr"]
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pyvlt"]
+bg_color = Color(0.8175212, 0.81752133, 0.8175211, 1)
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
 
 [node name="SongCard" type="Control"]
-custom_minimum_size = Vector2(170, 160)
+clip_contents = true
+custom_minimum_size = Vector2(160, 236)
 layout_mode = 3
 anchors_preset = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
 mouse_filter = 1
 script = ExtResource("1_6l1gx")
 
-[node name="CardBack" type="Panel" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_usb")
+[node name="SleeveBack" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 160.0
+offset_bottom = 148.0
+theme = SubResource("Theme_6l1gx")
+theme_override_styles/panel = SubResource("StyleBoxFlat_wf1kf")
 
-[node name="VBox" type="VBoxContainer" parent="CardBack"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+[node name="RecordMiddle" type="Panel" parent="SleeveBack"]
+layout_mode = 0
+offset_left = 46.0
+offset_top = 39.0
+offset_right = 113.0
+offset_bottom = 100.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_qnehr")
+
+[node name="RiskSticker" type="Panel" parent="SleeveBack"]
+layout_mode = 0
 offset_left = 12.0
-offset_top = 10.0
-offset_right = -12.0
-offset_bottom = -10.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 5
+offset_top = 12.0
+offset_right = 27.0
+offset_bottom = 25.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_pyvlt")
 
-[node name="loadTitle" type="Label" parent="CardBack/VBox"]
-layout_mode = 2
-autowrap_mode = 3
-max_lines_visible = 2
+[node name="RecordSpindle2" type="Panel" parent="SleeveBack"]
+layout_mode = 0
+offset_left = 78.0
+offset_top = 67.0
+offset_right = 85.0
+offset_bottom = 73.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_pyvlt")
 
-[node name="loadArtist" type="Label" parent="CardBack/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.8, 0.88, 1, 1)
-autowrap_mode = 3
-max_lines_visible = 2
-
-[node name="MetaRow" type="HBoxContainer" parent="CardBack/VBox"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="loadGenre" type="Label" parent="CardBack/VBox/MetaRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="loadRisk" type="Label" parent="CardBack/VBox/MetaRow"]
-layout_mode = 2
-
-[node name="EnergyBars" type="HBoxContainer" parent="CardBack/VBox"]
-layout_mode = 2
+[node name="TitleLabel" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 21.0
+offset_top = 12.0
+offset_right = 145.0
+offset_bottom = 35.0
 alignment = 1
 
-[node name="Bar1" type="ColorRect" parent="CardBack/VBox/EnergyBars"]
-custom_minimum_size = Vector2(8, 8)
+[node name="loadTitle" type="Label" parent="TitleLabel"]
 layout_mode = 2
-color = Color(0.22, 1, 0.45, 1)
+size_flags_horizontal = 3
+horizontal_alignment = 1
+autowrap_mode = 3
+max_lines_visible = 3
 
-[node name="Bar2" type="ColorRect" parent="CardBack/VBox/EnergyBars"]
-custom_minimum_size = Vector2(8, 12)
+[node name="ArtistLabel" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 27.0
+offset_top = 110.0
+offset_right = 151.0
+offset_bottom = 133.0
+alignment = 1
+
+[node name="loadArtist" type="Label" parent="ArtistLabel"]
 layout_mode = 2
-color = Color(0.22, 1, 0.45, 1)
+size_flags_horizontal = 3
+horizontal_alignment = 1
+autowrap_mode = 3
+max_lines_visible = 2
 
-[node name="Bar3" type="ColorRect" parent="CardBack/VBox/EnergyBars"]
-custom_minimum_size = Vector2(8, 16)
-layout_mode = 2
-color = Color(0.22, 1, 0.45, 1)
-
-[node name="Bar4" type="ColorRect" parent="CardBack/VBox/EnergyBars"]
-custom_minimum_size = Vector2(8, 20)
-layout_mode = 2
-color = Color(0.22, 1, 0.45, 1)
-
-[node name="Bar5" type="ColorRect" parent="CardBack/VBox/EnergyBars"]
-custom_minimum_size = Vector2(8, 24)
-layout_mode = 2
-color = Color(0.22, 1, 0.45, 1)
-
-[node name="Button" type="Button" parent="CardBack"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-flat = true
-
-[connection signal="pressed" from="CardBack/Button" to="." method="_on_button_pressed"]
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_right = 160.0
+offset_bottom = 148.0
