@@ -1,28 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://xrgbab5yrpj3"]
 
 [ext_resource type="Script" uid="uid://du3rl714jue1q" path="res://scripts/song_deck_manager.gd" id="1_vbqqs"]
-[ext_resource type="Script" uid="uid://bdpiw3r1v60vi" path="res://scripts/song_database.gd" id="2_8u0yk"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_show_shell"]
-bg_color = Color(0.0392157, 0.0627451, 0.121569, 0.92)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.533333, 0.741176, 1, 1)
-corner_radius_top_left = 24
-corner_radius_top_right = 24
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
-shadow_color = Color(0, 0, 0, 0.45)
-shadow_size = 24
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_show_section"]
-bg_color = Color(0.0784314, 0.113725, 0.203922, 0.90)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
+[ext_resource type="Texture2D" uid="uid://d0c7t06kbhk2x" path="res://assets/Tilesheets/concert_B.png" id="2_8u0yk"]
+[ext_resource type="Texture2D" uid="uid://duolt0hlc3n53" path="res://assets/Tilesheets/concert_C.png" id="3_wv7v2"]
 
 [node name="SongDeckManager" type="Control" groups=["game_managers"]]
 layout_mode = 3
@@ -38,214 +18,204 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 2.0
+offset_right = 4.0
+offset_bottom = 2.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.84313726, 0.65882355, 0.8117647, 1)
 
-[node name="Line2D" type="Line2D" parent="."]
-position = Vector2(0, -0.1620031)
-scale = Vector2(1, 0.9837997)
-points = PackedVector2Array(537, 0, 537, 659)
-
-[node name="VenueBackdrop" type="Control" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="BackdropColor" type="ColorRect" parent="VenueBackdrop"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.0156863, 0.0235294, 0.0509804, 1)
-
-[node name="BackdropAccents" type="Control" parent="VenueBackdrop"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="Shell" type="Panel" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 28.0
-offset_top = 28.0
-offset_right = -28.0
-offset_bottom = -28.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_show_shell")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Shell"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 24.0
-offset_top = 24.0
-offset_right = -24.0
-offset_bottom = -24.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="PlayArea" type="HBoxContainer" parent="Background"]
+layout_mode = 0
+offset_left = 621.0
+offset_top = 160.0
+offset_right = 1041.0
+offset_bottom = 587.0
+size_flags_vertical = 3
 theme_override_constants/separation = 16
 
-[node name="TopBar" type="HBoxContainer" parent="Shell/VBoxContainer"]
-layout_mode = 2
-theme_override_constants/separation = 12
+[node name="Header" type="Label" parent="Background"]
+layout_mode = 0
+offset_left = 737.0
+offset_top = 245.0
+offset_right = 995.0
+offset_bottom = 276.0
+theme_override_font_sizes/font_size = 22
+text = "Last Played"
 
-[node name="TitleBlock" type="VBoxContainer" parent="Shell/VBoxContainer/TopBar"]
-layout_mode = 2
+[node name="Title" type="Label" parent="Background"]
+layout_mode = 0
+offset_left = 737.0
+offset_top = 284.0
+offset_right = 995.0
+offset_bottom = 307.0
+text = "Title: —"
+autowrap_mode = 3
+
+[node name="Artist" type="Label" parent="Background"]
+layout_mode = 0
+offset_left = 737.0
+offset_top = 315.0
+offset_right = 995.0
+offset_bottom = 338.0
+text = "Artist: —"
+autowrap_mode = 3
+
+[node name="Genre" type="Label" parent="Background"]
+layout_mode = 0
+offset_left = 737.0
+offset_top = 346.0
+offset_right = 995.0
+offset_bottom = 369.0
+text = "Genre: —"
+
+[node name="Risk" type="Label" parent="Background"]
+layout_mode = 0
+offset_left = 737.0
+offset_top = 377.0
+offset_right = 995.0
+offset_bottom = 400.0
+text = "Risk: —"
+
+[node name="Energy" type="Label" parent="Background"]
+layout_mode = 0
+offset_left = 737.0
+offset_top = 408.0
+offset_right = 995.0
+offset_bottom = 431.0
+text = "Energy: —"
+
+[node name="TitleBlock" type="VBoxContainer" parent="Background"]
+layout_mode = 0
+offset_left = 31.0
+offset_top = 24.0
+offset_right = 459.0
+offset_bottom = 112.0
 size_flags_horizontal = 3
 theme_override_constants/separation = 4
 
-[node name="VenueNameLabel" type="Label" parent="Shell/VBoxContainer/TopBar/TitleBlock"]
+[node name="VenueNameLabel" type="Label" parent="Background/TitleBlock"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Tonight's Venue"
 
-[node name="VenueGenreLabel" type="Label" parent="Shell/VBoxContainer/TopBar/TitleBlock"]
+[node name="VenueGenreLabel" type="Label" parent="Background/TitleBlock"]
 layout_mode = 2
 text = "Genres:"
 vertical_alignment = 1
 
-[node name="VenueAttributeLabel" type="Label" parent="Shell/VBoxContainer/TopBar/TitleBlock"]
+[node name="VenueAttributeLabel" type="Label" parent="Background/TitleBlock"]
 layout_mode = 2
 text = "Read the room and sequence the best five-track run."
 autowrap_mode = 3
 
-[node name="ScoreLabel" type="Label" parent="Shell/VBoxContainer/TopBar"]
+[node name="TopBar" type="HBoxContainer" parent="Background"]
+layout_mode = 0
+offset_left = 62.0
+offset_top = 125.0
+offset_right = 414.0
+offset_bottom = 165.0
+theme_override_constants/separation = 12
+
+[node name="ScoreLabel" type="Label" parent="Background/TopBar"]
 custom_minimum_size = Vector2(160, 40)
 layout_mode = 2
 text = "Score: 0"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="BackButton" type="Button" parent="Shell/VBoxContainer/TopBar"]
-custom_minimum_size = Vector2(150, 42)
-layout_mode = 2
-text = "Back to World"
-
-[node name="BackToWorld" type="Button" parent="Shell/VBoxContainer/TopBar"]
+[node name="BackToWorld" type="Button" parent="Background/TopBar"]
 custom_minimum_size = Vector2(180, 40)
 layout_mode = 2
 text = "Back to World"
 
-[node name="PlayArea" type="HBoxContainer" parent="Shell/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 16
-
-[node name="Panel" type="Panel" parent="Shell/VBoxContainer/PlayArea"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_show_section")
-
-[node name="HandVBox" type="VBoxContainer" parent="Shell/VBoxContainer/PlayArea/Panel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = -16.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 10
-
-[node name="HandTitle" type="Label" parent="Shell/VBoxContainer/PlayArea/Panel/HandVBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "Performance Hand"
-
-[node name="HandSubtitle" type="Label" parent="Shell/VBoxContainer/PlayArea/Panel/HandVBox"]
-layout_mode = 2
-text = " Click on the cards to make your set order!"
-autowrap_mode = 3
-
-[node name="HandScroll" type="ScrollContainer" parent="Shell/VBoxContainer/PlayArea/Panel/HandVBox"]
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="CardDisplayArea" type="GridContainer" parent="Shell/VBoxContainer/PlayArea/Panel/HandVBox/HandScroll"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/h_separation = 16
-theme_override_constants/v_separation = 16
-columns = 3
-
-[node name="LastCardPanel" type="Panel" parent="Shell/VBoxContainer/PlayArea"]
-custom_minimum_size = Vector2(290, 0)
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_show_section")
-
-[node name="LastCardVBox" type="VBoxContainer" parent="Shell/VBoxContainer/PlayArea/LastCardPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = -16.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 8
-
-[node name="Header" type="Label" parent="Shell/VBoxContainer/PlayArea/LastCardPanel/LastCardVBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "Last Played"
-
-[node name="Title" type="Label" parent="Shell/VBoxContainer/PlayArea/LastCardPanel/LastCardVBox"]
-layout_mode = 2
-text = "Title: —"
-autowrap_mode = 3
-
-[node name="Artist" type="Label" parent="Shell/VBoxContainer/PlayArea/LastCardPanel/LastCardVBox"]
-layout_mode = 2
-text = "Artist: —"
-autowrap_mode = 3
-
-[node name="Genre" type="Label" parent="Shell/VBoxContainer/PlayArea/LastCardPanel/LastCardVBox"]
-layout_mode = 2
-text = "Genre: —"
-
-[node name="Risk" type="Label" parent="Shell/VBoxContainer/PlayArea/LastCardPanel/LastCardVBox"]
-layout_mode = 2
-text = "Risk: —"
-
-[node name="Energy" type="Label" parent="Shell/VBoxContainer/PlayArea/LastCardPanel/LastCardVBox"]
-layout_mode = 2
-text = "Energy: —"
-
-[node name="ScoreBreakdown" type="Label" parent="Shell/VBoxContainer/PlayArea/LastCardPanel/LastCardVBox"]
-layout_mode = 2
-size_flags_vertical = 3
-text = "Score: waiting for first play"
-vertical_alignment = 1
-autowrap_mode = 3
-
-[node name="LastPlayedInfoLabel" type="Label" parent="Shell/VBoxContainer"]
-layout_mode = 2
+[node name="LastPlayedInfoLabel" type="Label" parent="Background"]
+layout_mode = 0
+offset_left = 42.0
+offset_top = 181.0
+offset_right = 372.0
+offset_bottom = 222.0
 text = "The show is starting! Pick your first song."
 autowrap_mode = 3
 
-[node name="GenreIndicator" type="ColorRect" parent="Shell/VBoxContainer"]
-custom_minimum_size = Vector2(0, 14)
+[node name="GenreLight1" type="Polygon2D" parent="Background"]
+position = Vector2(-25, 39)
+polygon = PackedVector2Array(1128, 223, 1146, 1, 986, 225)
+
+[node name="Light1" type="Sprite2D" parent="Background/GenreLight1"]
+position = Vector2(1155, -14)
+texture = ExtResource("2_8u0yk")
+region_enabled = true
+region_rect = Rect2(390.53046, 428.5515, 36.387634, 44.78473)
+
+[node name="GenreLight2" type="Polygon2D" parent="Background"]
+position = Vector2(-272, 37)
+polygon = PackedVector2Array(1197, 212, 1146, 1, 1057, 208)
+
+[node name="Light2" type="Sprite2D" parent="Background/GenreLight2"]
+position = Vector2(1147, -10)
+texture = ExtResource("2_8u0yk")
+region_enabled = true
+region_rect = Rect2(388.7874, 333.23697, 39.186646, 42.91873)
+
+[node name="GenreLight3" type="Polygon2D" parent="Background"]
+position = Vector2(-297, 76)
+polygon = PackedVector2Array(1043, 165, 860, -53, 928, 173)
+
+[node name="Light3" type="Sprite2D" parent="Background/GenreLight3"]
+position = Vector2(856, -56)
+texture = ExtResource("2_8u0yk")
+region_enabled = true
+region_rect = Rect2(386.7984, 381.90073, 41.985718, 42.45224)
+
+[node name="ConcertC" type="Sprite2D" parent="Background"]
+position = Vector2(822, 514)
+scale = Vector2(2.2755103, 2.1623378)
+texture = ExtResource("3_wv7v2")
+region_enabled = true
+region_rect = Rect2(121, 690, 98, 77)
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Background"]
+custom_minimum_size = Vector2(420, 210)
+layout_mode = 0
+offset_left = 54.0
+offset_top = 263.0
+offset_right = 474.0
+offset_bottom = 473.0
+vertical_scroll_mode = 0
+
+[node name="RecordDisplay" type="HBoxContainer" parent="Background/ScrollContainer"]
 layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="LeftSpacer" type="Control" parent="Background/ScrollContainer/RecordDisplay"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="RightSpacer" type="Control" parent="Background/ScrollContainer/RecordDisplay"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="RightButton" type="Button" parent="Background"]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 0
+offset_left = 423.0
+offset_top = 407.0
+offset_right = 467.0
+offset_bottom = 451.0
+text = ">"
+
+[node name="LeftButton" type="Button" parent="Background"]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 0
+offset_left = 39.0
+offset_top = 413.0
+offset_right = 83.0
+offset_bottom = 457.0
+text = "<"
+
+[node name="Line2D" type="Line2D" parent="."]
+position = Vector2(0, -0.1620031)
+scale = Vector2(1, 0.9837997)
+points = PackedVector2Array(537, 0, 537, 659)
