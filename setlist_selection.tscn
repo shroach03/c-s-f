@@ -1,14 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://chew3x6qefsjm"]
+[gd_scene load_steps=2 format=3 uid="uid://chew3x6qefsjm"]
 
 [ext_resource type="Script" uid="uid://bkc4psr25d2da" path="res://scripts/setlist_selection.gd" id="1_nrlia"]
-[ext_resource type="Texture2D" path="res://assets/Tilesheets/concert_A4_redgreen.png" id="2_bg"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_section"]
-bg_color = Color(0.12, 0.14, 0.2, 0.88)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
 
 [node name="SetListSelection" type="Control"]
 layout_mode = 3
@@ -19,121 +11,88 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_nrlia")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 35.0
+offset_right = 35.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_bg")
-expand_mode = 1
-stretch_mode = 6
+color = Color(0.84313726, 0.65882355, 0.8117647, 1)
 
-[node name="Shell" type="Panel" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = -20.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Line2D" type="Line2D" parent="Background"]
+position = Vector2(0, -0.1620031)
+scale = Vector2(1, 0.9837997)
+points = PackedVector2Array(537, 0, 537, 659)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Shell"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 14.0
-offset_top = 14.0
-offset_right = -14.0
-offset_bottom = -14.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Title" type="Label" parent="Background"]
+layout_mode = 0
+offset_left = 35.0
+offset_top = 104.0
+offset_right = 267.0
+offset_bottom = 143.0
+theme_override_font_sizes/font_size = 28
+text = "Build Your Setlist!"
 
-[node name="TopBar" type="HBoxContainer" parent="Shell/VBoxContainer"]
-layout_mode = 2
+[node name="Subtitle" type="Label" parent="Background"]
+layout_mode = 0
+offset_left = 35.0
+offset_top = 187.0
+offset_right = 319.0
+offset_bottom = 210.0
+text = "Pick exactly 5 songs for the show. "
+autowrap_mode = 3
 
-[node name="CountLabel" type="Label" parent="Shell/VBoxContainer/TopBar"]
-custom_minimum_size = Vector2(300, 40)
-layout_mode = 2
+[node name="CountLabel" type="Label" parent="Background"]
+custom_minimum_size = Vector2(320, 40)
+layout_mode = 0
+offset_left = 59.0
+offset_top = 242.0
+offset_right = 379.0
+offset_bottom = 282.0
 size_flags_horizontal = 3
-text = "Select 5 Songs (0/5)"
+text = " (0/5)"
+vertical_alignment = 1
 
-[node name="StartShow" type="Button" parent="Shell/VBoxContainer/TopBar"]
-custom_minimum_size = Vector2(160, 40)
-layout_mode = 2
+[node name="StartShow" type="Button" parent="Background"]
+custom_minimum_size = Vector2(180, 44)
+layout_mode = 0
+offset_left = 761.0
+offset_top = 17.0
+offset_right = 941.0
+offset_bottom = 61.0
 text = "Start Show"
 
-[node name="BackToWorld" type="Button" parent="Shell/VBoxContainer/TopBar"]
-custom_minimum_size = Vector2(160, 40)
-layout_mode = 2
+[node name="BackToWorld" type="Button" parent="Background"]
+custom_minimum_size = Vector2(180, 44)
+layout_mode = 0
+offset_left = 13.0
+offset_top = 17.0
+offset_right = 193.0
+offset_bottom = 61.0
 text = "Back to World"
 
-[node name="Split" type="HSplitContainer" parent="Shell/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_section")
-
-[node name="SelectedPanel" type="Panel" parent="Shell/VBoxContainer/Split"]
-layout_mode = 2
-
-[node name="SelectedVBox" type="VBoxContainer" parent="Shell/VBoxContainer/Split/SelectedPanel"]
+[node name="ScrollContainer" type="ScrollContainer" parent="Background"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = -8.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = -1
+anchor_left = 1.845
+anchor_top = -0.88900006
+anchor_right = 3.8040001
+anchor_bottom = 4.222
+offset_left = -1542.44
+offset_top = 786.072
+offset_right = -3284.4478
+offset_bottom = -2260.76
 
-[node name="SelectedTitle" type="Label" parent="Shell/VBoxContainer/Split/SelectedPanel/SelectedVBox"]
-layout_mode = 2
-text = "Selected Set (Left Deck)"
-
-[node name="SelectedScroll" type="ScrollContainer" parent="Shell/VBoxContainer/Split/SelectedPanel/SelectedVBox"]
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="SelectedGrid" type="GridContainer" parent="Shell/VBoxContainer/Split/SelectedPanel/SelectedVBox/SelectedScroll"]
-layout_mode = 2
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
-columns = 2
-
-[node name="CollectionPanel" type="Panel" parent="Shell/VBoxContainer/Split"]
+[node name="RecordDisplay" type="HBoxContainer" parent="Background/ScrollContainer"]
 layout_mode = 2
 
-[node name="CollectionVBox" type="VBoxContainer" parent="Shell/VBoxContainer/Split/CollectionPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="CollectionTitle" type="Label" parent="Shell/VBoxContainer/Split/CollectionPanel/CollectionVBox"]
+[node name="LeftSpacer" type="Control" parent="Background/ScrollContainer/RecordDisplay"]
+custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-text = "MP3 Collection (Right Crate)"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Shell/VBoxContainer/Split/CollectionPanel/CollectionVBox"]
+[node name="RightSpacer" type="Control" parent="Background/ScrollContainer/RecordDisplay"]
+custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="GridContainer" type="GridContainer" parent="Shell/VBoxContainer/Split/CollectionPanel/CollectionVBox/ScrollContainer"]
-layout_mode = 2
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
-columns = 2
