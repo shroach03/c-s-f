@@ -12,11 +12,18 @@ var player_collection: Array = []
 var current_setlist: Array = []
 var available_genres: Array = []
 var sfx_streams := {}
+var performance_active: bool = false
+var performance_time_remaining: float = 0.0
+var live_score_target: float = 0.0
+var live_score_rate_per_second: float = 0.0
+var current_score_float: float = 0.0
 
 signal score_updated(new_score)
 signal crowd_state_updated(new_state)
+signal performance_timer_updated(time_remaining)
 
 const SONGS_IN_SET = 5
+const PERFORMANCE_DURATION_SECONDS = 90.0
 const WORLD_SCENE = preload("res://scenes/world.tscn")
 const CRATE_SCENE = preload("res://scenes/crate_dig.tscn")
 const PERFORMANCE_SCENE = preload("res://scenes/song_deck_manager.tscn")
@@ -39,6 +46,30 @@ func _ready():
 	_initialize_available_genres()
 	_initialize_venue_preferences()
 	start_world_phase()
+
+func _process(delta: float) -> void:
+	if not performance_active:
+		return
+
+	performance_time_remaining = maxf(performance_time_remaining - delta, 0.0)
+	performance_timer_updated.emit(performance_time_remaining)
+	if performance_time_remaining <= 0.0:
+		_finish_performance_phase()
+		return
+
+	if is_equal_approx(current_score_float, live_score_target):
+		return
+
+	var score_step = live_score_rate_per_second * delta
+	if current_score_float < live_score_target:
+		current_score_float = minf(current_score_float + score_step, live_score_target)
+	else:
+		current_score_float = maxf(current_score_float - score_step, live_score_target)
+
+	var rounded_score = int(round(current_score_float))
+	if rounded_score != current_score:
+		current_score = rounded_score
+		score_updated.emit(current_score)
 
 func _initialize_sfx() -> void:
 	sfx_player = AudioStreamPlayer.new()
@@ -103,25 +134,22 @@ func _handle_song_played(_card_instance, selected_song_data):
 	var impact = calculate_impact(score_results)
 	set_history.append(selected_song_data)
 	last_played_energy = selected_song_data.get("energy", 0)
-	current_score += score_results.points
+	_start_live_score_update(selected_song_data, score_results)
 
 	update_crowd_state(impact)
-	score_updated.emit(current_score)
 
 	if is_instance_valid(active_deck_manager):
 		var played_count = set_history.size()
-		active_deck_manager.show_play_result(selected_song_data, score_results, played_count, SONGS_IN_SET)
+		active_deck_manager.show_play_result(selected_song_data, score_results, played_count)
 
 	if check_fail_condition():
 		return
 
-	if set_history.size() >= SONGS_IN_SET:
-		check_win_condition()
-	else:
-		if is_instance_valid(active_deck_manager):
-			active_deck_manager.draw_next_hand()
+	if is_instance_valid(active_deck_manager):
+		active_deck_manager.draw_next_hand()
 
 func start_world_phase():
+	performance_active = false
 	_cleanup_phase_nodes()
 	active_world = WORLD_SCENE.instantiate()
 	add_child(active_world)
@@ -204,6 +232,12 @@ func start_performance_phase():
 
 	set_history.clear()
 	last_played_energy = -1
+	performance_active = true
+	performance_time_remaining = PERFORMANCE_DURATION_SECONDS
+	performance_timer_updated.emit(performance_time_remaining)
+	current_score_float = float(current_score)
+	live_score_target = current_score_float
+	live_score_rate_per_second = 0.0
 
 	if active_deck_manager.has_signal("song_chosen_for_set"):
 		active_deck_manager.song_chosen_for_set.connect(_handle_song_played)
@@ -298,7 +332,8 @@ func calculate_score_from_song(song_data: Dictionary) -> Dictionary:
 		"energy_correct": energy_correct,
 		"genre_match": genre_match,
 		"risk_success": risk_success,
-		"penalty_count": penalty_count
+		"penalty_count": penalty_count,
+		"risk_multiplier": _risk_to_multiplier(risk)
 	}
 
 func _risk_to_value(risk: String) -> int:
@@ -310,6 +345,40 @@ func _risk_to_value(risk: String) -> int:
 		"High":
 			return 3
 	return 1
+
+func _risk_to_multiplier(risk: String) -> float:
+	match risk:
+		"Low":
+			return 1.0
+		"Medium":
+			return 1.5
+		"High":
+			return 2.0
+	return 1.0
+
+func _start_live_score_update(song_data: Dictionary, score_results: Dictionary) -> void:
+	var trend_score = 0
+	trend_score += 1 if score_results.genre_match else -1
+	if score_results.energy_score > 0:
+		trend_score += 1
+	elif score_results.energy_score < 0:
+		trend_score -= 1
+	trend_score += 1 if score_results.risk_success else -1
+
+	var direction = signi(trend_score)
+	if direction == 0:
+		direction = 1 if score_results.points >= 0 else -1
+
+	var risk_multiplier = float(score_results.get("risk_multiplier", _risk_to_multiplier(song_data.get("risk", "Low"))))
+	var target_delta = (8.0 + absf(float(score_results.points)) * 2.0) * risk_multiplier * float(direction)
+	live_score_target = current_score_float + target_delta
+	live_score_rate_per_second = absf(target_delta) / 4.0
+
+func _finish_performance_phase() -> void:
+	performance_active = false
+	if is_instance_valid(active_deck_manager):
+		active_deck_manager.feedback_label.text = "Encore over! Final score: %d" % current_score
+	_end_night_and_return_world()
 
 func _apply_genre_shift(new_genre: String):
 	if current_venue_genres.has(new_genre):
