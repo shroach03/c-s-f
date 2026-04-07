@@ -114,7 +114,7 @@ autowrap_mode = 3
 layout_mode = 0
 offset_left = 62.0
 offset_top = 125.0
-offset_right = 414.0
+offset_right = 560.0
 offset_bottom = 165.0
 theme_override_constants/separation = 12
 
@@ -123,6 +123,13 @@ custom_minimum_size = Vector2(160, 40)
 layout_mode = 2
 text = "Score: 0"
 horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TimerLabel" type="Label" parent="Background/TopBar"]
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+text = "Time: 01:30"
+horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="BackToWorld" type="Button" parent="Background/TopBar"]
