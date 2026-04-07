@@ -1,230 +1,112 @@
-[gd_scene load_steps=6 format=3 uid="uid://c6lhdyi4s8pkj"]
+[gd_scene format=3 uid="uid://c6lhdyi4s8pkj"]
 
-[ext_resource type="Texture2D" uid="uid://duolt0hlc3n53" path="res://assets/Tilesheets/concert_C.png" id="1_wttuf"]
-[ext_resource type="Texture2D" path="res://assets/Tilesheets/concert_C.png" id="2_s1xkn"]
-[ext_resource type="Texture2D" path="res://assets/Tilesheets/concert_C.png" id="3_j16ra"]
-[ext_resource type="Texture2D" path="res://assets/Tilesheets/concert_C.png" id="4_qo0oe"]
-[ext_resource type="Texture2D" path="res://assets/Tilesheets/concert_C.png" id="5_o1mbd"]
 
-[node name="Venue" type="Control"]
+
+
+
+[node name="Venue" type="Node2D" groups=["game_managers"]]
+metadata/_edit_vertical_guides_ = [2.0]
+
+
+
+
+[node name="VenueManager" type="Node" parent="."]
+
+[node name="UIManager" type="Node" parent="."]
+
+[node name="Stage" type="HBoxContainer" parent="UIManager"]
+anchors_preset = -1
+anchor_left = 0.004
+anchor_top = 0.006
+anchor_right = 1.0
+anchor_bottom = 0.994
+offset_left = 0.39199972
+offset_top = 0.11199999
+offset_right = -4.0
+offset_bottom = -0.11199951
+mouse_filter = 2
+
+[node name="StageArea" type="GridContainer" parent="UIManager"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(-128.41666, -781.4451)
+mouse_filter = 2
+
+[node name="StatDisplay" type="Control" parent="UIManager"]
 layout_mode = 3
-anchors_preset = 15
+anchor_left = 0.041
+anchor_top = 0.116000004
+anchor_right = 0.041
+anchor_bottom = 0.116000004
+offset_left = -0.23200226
+offset_top = -0.16799927
+offset_right = -0.23200226
+offset_bottom = -0.16799927
+
+[node name="PromptArea" type="Control" parent="UIManager"]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
 anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = -0.056030273
+offset_bottom = 5.8239975
+grow_horizontal = 0
 
-[node name="Background" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.03, 0.02, 0.08, 1)
+[node name="Slot 1" type="ReferenceRect" parent="UIManager" groups=["slots"]]
+anchors_preset = -1
+anchor_left = 0.43300003
+anchor_top = 0.54200006
+anchor_right = 0.577
+anchor_bottom = 0.94100004
+offset_left = -30.81604
+offset_top = 4.783966
+offset_right = -30.70404
+offset_bottom = 5.2319946
 
-[node name="RootSplit" type="HSplitContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = -16.0
-grow_horizontal = 2
-grow_vertical = 2
-split_offset = 420
+[node name="Slot2" type="ReferenceRect" parent="UIManager" groups=["slots"]]
+anchors_preset = -1
+anchor_left = 0.069000006
+anchor_top = 0.54200006
+anchor_right = 0.21400002
+anchor_bottom = 0.94100004
+offset_left = -30.488007
+offset_top = 4.783966
+offset_right = -31.528015
+offset_bottom = 5.2319946
 
-[node name="LeftPane" type="VBoxContainer" parent="RootSplit"]
-layout_mode = 2
-theme_override_constants/separation = 10
+[node name="Slot 3" type="ReferenceRect" parent="UIManager" groups=["slots"]]
+visible = false
+anchors_preset = -1
+anchor_left = 0.263
+anchor_top = 0.523
+anchor_right = 0.407
+anchor_bottom = 0.92300004
+offset_left = 0.023986816
+offset_top = 0.0960083
+offset_right = 0.13598633
+offset_bottom = -0.104003906
 
-[node name="VenueNameLabel" type="Label" parent="RootSplit/LeftPane"]
-layout_mode = 2
-text = "Tonight's Venue"
+[node name="Slot4" type="ReferenceRect" parent="UIManager" groups=["slots"]]
+anchors_preset = -1
+anchor_left = 0.43500003
+anchor_top = 0.55600005
+anchor_right = 0.558
+anchor_bottom = 0.90000004
+offset_left = 217.87997
+offset_top = 4.711975
+offset_right = 242.18396
+offset_bottom = 40.799988
 
-[node name="VenueGenreLabel" type="Label" parent="RootSplit/LeftPane"]
-layout_mode = 2
-text = "Genres:"
-
-[node name="ScoreLabel" type="Label" parent="RootSplit/LeftPane"]
-layout_mode = 2
-text = "Score: 0"
-
-[node name="TimerLabel" type="Label" parent="RootSplit/LeftPane"]
-layout_mode = 2
-text = "Time Left: 90"
-
-[node name="LastCardPanel" type="Panel" parent="RootSplit/LeftPane"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="LastCardVBox" type="VBoxContainer" parent="RootSplit/LeftPane/LastCardPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 12.0
-offset_top = 12.0
-offset_right = -12.0
-offset_bottom = -12.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 8
-
-[node name="Title" type="Label" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox"]
-layout_mode = 2
-text = "—"
-
-[node name="Artist" type="Label" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox"]
-layout_mode = 2
-text = "—"
-
-[node name="Genre" type="Label" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox"]
-layout_mode = 2
-text = "Genre: —"
-
-[node name="Risk" type="Label" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox"]
-layout_mode = 2
-text = "LOW RISK"
-
-[node name="EnergyBars" type="HBoxContainer" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox"]
-layout_mode = 2
-alignment = 1
-
-[node name="Bar1" type="ColorRect" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox/EnergyBars"]
-custom_minimum_size = Vector2(10, 8)
-layout_mode = 2
-color = Color(0.22, 1, 0.45, 1)
-
-[node name="Bar2" type="ColorRect" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox/EnergyBars"]
-custom_minimum_size = Vector2(10, 14)
-layout_mode = 2
-color = Color(0.22, 1, 0.45, 1)
-
-[node name="Bar3" type="ColorRect" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox/EnergyBars"]
-custom_minimum_size = Vector2(10, 20)
-layout_mode = 2
-color = Color(0.22, 1, 0.45, 1)
-
-[node name="Bar4" type="ColorRect" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox/EnergyBars"]
-custom_minimum_size = Vector2(10, 26)
-layout_mode = 2
-color = Color(0.22, 1, 0.45, 1)
-
-[node name="Bar5" type="ColorRect" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox/EnergyBars"]
-custom_minimum_size = Vector2(10, 32)
-layout_mode = 2
-color = Color(0.22, 1, 0.45, 1)
-
-[node name="ScoreBreakdown" type="Label" parent="RootSplit/LeftPane/LastCardPanel/LastCardVBox"]
-layout_mode = 2
-autowrap_mode = 3
-text = "Score: waiting for first play"
-
-[node name="FeedbackLabel" type="Label" parent="RootSplit/LeftPane"]
-layout_mode = 2
-text = "The show is starting! Pick your first song."
-autowrap_mode = 3
-
-[node name="BackButton" type="Button" parent="RootSplit/LeftPane"]
-layout_mode = 2
-text = "Back to World"
-
-[node name="RightPane" type="VBoxContainer" parent="RootSplit"]
-layout_mode = 2
-theme_override_constants/separation = 0
-
-[node name="AudienceRow" type="HBoxContainer" parent="RootSplit/RightPane"]
-layout_mode = 2
-size_flags_vertical = 0
-custom_minimum_size = Vector2(0, 120)
-alignment = 1
-
-[node name="BlackCat_Waiting" type="TextureRect" parent="RootSplit/RightPane/AudienceRow"]
-custom_minimum_size = Vector2(100, 110)
-layout_mode = 2
-texture = ExtResource("2_s1xkn")
-region_enabled = true
-region_rect = Rect2(424.1078, 4149.9023, 74.38043, 77.686035)
-expand_mode = 1
-stretch_mode = 5
-
-[node name="OrangeCat_Waiting" type="TextureRect" parent="RootSplit/RightPane/AudienceRow"]
-custom_minimum_size = Vector2(80, 110)
-layout_mode = 2
-texture = ExtResource("3_j16ra")
-region_enabled = true
-region_rect = Rect2(133.41443, 4154.761, 54.641296, 72.02734)
-expand_mode = 1
-stretch_mode = 5
-
-[node name="GreyCat_Waiting" type="TextureRect" parent="RootSplit/RightPane/AudienceRow"]
-custom_minimum_size = Vector2(80, 100)
-layout_mode = 2
-texture = ExtResource("4_qo0oe")
-region_enabled = true
-region_rect = Rect2(132.01047, 4161.0674, 56.007355, 59.422363)
-expand_mode = 1
-stretch_mode = 5
-
-[node name="WhiteCat_Waiting" type="TextureRect" parent="RootSplit/RightPane/AudienceRow"]
-custom_minimum_size = Vector2(80, 110)
-layout_mode = 2
-texture = ExtResource("5_o1mbd")
-region_enabled = true
-region_rect = Rect2(433.39313, 4162.8193, 55.32434, 52.592285)
-expand_mode = 1
-stretch_mode = 5
-
-[node name="StageArea" type="Control" parent="RootSplit/RightPane"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="DJSetup" type="TextureRect" parent="RootSplit/RightPane/StageArea"]
-layout_mode = 1
-anchors_preset = 12
-anchor_left = 0.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -200.0
-grow_horizontal = 2
-grow_vertical = 0
-texture = ExtResource("1_wttuf")
-region_enabled = true
-region_rect = Rect2(109.41743, 671.86005, 120.2105, 94.25592)
-expand_mode = 1
-stretch_mode = 5
-
-[node name="HandPanel" type="Panel" parent="RootSplit/RightPane"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="HandVBox" type="VBoxContainer" parent="RootSplit/RightPane/HandPanel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="HandTitle" type="Label" parent="RootSplit/RightPane/HandPanel/HandVBox"]
-layout_mode = 2
-text = "Choose Next Track:"
-
-[node name="HandScroll" type="ScrollContainer" parent="RootSplit/RightPane/HandPanel/HandVBox"]
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="CardDisplayArea" type="GridContainer" parent="RootSplit/RightPane/HandPanel/HandVBox/HandScroll"]
-layout_mode = 2
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
-columns = 2
+[node name="Slot5" type="ReferenceRect" parent="UIManager" groups=["slots"]]
+anchors_preset = -1
+anchor_left = 0.837
+anchor_top = 0.551
+anchor_right = 0.98100007
+anchor_bottom = 0.95100003
+offset_left = -31.223999
+offset_top = 4.951996
+offset_right = -31.11206
+offset_bottom = 4.751953
