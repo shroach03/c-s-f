@@ -7,6 +7,7 @@ signal card_moved_to_set(card_instance, song_data)
 @onready var feedback_label: Label = $Background/LastPlayedInfoLabel
 @onready var venue_genre_label: Label = $Background/TitleBlock/VenueGenreLabel
 @onready var score_label: Label = $Background/TopBar/ScoreLabel
+@onready var timer_label: Label = $Background/TopBar/TimerLabel
 @onready var back_button: Button = $Background/TopBar/BackToWorld
 @onready var left_button: Button = $Background/LeftButton
 @onready var right_button: Button = $Background/RightButton
@@ -27,7 +28,6 @@ signal card_moved_to_set(card_instance, song_data)
 @onready var last_energy_label: Label = $Background/Energy
 
 const SONG_CARD_SCENE = preload("res://scenes/song_card.tscn")
-const MAX_SONGS_IN_SET = 5
 const CARDS_SHOWN_PER_TURN = 5
 const TARGET_CARD_WIDTH := 176.0
 const GENRE_COLORS = {
@@ -39,6 +39,7 @@ const GENRE_COLORS = {
 }
 
 var playable_song_pool: Array = []
+var source_song_pool: Array = []
 var set_history: Array = []
 var cards_on_display: Array = []
 var current_turn_count: int = 0
@@ -52,6 +53,8 @@ var record_width := 0.0
 func _ready() -> void:
 	if GameManager and not GameManager.score_updated.is_connected(_on_score_updated):
 		GameManager.score_updated.connect(_on_score_updated)
+	if GameManager and not GameManager.performance_timer_updated.is_connected(_on_performance_timer_updated):
+		GameManager.performance_timer_updated.connect(_on_performance_timer_updated)
 	if back_button and not back_button.pressed.is_connected(_on_back_to_world_pressed):
 		back_button.pressed.connect(_on_back_to_world_pressed)
 	if left_button and not left_button.pressed.is_connected(_on_left_button_pressed):
@@ -126,6 +129,9 @@ func draw_next_hand() -> void:
 		if card.get_parent() != card_display_area:
 			card_display_area.add_child(card)
 			card_display_area.move_child(card, right_spacer.get_index())
+	if playable_song_pool.is_empty() and not source_song_pool.is_empty():
+		playable_song_pool = source_song_pool.duplicate(true)
+		playable_song_pool.shuffle()
 
 	while cards_on_display.size() < CARDS_SHOWN_PER_TURN and not playable_song_pool.is_empty():
 		var song_data = playable_song_pool.pop_front()
@@ -137,15 +143,16 @@ func draw_next_hand() -> void:
 			new_card.song_selected.connect(_on_song_selected)
 		cards_on_display.append(new_card)
 
-	if cards_on_display.is_empty() and playable_song_pool.is_empty() and current_turn_count < MAX_SONGS_IN_SET:
+	if cards_on_display.is_empty() and playable_song_pool.is_empty():
 		feedback_label.text = "Deck empty"
 	else:
-		feedback_label.text = "Choose your next track (%d/%d played)." % [current_turn_count, MAX_SONGS_IN_SET]
+		feedback_label.text = "Choose your next track (%d played)." % [current_turn_count]
 
 	_set_index(clampi(current_index, 0, maxi(_card_count() - 1, 0)))
 
 func initialize_deck_from_inventory(inventory: Array) -> void:
 	playable_song_pool.clear()
+	source_song_pool.clear()
 	set_history.clear()
 	current_turn_count = 0
 	current_index = 0
@@ -155,7 +162,8 @@ func initialize_deck_from_inventory(inventory: Array) -> void:
 			card.queue_free()
 	cards_on_display.clear()
 
-	playable_song_pool = inventory.duplicate(true)
+	source_song_pool = inventory.duplicate(true)
+	playable_song_pool = source_song_pool.duplicate(true)
 	playable_song_pool.shuffle()
 	draw_next_hand()
 
@@ -168,13 +176,7 @@ func _on_song_selected(card_instance, data: Dictionary) -> void:
 		card_instance.queue_free()
 	card_moved_to_set.emit(card_instance, data)
 
-	if current_turn_count >= MAX_SONGS_IN_SET:
-		for card in cards_on_display:
-			if is_instance_valid(card):
-				card.queue_free()
-		cards_on_display.clear()
-	else:
-		draw_next_hand()
+	draw_next_hand()
 
 	_set_index(clampi(current_index, 0, maxi(_card_count() - 1, 0)))
 
@@ -183,8 +185,8 @@ func update_venue_ui() -> void:
 		current_venue_genres = [current_venue_genre]
 	venue_genre_label.text = "Genres: %s" % "/".join(current_venue_genres)
 
-func show_play_result(song_data: Dictionary, score_results: Dictionary, played_count: int, songs_in_set: int) -> void:
-	feedback_label.text = "Played %s (+%d). (%d/%d played)" % [song_data.get("title", "Unknown"), score_results.points, played_count, songs_in_set]
+func show_play_result(song_data: Dictionary, score_results: Dictionary, played_count: int) -> void:
+	feedback_label.text = "Played %s (%+d trend). (%d played)" % [song_data.get("title", "Unknown"), score_results.points, played_count]
 	_set_last_card_panel(song_data)
 	update_venue_ui()
 
@@ -204,6 +206,12 @@ func _reset_last_card_panel() -> void:
 
 func _on_score_updated(new_score: int) -> void:
 	score_label.text = "Score: %d" % new_score
+
+func _on_performance_timer_updated(time_remaining: float) -> void:
+	var whole_seconds = maxi(int(ceil(time_remaining)), 0)
+	var minutes = whole_seconds / 60
+	var seconds = whole_seconds % 60
+	timer_label.text = "Time: %02d:%02d" % [minutes, seconds]
 
 func _on_back_to_world_pressed() -> void:
 	if GameManager != null:
