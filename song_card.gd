@@ -19,9 +19,8 @@ const RISK_COLORS := {
 	"high": Color("#d9534f"),
 }
 
-const ENERGY_ACTIVE_COLOR := Color("#e8eef9")
+const ENERGY_ACTIVE_COLOR := Color("56c271")
 const ENERGY_INACTIVE_COLOR := Color(1, 1, 1, 0.2)
-
 var current_song_data: Dictionary = {}
 
 func setup_card(song_data: Dictionary, options: Dictionary = {}) -> void:
