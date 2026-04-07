@@ -24,12 +24,10 @@ func _ready() -> void:
 		back_button.pressed.connect(_on_back_to_world_pressed)
 	left_button.pressed.connect(_on_left_button_pressed)
 	right_button.pressed.connect(_on_right_button_pressed)
-
 	start_button.disabled = true
 	count_label.text = "Select 5 Songs (0/5)"
 	selected_songs.clear()
 	_clear_song_cards()
-
 	_update_carousel_layout()
 	_populate_collection()
 	_update_nav_buttons()
@@ -85,6 +83,7 @@ func _update_nav_buttons() -> void:
 	var has_cards = _card_count() > 0
 	left_button.disabled = (not has_cards) or current_index <= 0
 	right_button.disabled = (not has_cards) or current_index >= _card_count() - 1
+
 
 func _on_card_clicked(card_instance, song_data):
 	if selected_songs.has(song_data):
