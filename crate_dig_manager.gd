@@ -34,7 +34,6 @@ func _ready():
 	dig_button.pressed.connect(_on_dig_button_pressed)
 	left_button.pressed.connect(_on_left_button_pressed)
 	right_button.pressed.connect(_on_right_button_pressed)
-
 	if SongDatabase and SongDatabase.SONGS:
 		master_database = SongDatabase.SONGS.duplicate(true)
 		if unlocked_inventory.is_empty() and GameManager != null:
@@ -43,9 +42,9 @@ func _ready():
 	else:
 		status_label.text = "ERROR: database not found"
 		dig_button.disabled = true
-
 	_update_carousel_layout()
 	_update_nav_buttons()
+
 
 func _update_carousel_layout() -> void:
 	var center_padding = maxf((scroll_container.size.x - TARGET_CARD_WIDTH) * 0.5, 0.0)
@@ -117,8 +116,7 @@ func _reveal_crate_contents(amount: int) -> void:
 		display_area.move_child(card_visual, right_spacer.get_index())
 		card_visual.setup_card(song_data, {"context": "selection"})
 		card_visual.song_selected.connect(_on_card_selected_for_inventory)
-
-	_set_index(0)
+		_set_index(0)
 
 func _on_card_selected_for_inventory(card_instance, song_data):
 	if not unlocked_inventory.has(song_data):
@@ -130,3 +128,18 @@ func _on_card_selected_for_inventory(card_instance, song_data):
 	elif card_instance.modulate != Color(0.5, 1.0, 0.6):
 		card_instance.modulate = Color(0.5, 1.0, 0.6)
 		status_label.text = "Already owned. Inventory total: %d" % unlocked_inventory.size()
+
+func _on_go_to_world_pressed() -> void:
+	if GameManager != null:
+		GameManager.play_sfx("click_button")
+	finish_digging_phase()
+
+func _on_go_to_world_phase():
+	if unlocked_inventory.size() < 5:
+		status_label.text = "You need at least 5 songs to perform!"
+		return
+	finish_digging_phase()
+
+func finish_digging_phase() -> void:
+	digging_finished.emit(unlocked_inventory.duplicate(true))
+	print("Signal 'digging_finished' emitted with ", unlocked_inventory.size(), " songs.")
