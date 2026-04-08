@@ -36,6 +36,24 @@ corner_radius_top_right = 50
 corner_radius_bottom_right = 50
 corner_radius_bottom_left = 50
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+bg_color = Color(0, 0, 0, 0)
+draw_center = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(1, 1, 1, 0.08)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
+bg_color = Color(1, 1, 1, 0.15)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
 [node name="SongCard" type="Control"]
 clip_contents = true
 custom_minimum_size = Vector2(160, 236)
@@ -46,18 +64,19 @@ size_flags_vertical = 4
 mouse_filter = 1
 script = ExtResource("1_6l1gx")
 
-[node name="GenreBorder" type="Panel" parent="."]
-layout_mode = 0
-offset_right = 160.0
-offset_bottom = 148.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_border")
-
 [node name="SleeveBack" type="Panel" parent="."]
 layout_mode = 0
 offset_right = 160.0
 offset_bottom = 148.0
 theme = SubResource("Theme_6l1gx")
 theme_override_styles/panel = SubResource("StyleBoxFlat_wf1kf")
+
+[node name="GenreBorder" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 160.0
+offset_bottom = 148.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_border")
 
 [node name="RecordMiddle" type="Panel" parent="SleeveBack"]
 layout_mode = 0
@@ -151,3 +170,8 @@ visible = false
 layout_mode = 0
 offset_right = 160.0
 offset_bottom = 148.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_btn_normal")
