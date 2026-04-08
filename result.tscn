@@ -1,199 +1,51 @@
-[gd_scene load_steps=4 format=3 uid="uid://d2hqi1axsmnxa"]
+extends Control
 
-[ext_resource type="Script" path="res://scripts/result.gd" id="1_result_script"]
+signal continue_pressed
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_result_shell"]
-bg_color = Color(0.0862745, 0.113725, 0.188235, 0.95)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.568627, 0.941176, 1, 1)
-corner_radius_top_left = 28
-corner_radius_top_right = 28
-corner_radius_bottom_right = 28
-corner_radius_bottom_left = 28
-shadow_color = Color (0, 0, 0, 0.45)
-shadow_size = 24
+@onready var title_label: Label = $Backdrop/ColorRect/VictoryFlare/TitleBlock/Title
+@onready var subtitle_label: Label = $Backdrop/ColorRect/VictoryFlare/TitleBlock/Subtitle
+@onready var score_value_label: Label = $Backdrop/ColorRect/VictoryFlare/ScoreCard/ScoreVBox/ScoreValue
+@onready var crowd_value_label: Label = $Backdrop/ColorRect/VictoryFlare/InfoColumn/CrowdValue
+@onready var continue_button: Button = $Backdrop/ColorRect/VictoryFlare/ContinueButton
+@onready var victory_flare: Control = $Backdrop/ColorRect/VictoryFlare
+@onready var fail_flare: Control = $Backdrop/ColorRect/FailFlare
+@onready var shell: Control = $Backdrop/ColorRect
 
-[node name="Result" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+var is_victory := false
+var anim_time := 0.0
 
-script = ExtResource("1_result_script")
+func _ready() -> void:
+	continue_button.pressed.connect(_on_continue_pressed)
 
-[node name="BackgroundLayer" type="Control" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+func setup_result(victory: bool, final_score: int, crowd_state: Dictionary, headline: String, summary: String) -> void:
+	is_victory = victory
+	title_label.text = headline
+	subtitle_label.text = summary
+	score_value_label.text = str(final_score)
+	crowd_value_label.text = "E:%d  T:%d  P:%d" % [
+		crowd_state.get("energy", 0),
+		crowd_state.get("trust", 0),
+		crowd_state.get("patience", 0)
+	]
 
-[node name="Backdrop" type="ColorRect" parent="BackgroundLayer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.0196078, 0.027451, 0.0627451, 1)
+	var panel_style := shell.get_theme_stylebox("panel").duplicate()
+	if panel_style is StyleBoxFlat:
+		panel_style.bg_color = Color(0.0862745, 0.113725, 0.188235, 0.95) if victory else Color(0.156863, 0.0588235, 0.0823529, 0.95)
+		panel_style.border_color = Color(0.568627, 0.941176, 1.0, 1.0) if victory else Color(1.0, 0.470588, 0.560784, 1.0)
+		shell.add_theme_stylebox_override("panel", panel_style)
 
-[node name="FlairLayer" type="Control" parent="BackgroundLayer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
+	victory_flare.visible = victory
+	fail_flare.visible = not victory
+	continue_button.text = "Book Another Night"
 
-[node name="VictoryFlare" type="ColorRect" parent="BackgroundLayer/FlairLayer"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -260.0
-offset_top = -260.0
-offset_right = 260.0
-offset_bottom = 260.0
-grow_horizontal = 2
-grow_vertical = 2
-rotation = 0.15
-color = Color(0.368627, 0.980392, 0.996078, 0.28)
+func _process(delta: float) -> void:
+	anim_time += delta
+	if is_victory:
+		victory_flare.modulate.a = 0.32 + 0.18 * (0.5 + 0.5 * sin(anim_time * 3.4))
+		victory_flare.rotation = sin(anim_time * 0.7) * 0.03
+	else:
+		fail_flare.position.x = sin(anim_time * 5.0) * 10.0
+		fail_flare.modulate.a = 0.18 + 0.12 * (0.5 + 0.5 * sin(anim_time * 6.0))
 
-[node name="FailFlare" type="ColorRect" parent="BackgroundLayer/FlairLayer"]
-visible = false
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -340.0
-offset_top = -38.0
-offset_right = 340.0
-offset_bottom = 38.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.996078, 0.32549, 0.447059, 0.22)
-
-[node name="Shell" type="Panel" parent="BackgroundLayer"]
-custom_minimum_size = Vector2(720, 420)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -360.0
-offset_top = -210.0
-offset_right = 360.0
-offset_bottom = 210.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_result_shell")
-
-[node name="VBox" type="VBoxContainer" parent="BackgroundLayer/Shell"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 28.0
-offset_top = 28.0
-offset_right = -28.0
-offset_bottom = -28.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 20
-
-[node name="TitleBlock" type="VBoxContainer" parent="BackgroundLayer/Shell/VBox"]
-layout_mode = 2
-theme_override_constants/separation = 6
-
-[node name="Title" type="Label" parent="BackgroundLayer/Shell/VBox/TitleBlock"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 34
-text = "Set Complete!"
-
-[node name="Subtitle" type="Label" parent="BackgroundLayer/Shell/VBox/TitleBlock"]
-layout_mode = 2
-text = "You landed the room and closed the night strong."
-autowrap_mode = 3
-
-[node name="Stats" type="HBoxContainer" parent="BackgroundLayer/Shell/VBox"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 18
-
-[node name="ScoreCard" type="Panel" parent="BackgroundLayer/Shell/VBox/Stats"]
-custom_minimum_size = Vector2(220, 180)
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="ScoreVBox" type="VBoxContainer" parent="BackgroundLayer/Shell/VBox/Stats/ScoreCard"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 18.0
-offset_top = 18.0
-offset_right = -18.0
-offset_bottom = -18.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 10
-
-[node name="ScoreLabel" type="Label" parent="BackgroundLayer/Shell/VBox/Stats/ScoreCard/ScoreVBox"]
-layout_mode = 2
-text = "FINAL SCORE"
-
-[node name="ScoreValue" type="Label" parent="BackgroundLayer/Shell/VBox/Stats/ScoreCard/ScoreVBox"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 54
-text = "0"
-vertical_alignment = 1
-
-[node name="InfoColumn" type="VBoxContainer" parent="BackgroundLayer/Shell/VBox/Stats"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 12
-
-[node name="VenueLabel" type="Label" parent="BackgroundLayer/Shell/VBox/Stats/InfoColumn"]
-layout_mode = 2
-text = "Venue"
-
-[node name="VenueValue" type="Label" parent="BackgroundLayer/Shell/VBox/Stats/InfoColumn"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 26
-text = "Nyan Alley"
-autowrap_mode = 3
-
-[node name="GenreLabel" type="Label" parent="BackgroundLayer/Shell/VBox/Stats/InfoColumn"]
-layout_mode = 2
-text = "Accepted Genres"
-
-[node name="GenreValue" type="Label" parent="BackgroundLayer/Shell/VBox/Stats/InfoColumn"]
-layout_mode = 2
-text = "Pop/EDM"
-
-[node name="CrowdLabel" type="Label" parent="BackgroundLayer/Shell/VBox/Stats/InfoColumn"]
-layout_mode = 2
-text = "Final Crowd State"
-
-[node name="CrowdValue" type="Label" parent="BackgroundLayer/Shell/VBox/Stats/InfoColumn"]
-layout_mode = 2
-text = "E:50  T:50  P:50"
-
-[node name="ContinueButton" type="Button" parent="BackgroundLayer/Shell/VBox"]
-custom_minimum_size = Vector2(0, 52)
-layout_mode = 2
-text = "Book Another Night"
+func _on_continue_pressed() -> void:
+	continue_pressed.emit()
