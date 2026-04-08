@@ -8,7 +8,7 @@ signal continue_pressed
 @onready var crowd_value_label: Label = $Backdrop/ColorRect/VictoryFlare/InfoColumn/CrowdValue
 @onready var continue_button: Button = $Backdrop/ColorRect/VictoryFlare/ContinueButton
 @onready var victory_flare: Control = $Backdrop/ColorRect/VictoryFlare
-@onready var fail_flare: Control = $Backdrop/ColorRect/FailFlare
+@onready var fail_flare: Control = $Backdrop/FailFlare
 @onready var shell: Control = $Backdrop/ColorRect
 
 var is_victory := false
