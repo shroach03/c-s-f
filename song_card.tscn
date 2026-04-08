@@ -1,11 +1,23 @@
-[gd_scene load_steps=6 format=3 uid="uid://bveheb6piqlux"]
+[gd_scene load_steps=7 format=3 uid="uid://bveheb6piqlux"]
 
 [ext_resource type="Script" uid="uid://dy52xpewdewrf" path="res://scripts/song_card.gd" id="1_6l1gx"]
 
 [sub_resource type="Theme" id="Theme_6l1gx"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wf1kf"]
-bg_color = Color(0.3854925, 0.3854925, 0.38549235, 1)
+bg_color = Color(0.1882353, 0.2, 0.28627452, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_border"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.8)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
@@ -23,6 +35,12 @@ corner_radius_top_left = 50
 corner_radius_top_right = 50
 corner_radius_bottom_right = 50
 corner_radius_bottom_left = 50
+
+[node name="GenreBorder" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 160.0
+offset_bottom = 148.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_border")
 
 [node name="SongCard" type="Control"]
 clip_contents = true
