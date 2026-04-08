@@ -1,51 +1,161 @@
-extends Control
+[gd_scene load_steps=3 format=3 uid="uid://d2hqi1axsmnxa"]
 
-signal continue_pressed
+[ext_resource type="Script" uid="uid://di1pwpxwv0ay5" path="res://scripts/result.gd" id="1_result_script"]
+[ext_resource type="Texture2D" uid="uid://duolt0hlc3n53" path="res://assets/Tilesheets/concert_C.png" id="2_gd8ac"]
 
-@onready var title_label: Label = $Backdrop/ColorRect/VictoryFlare/TitleBlock/Title
-@onready var subtitle_label: Label = $Backdrop/ColorRect/VictoryFlare/TitleBlock/Subtitle
-@onready var score_value_label: Label = $Backdrop/ColorRect/VictoryFlare/ScoreCard/ScoreVBox/ScoreValue
-@onready var crowd_value_label: Label = $Backdrop/ColorRect/VictoryFlare/InfoColumn/CrowdValue
-@onready var continue_button: Button = $Backdrop/ColorRect/VictoryFlare/ContinueButton
-@onready var victory_flare: Control = $Backdrop/ColorRect/VictoryFlare
-@onready var fail_flare: Control = $Backdrop/ColorRect/FailFlare
-@onready var shell: Control = $Backdrop/ColorRect
+[node name="Result" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_result_script")
 
-var is_victory := false
-var anim_time := 0.0
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = -2.0
+offset_right = 1.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.84313726, 0.65882355, 0.8117647, 1)
 
-func _ready() -> void:
-	continue_button.pressed.connect(_on_continue_pressed)
+[node name="ColorRect" type="ColorRect" parent="Backdrop"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.035
+anchor_bottom = 0.031000001
+offset_left = 261.0
+offset_top = 137.0
+offset_right = 649.68
+offset_bottom = 386.91196
+color = Color(0, 0, 0, 1)
 
-func setup_result(victory: bool, final_score: int, crowd_state: Dictionary, headline: String, summary: String) -> void:
-	is_victory = victory
-	title_label.text = headline
-	subtitle_label.text = summary
-	score_value_label.text = str(final_score)
-	crowd_value_label.text = "E:%d  T:%d  P:%d" % [
-		crowd_state.get("energy", 0),
-		crowd_state.get("trust", 0),
-		crowd_state.get("patience", 0)
-	]
+[node name="VictoryFlare" type="ColorRect" parent="Backdrop/ColorRect"]
+layout_mode = 0
+offset_left = 27.0
+offset_top = 7.0
+offset_right = 413.0
+offset_bottom = 250.0
 
-	var panel_style := shell.get_theme_stylebox("panel").duplicate()
-	if panel_style is StyleBoxFlat:
-		panel_style.bg_color = Color(0.0862745, 0.113725, 0.188235, 0.95) if victory else Color(0.156863, 0.0588235, 0.0823529, 0.95)
-		panel_style.border_color = Color(0.568627, 0.941176, 1.0, 1.0) if victory else Color(1.0, 0.470588, 0.560784, 1.0)
-		shell.add_theme_stylebox_override("panel", panel_style)
+[node name="Stats" type="HBoxContainer" parent="Backdrop/ColorRect/VictoryFlare"]
+layout_mode = 0
+offset_left = 1235.0
+offset_top = 3.0
+offset_right = 2331.0
+offset_bottom = 442.0
+size_flags_vertical = 3
+theme_override_constants/separation = 18
 
-	victory_flare.visible = victory
-	fail_flare.visible = not victory
-	continue_button.text = "Book Another Night"
+[node name="ContinueButton" type="Button" parent="Backdrop/ColorRect/VictoryFlare"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 0
+offset_left = 60.0
+offset_top = 284.0
+offset_right = 314.0
+offset_bottom = 336.0
+text = "Book Another Night"
 
-func _process(delta: float) -> void:
-	anim_time += delta
-	if is_victory:
-		victory_flare.modulate.a = 0.32 + 0.18 * (0.5 + 0.5 * sin(anim_time * 3.4))
-		victory_flare.rotation = sin(anim_time * 0.7) * 0.03
-	else:
-		fail_flare.position.x = sin(anim_time * 5.0) * 10.0
-		fail_flare.modulate.a = 0.18 + 0.12 * (0.5 + 0.5 * sin(anim_time * 6.0))
+[node name="TitleBlock" type="VBoxContainer" parent="Backdrop/ColorRect/VictoryFlare"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = -9.0
+offset_right = 423.0
+offset_bottom = 67.0
+theme_override_constants/separation = 6
 
-func _on_continue_pressed() -> void:
-	continue_pressed.emit()
+[node name="Title" type="Label" parent="Backdrop/ColorRect/VictoryFlare/TitleBlock"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "Set Complete!"
+
+[node name="Subtitle" type="Label" parent="Backdrop/ColorRect/VictoryFlare/TitleBlock"]
+layout_mode = 2
+text = "You landed the room and closed the night strong."
+autowrap_mode = 3
+
+[node name="ScoreCard" type="Panel" parent="Backdrop/ColorRect/VictoryFlare"]
+custom_minimum_size = Vector2(220, 180)
+layout_mode = 0
+offset_left = 166.0
+offset_top = 76.0
+offset_right = 388.0
+offset_bottom = 256.0
+size_flags_vertical = 3
+
+[node name="ScoreVBox" type="VBoxContainer" parent="Backdrop/ColorRect/VictoryFlare/ScoreCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 18.0
+offset_right = -18.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="ScoreLabel" type="Label" parent="Backdrop/ColorRect/VictoryFlare/ScoreCard/ScoreVBox"]
+layout_mode = 2
+text = "FINAL SCORE"
+
+[node name="ScoreValue" type="Label" parent="Backdrop/ColorRect/VictoryFlare/ScoreCard/ScoreVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 54
+text = "0"
+vertical_alignment = 1
+
+[node name="InfoColumn" type="VBoxContainer" parent="Backdrop/ColorRect/VictoryFlare"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 90.0
+offset_right = 154.0
+offset_bottom = 201.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="CrowdLabel" type="Label" parent="Backdrop/ColorRect/VictoryFlare/InfoColumn"]
+layout_mode = 2
+text = "Final Crowd State"
+
+[node name="CrowdValue" type="Label" parent="Backdrop/ColorRect/VictoryFlare/InfoColumn"]
+layout_mode = 2
+text = "Energy:50  
+Trust:50 
+Patience:50"
+
+[node name="FailFlare" type="ColorRect" parent="Backdrop/ColorRect"]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 6.0
+offset_right = 417.0
+offset_bottom = 249.0
+
+[node name="DJBoard" type="Sprite2D" parent="."]
+position = Vector2(476.00003, 402)
+scale = Vector2(2.1931818, 2.0357144)
+texture = ExtResource("2_gd8ac")
+region_enabled = true
+region_rect = Rect2(5, 721, 88, 28)
+
+[node name="RightSpeaker" type="Sprite2D" parent="."]
+position = Vector2(738.00006, 166)
+scale = Vector2(1.2205884, 1.1463904)
+texture = ExtResource("2_gd8ac")
+region_enabled = true
+region_rect = Rect2(633, 2, 136, 187)
+
+[node name="LeftSpeaker" type="Sprite2D" parent="."]
+position = Vector2(221, 153)
+scale = Vector2(1.1899512, 1.1260172)
+texture = ExtResource("2_gd8ac")
+region_enabled = true
+region_rect = Rect2(480, 2, 136, 187)
