@@ -34,18 +34,20 @@ func setup_result(victory: bool, final_score: int, crowd_state: Dictionary, head
 		panel_style.border_color = Color(0.568627, 0.941176, 1.0, 1.0) if victory else Color(1.0, 0.470588, 0.560784, 1.0)
 		shell.add_theme_stylebox_override("panel", panel_style)
 
-	victory_flare.visible = victory
+	victory_flare.color = Color(1.0, 0.36, 0.76, 0.28)
+	fail_flare.color = Color(1.0, 0.2, 0.2, 0.24)
+	victory_flare.visible = true
 	fail_flare.visible = not victory
 	continue_button.text = "Book Another Night"
 
 func _process(delta: float) -> void:
 	anim_time += delta
 	if is_victory:
-		victory_flare.modulate.a = 0.32 + 0.18 * (0.5 + 0.5 * sin(anim_time * 3.4))
+		victory_flare.color.a = 0.2 + 0.2 * (0.5 + 0.5 * sin(anim_time * 3.4))
 		victory_flare.rotation = sin(anim_time * 0.7) * 0.03
 	else:
 		fail_flare.position.x = sin(anim_time * 5.0) * 10.0
-		fail_flare.modulate.a = 0.18 + 0.12 * (0.5 + 0.5 * sin(anim_time * 6.0))
+		fail_flare.color.a = 0.14 + 0.16 * (0.5 + 0.5 * sin(anim_time * 6.0))
 
 func _on_continue_pressed() -> void:
 	continue_pressed.emit()
