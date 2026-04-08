@@ -6,6 +6,7 @@ var last_played_energy: int = -1
 var current_song_inventory: Array = []
 var current_venue_genre: String = ""
 var current_venue_genres: Array = []
+var current_venue_data: Dictionary = {}
 var venue_preferences: Array = []
 var set_history: Array = []
 var player_collection: Array = []
@@ -17,6 +18,7 @@ var performance_time_remaining: float = 0.0
 var live_score_target: float = 0.0
 var live_score_rate_per_second: float = 0.0
 var current_score_float: float = 0.0
+var song_intermission_remaining: float = 0.0
 
 signal score_updated(new_score)
 signal crowd_state_updated(new_state)
@@ -28,6 +30,9 @@ const WORLD_SCENE = preload("res://scenes/world.tscn")
 const CRATE_SCENE = preload("res://scenes/crate_dig.tscn")
 const PERFORMANCE_SCENE = preload("res://scenes/song_deck_manager.tscn")
 const SELECTION_SCENE = preload("res://scenes/setlist_selection.tscn")
+const RESULT_SCENE = preload("res://scenes/result.tscn")
+const SONG_INTERMISSION_SECONDS = 8.0
+const SCORE_UPDATE_SECONDS = 10.0
 const SFX_FILES = {
 	"place_card": "place_card.wav",
 	"record_store_open": "record_store_open.wav",
@@ -56,7 +61,11 @@ func _process(delta: float) -> void:
 	if performance_time_remaining <= 0.0:
 		_finish_performance_phase()
 		return
-
+	if song_intermission_remaining > 0.0:
+		song_intermission_remaining = maxf(song_intermission_remaining - delta, 0.0)
+		if is_instance_valid(active_deck_manager) and song_intermission_remaining <= 0.0:
+			active_deck_manager.draw_next_hand()
+			active_deck_manager.feedback_label.text = "Crowd's ready. Pick the next track."
 	if is_equal_approx(current_score_float, live_score_target):
 		return
 
@@ -129,6 +138,8 @@ func _handle_song_played(_card_instance, selected_song_data):
 	if not is_instance_valid(self) or selected_song_data == null:
 		print("ERROR: null song data")
 		return
+	if song_intermission_remaining > 0.0:
+		return
 
 	var score_results = calculate_score_from_song(selected_song_data)
 	var impact = calculate_impact(score_results)
@@ -141,12 +152,13 @@ func _handle_song_played(_card_instance, selected_song_data):
 	if is_instance_valid(active_deck_manager):
 		var played_count = set_history.size()
 		active_deck_manager.show_play_result(selected_song_data, score_results, played_count)
-
+		if played_count >= SONGS_IN_SET:
+			check_win_condition()
+			return
+		song_intermission_remaining = SONG_INTERMISSION_SECONDS
+		active_deck_manager.feedback_label.text = "Let this track breathe... next pick in %.0fs." % ceil(song_intermission_remaining)
 	if check_fail_condition():
 		return
-
-	if is_instance_valid(active_deck_manager):
-		active_deck_manager.draw_next_hand()
 
 func start_world_phase():
 	performance_active = false
@@ -163,12 +175,20 @@ func start_world_phase():
 		active_world.setup_world(_build_venue_options(), current_crowd_state, current_setlist.size() >= SONGS_IN_SET)
 
 func _initialize_venue_preferences() -> void:
-	venue_preferences.clear()
-	for index in range(3):
-		venue_preferences.append({
-			"name": "Venue %d" % (index + 1),
-			"genres": _generate_venue_genres()
-		})
+	venue_preferences = [
+		{
+			"name": "Nyan Alley",
+			"genres": ["EDM", "POP"]
+		},
+		{
+			"name": "Burmese Beach",
+			"genres": ["Euro"]
+		},
+		{
+			"name": "Biggie's Lounge",
+			"genres": ["RnB", "HipHop"]
+		}
+	]
 
 func _generate_venue_genres() -> Array:
 	if available_genres.is_empty():
@@ -191,6 +211,7 @@ func _on_world_venue_selected(venue_data: Dictionary):
 	if current_setlist.size() < SONGS_IN_SET:
 		print("Need a full setlist before going to the venue!")
 		return
+	current_venue_data = venue_data.duplicate(true)
 	current_venue_genres = venue_data.get("genres", ["Unknown"])
 	current_venue_genre = current_venue_genres[0]
 	print("Crowd wants: %s" % ", ".join(current_venue_genres))
@@ -238,6 +259,7 @@ func start_performance_phase():
 	current_score_float = float(current_score)
 	live_score_target = current_score_float
 	live_score_rate_per_second = 0.0
+	song_intermission_remaining = 0.0
 
 	if active_deck_manager.has_signal("song_chosen_for_set"):
 		active_deck_manager.song_chosen_for_set.connect(_handle_song_played)
@@ -250,7 +272,7 @@ func start_performance_phase():
 func _cleanup_phase_nodes():
 	var phase_children: Array = []
 	for child in get_children():
-		if child.name in ["Crate_dig", "crate_dig", "SongDeckManager", "SetListSelection", "world", "Venue"]:
+		if child.name in ["Crate_dig", "crate_dig", "SongDeckManager", "SetListSelection", "world", "Venue", "result", "Result"]:
 			phase_children.append(child)
 	for child in phase_children:
 		if child == active_world:
@@ -372,13 +394,13 @@ func _start_live_score_update(song_data: Dictionary, score_results: Dictionary) 
 	var risk_multiplier = float(score_results.get("risk_multiplier", _risk_to_multiplier(song_data.get("risk", "Low"))))
 	var target_delta = (8.0 + absf(float(score_results.points)) * 2.0) * risk_multiplier * float(direction)
 	live_score_target = current_score_float + target_delta
-	live_score_rate_per_second = absf(target_delta) / 4.0
+	live_score_rate_per_second = absf(target_delta) / SCORE_UPDATE_SECONDS
 
 func _finish_performance_phase() -> void:
 	performance_active = false
 	if is_instance_valid(active_deck_manager):
 		active_deck_manager.feedback_label.text = "Encore over! Final score: %d" % current_score
-	_end_night_and_return_world()
+	_show_result_scene(false, "Night Over", "Time ran out before your full set landed.")
 
 func _apply_genre_shift(new_genre: String):
 	if current_venue_genres.has(new_genre):
@@ -418,7 +440,7 @@ func check_fail_condition() -> bool:
 		print("*** NIGHT FAILED: the crowd turned on the set. ***")
 		if is_instance_valid(active_deck_manager):
 			active_deck_manager.feedback_label.text = "Night failed! Crowd state collapsed. Returning to world.."
-		_end_night_and_return_world()
+		_show_result_scene(false, "Set Crashed", "The crowd lost faith before sunrise.")
 		return true
 	return false
 
@@ -426,8 +448,22 @@ func check_win_condition():
 	print("*** VICTORY! Set Complete! ***")
 	if is_instance_valid(active_deck_manager):
 		active_deck_manager.feedback_label.text = "Set complete! Final score: %d. Returning to world..." % current_score
-	_end_night_and_return_world()
+	_show_result_scene(true, "Set Complete!", "You delivered a full five-track journey.")
+
+func _show_result_scene(victory: bool, headline: String, summary: String) -> void:
+	performance_active = false
+	_cleanup_phase_nodes()
+	var result_scene = RESULT_SCENE.instantiate()
+	add_child(result_scene)
+	if result_scene.has_signal("continue_pressed"):
+		result_scene.continue_pressed.connect(_on_result_continue_pressed)
+	if result_scene.has_method("setup_result"):
+		result_scene.setup_result(victory, current_score, current_venue_data, current_crowd_state, headline, summary)
 
 func _end_night_and_return_world():
 	current_setlist.clear()
+	current_venue_data.clear()
 	start_world_phase()
+
+func _on_result_continue_pressed() -> void:
+	_end_night_and_return_world()
