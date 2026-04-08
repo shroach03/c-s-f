@@ -34,6 +34,7 @@ const RESULT_SCENE = preload("res://scenes/result.tscn")
 const SONG_INTERMISSION_SECONDS = 8.0
 const SCORE_UPDATE_SECONDS = 14.0
 const MIN_SCORE_UPDATE_SECONDS = 3.0
+const SCORE_MAGNITUDE_SCALE = 3.0
 const SFX_FILES = {
 	"place_card": "place_card.wav",
 	"record_store_open": "record_store_open.wav",
@@ -302,7 +303,7 @@ func calculate_score_from_song(song_data: Dictionary) -> Dictionary:
 	var patience_score = 1 if genre_match else -1
 	var base_score = energy_score + patience_score
 	var risk_multiplier = _risk_to_multiplier(risk)
-	var points = int(round(float(base_score) * risk_multiplier))
+	var points = int(round(float(base_score) * risk_multiplier * SCORE_MAGNITUDE_SCALE))
 	return {
 		"points": points,
 		"energy_score": energy_score,
@@ -328,19 +329,30 @@ func _risk_to_multiplier(risk: String) -> float:
 		"Low":
 			return 1.0
 		"Medium":
-			return 1.5
+			return 1.8
 		"High":
-			return 2.0
+			return 2.8
 	return 1.0
 
-func _start_live_score_update(_song_data: Dictionary, score_results: Dictionary) -> void:
+func _risk_to_speed_multiplier(risk: String) -> float:
+	match risk:
+		"Low":
+			return 1.0
+		"Medium":
+			return 1.5
+		"High":
+			return 2.25
+	return 1.0
+
+func _start_live_score_update(song_data: Dictionary, score_results: Dictionary) -> void:
 	var target_delta = float(score_results.get("points", 0))
 	if is_zero_approx(target_delta):
 		return
 	live_score_target += target_delta
 	var remaining_distance = absf(live_score_target - current_score_float)
+	var risk_speed_multiplier = _risk_to_speed_multiplier(song_data.get("risk", "Low"))
 	var update_window = maxf(MIN_SCORE_UPDATE_SECONDS, SCORE_UPDATE_SECONDS * (remaining_distance / 6.0))
-	live_score_rate_per_second = remaining_distance / maxf(update_window, 0.1)
+	live_score_rate_per_second = (remaining_distance / maxf(update_window, 0.1)) * risk_speed_multiplier
 
 func _finish_performance_phase() -> void:
 	performance_active = false
