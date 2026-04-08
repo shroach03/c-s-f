@@ -327,8 +327,6 @@ func calculate_score_from_song(song_data: Dictionary) -> Dictionary:
 
 	if risk_success:
 		risk_score += risk_value * 2
-		if risk_value == 3 and off_genre:
-			_apply_genre_shift(genre)
 	else:
 		penalty_count += 1
 		risk_score -= max(2, risk_value * 2)
@@ -401,15 +399,6 @@ func _finish_performance_phase() -> void:
 	if is_instance_valid(active_deck_manager):
 		active_deck_manager.feedback_label.text = "Encore over! Final score: %d" % current_score
 	_show_result_scene(false, "Night Over", "Time ran out before your full set landed.")
-
-func _apply_genre_shift(new_genre: String):
-	if current_venue_genres.has(new_genre):
-		return
-	if current_venue_genres.size() >= 2:
-		current_venue_genres.pop_front()
-	current_venue_genres.append(new_genre)
-	current_venue_genre = current_venue_genres[0]
-	print("Genre shifted. Crowd now accepts: %s" % ", ".join(current_venue_genres))
 
 func calculate_impact(score_results: Dictionary) -> Dictionary:
 	var impact = {
