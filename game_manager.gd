@@ -283,77 +283,25 @@ func _cleanup_phase_nodes():
 
 
 func calculate_score_from_song(song_data: Dictionary) -> Dictionary:
-	var points = 0
-	var genre_score = 0
-	var risk_score = 0
-	var energy_score = 0
-	var flow_bonus = 0
-	var penalty_count = 0
 	var risk = song_data.get("risk", "Low")
 	var genre = song_data.get("genre", "Unknown")
 	var energy = song_data.get("energy", 0)
-	var energy_diff = 0
-	var energy_correct = true
-
-	if last_played_energy >= 0:
-		energy_diff = abs(energy - last_played_energy)
-		if energy_diff == 1:
-			energy_score += 3
-		else:
-			energy_correct = false
-			penalty_count += 1
-			if energy_diff == 0:
-				energy_score -= 2
-			elif energy_diff == 2:
-				energy_score -= 3
-			else:
-				energy_score -= 5
-	else:
-		energy_score += 1
-
+	var energy_diff = 0 if last_played_energy < 0 else abs(energy - last_played_energy)
+	var energy_correct = last_played_energy < 0 or energy_diff <= 1
 	var genre_match = current_venue_genres.has(genre)
-	if genre_match:
-		genre_score += 5
-		if set_history.size() > 0 and set_history.back().get("genre", "") == genre:
-			genre_score += 2
-	else:
-		genre_score -= 5
-		penalty_count += 1
-
-	var risk_value = _risk_to_value(risk)
-	var off_genre = not genre_match
-	var energy_jump = last_played_energy >= 0 and energy_diff >= 2
-	var risk_success = (risk_value == 1) or (risk_value == 2 and (energy_jump or genre_match)) or (risk_value == 3 and (off_genre or energy_jump))
-
-	if risk_success:
-		risk_score += risk_value * 2
-	else:
-		penalty_count += 1
-		risk_score -= max(2, risk_value * 2)
-
-	if set_history.size() >= 2:
-		var prev_energy = set_history.back().get("energy", energy)
-		var two_back_energy = set_history[set_history.size() - 2].get("energy", prev_energy)
-		if energy >= prev_energy and prev_energy >= two_back_energy:
-			flow_bonus += 2
-		elif energy <= prev_energy and prev_energy <= two_back_energy:
-			flow_bonus += 1
-
-	if penalty_count >= 2:
-		flow_bonus -= penalty_count
-
-	points = energy_score + genre_score + risk_score + flow_bonus
+	var energy_score = 1 if energy_correct else -1
+	var patience_score = 1 if genre_match else -1
+	var base_score = energy_score + patience_score
+	var risk_multiplier = _risk_to_multiplier(risk)
+	var points = int(round(float(base_score) * risk_multiplier))
 	return {
 		"points": points,
 		"energy_score": energy_score,
-		"genre_score": genre_score,
-		"risk_score": risk_score,
-		"flow_bonus": flow_bonus,
+		"patience_score": patience_score,
+		"base_score": base_score,
 		"energy_correct": energy_correct,
 		"genre_match": genre_match,
-		"risk_success": risk_success,
-		"penalty_count": penalty_count,
-		"risk_multiplier": _risk_to_multiplier(risk)
+		"risk_multiplier": risk_multiplier
 	}
 
 func _risk_to_value(risk: String) -> int:
@@ -376,23 +324,10 @@ func _risk_to_multiplier(risk: String) -> float:
 			return 2.0
 	return 1.0
 
-func _start_live_score_update(song_data: Dictionary, score_results: Dictionary) -> void:
-	var trend_score = 0
-	trend_score += 1 if score_results.genre_match else -1
-	if score_results.energy_score > 0:
-		trend_score += 1
-	elif score_results.energy_score < 0:
-		trend_score -= 1
-	trend_score += 1 if score_results.risk_success else -1
-
-	var direction = signi(trend_score)
-	if direction == 0:
-		direction = 1 if score_results.points >= 0 else -1
-
-	var risk_multiplier = float(score_results.get("risk_multiplier", _risk_to_multiplier(song_data.get("risk", "Low"))))
-	var target_delta = (4.0 + absf(float(score_results.points)) * 1.0) * risk_multiplier * float(direction)
+func _start_live_score_update(_song_data: Dictionary, score_results: Dictionary) -> void:
+	var target_delta = float(score_results.get("points", 0))
 	live_score_target = current_score_float + target_delta
-	live_score_rate_per_second = absf(target_delta) / SCORE_UPDATE_SECONDS
+	live_score_rate_per_second = absf(target_delta) / maxf(SCORE_UPDATE_SECONDS, 0.1)
 
 func _finish_performance_phase() -> void:
 	performance_active = false
@@ -402,19 +337,10 @@ func _finish_performance_phase() -> void:
 
 func calculate_impact(score_results: Dictionary) -> Dictionary:
 	var impact = {
-		"energy_change": score_results.energy_score + score_results.flow_bonus,
-		"trust_change": score_results.genre_score,
-		"patience_change": score_results.risk_score
+		"energy_change": score_results.energy_score,
+		"trust_change": score_results.points,
+		"patience_change": score_results.patience_score
 	}
-	if not score_results.energy_correct:
-		impact.energy_change -= 2
-		impact.patience_change -= 1
-	if not score_results.genre_match:
-		impact.trust_change -= 2
-		impact.energy_change -= 1
-	if not score_results.risk_success:
-		impact.patience_change -= 2
-		impact.trust_change -= 1
 	return impact
 
 func update_crowd_state(impact: Dictionary):
