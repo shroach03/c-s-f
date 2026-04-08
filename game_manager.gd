@@ -33,6 +33,7 @@ const SELECTION_SCENE = preload("res://scenes/setlist_selection.tscn")
 const RESULT_SCENE = preload("res://scenes/result.tscn")
 const SONG_INTERMISSION_SECONDS = 8.0
 const SCORE_UPDATE_SECONDS = 14.0
+const MIN_SCORE_UPDATE_SECONDS = 3.0
 const SFX_FILES = {
 	"place_card": "place_card.wav",
 	"record_store_open": "record_store_open.wav",
@@ -67,6 +68,14 @@ func _process(delta: float) -> void:
 			active_deck_manager.draw_next_hand()
 			active_deck_manager.feedback_label.text = "Crowd's ready. Pick the next track."
 	if is_equal_approx(current_score_float, live_score_target):
+		return
+
+	if live_score_rate_per_second <= 0.0:
+		current_score_float = live_score_target
+		var snapped_score = int(round(current_score_float))
+		if snapped_score != current_score:
+			current_score = snapped_score
+			score_updated.emit(current_score)
 		return
 
 	var score_step = live_score_rate_per_second * delta
@@ -326,8 +335,12 @@ func _risk_to_multiplier(risk: String) -> float:
 
 func _start_live_score_update(_song_data: Dictionary, score_results: Dictionary) -> void:
 	var target_delta = float(score_results.get("points", 0))
-	live_score_target = current_score_float + target_delta
-	live_score_rate_per_second = absf(target_delta) / maxf(SCORE_UPDATE_SECONDS, 0.1)
+	if is_zero_approx(target_delta):
+		return
+	live_score_target += target_delta
+	var remaining_distance = absf(live_score_target - current_score_float)
+	var update_window = maxf(MIN_SCORE_UPDATE_SECONDS, SCORE_UPDATE_SECONDS * (remaining_distance / 6.0))
+	live_score_rate_per_second = remaining_distance / maxf(update_window, 0.1)
 
 func _finish_performance_phase() -> void:
 	performance_active = false
