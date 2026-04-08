@@ -1,8 +1,12 @@
-[gd_scene load_steps=4 format=3 uid="uid://xrgbab5yrpj3"]
+[gd_scene load_steps=8 format=3 uid="uid://xrgbab5yrpj3"]
 
 [ext_resource type="Script" uid="uid://du3rl714jue1q" path="res://scripts/song_deck_manager.gd" id="1_vbqqs"]
 [ext_resource type="Texture2D" uid="uid://d0c7t06kbhk2x" path="res://assets/Tilesheets/concert_B.png" id="2_8u0yk"]
 [ext_resource type="Texture2D" uid="uid://duolt0hlc3n53" path="res://assets/Tilesheets/concert_C.png" id="3_wv7v2"]
+[ext_resource type="Texture2D" uid="uid://uumutn0qffja" path="res://assets/sprites/avatar/cat 1 (64х64).png" id="4_q4ww8"]
+[ext_resource type="Texture2D" uid="uid://brfos7a8r4f43" path="res://assets/sprites/avatar/cat 2 (64х64).png" id="5_m1heb"]
+[ext_resource type="Texture2D" uid="uid://bve4asfyceka7" path="res://assets/sprites/avatar/cat 3 (64х64).png" id="6_bwvs6"]
+[ext_resource type="Texture2D" uid="uid://pj8wjv4bsv72" path="res://assets/sprites/avatar/black cat with text.png" id="7_eiglf"]
 
 [node name="SongDeckManager" type="Control" groups=["game_managers"]]
 layout_mode = 3
@@ -37,53 +41,53 @@ theme_override_constants/separation = 16
 
 [node name="Header" type="Label" parent="Background"]
 layout_mode = 0
-offset_left = 737.0
-offset_top = 245.0
-offset_right = 995.0
-offset_bottom = 276.0
+offset_left = 546.0
+offset_top = 271.0
+offset_right = 804.0
+offset_bottom = 302.0
 theme_override_font_sizes/font_size = 22
 text = "Last Played"
 
 [node name="Title" type="Label" parent="Background"]
 layout_mode = 0
-offset_left = 737.0
-offset_top = 284.0
-offset_right = 995.0
-offset_bottom = 307.0
+offset_left = 546.0
+offset_top = 305.0
+offset_right = 804.0
+offset_bottom = 328.0
 text = "Title: —"
 autowrap_mode = 3
 
 [node name="Artist" type="Label" parent="Background"]
 layout_mode = 0
-offset_left = 737.0
-offset_top = 315.0
-offset_right = 995.0
-offset_bottom = 338.0
+offset_left = 546.0
+offset_top = 337.0
+offset_right = 804.0
+offset_bottom = 360.0
 text = "Artist: —"
 autowrap_mode = 3
 
 [node name="Genre" type="Label" parent="Background"]
 layout_mode = 0
-offset_left = 737.0
-offset_top = 346.0
-offset_right = 995.0
-offset_bottom = 369.0
+offset_left = 546.0
+offset_top = 367.0
+offset_right = 804.0
+offset_bottom = 390.0
 text = "Genre: —"
 
 [node name="Risk" type="Label" parent="Background"]
 layout_mode = 0
-offset_left = 737.0
-offset_top = 377.0
-offset_right = 995.0
-offset_bottom = 400.0
+offset_left = 546.0
+offset_top = 399.0
+offset_right = 804.0
+offset_bottom = 422.0
 text = "Risk: —"
 
 [node name="Energy" type="Label" parent="Background"]
 layout_mode = 0
-offset_left = 737.0
-offset_top = 408.0
-offset_right = 995.0
-offset_bottom = 431.0
+offset_left = 546.0
+offset_top = 430.0
+offset_right = 804.0
+offset_bottom = 453.0
 text = "Energy: —"
 
 [node name="TitleBlock" type="VBoxContainer" parent="Background"]
@@ -221,6 +225,55 @@ offset_top = 413.0
 offset_right = 83.0
 offset_bottom = 457.0
 text = "<"
+
+[node name="BlackCat" type="Sprite2D" parent="Background"]
+position = Vector2(934.00006, 359)
+scale = Vector2(1.3518518, 1.3378378)
+texture = ExtResource("4_q4ww8")
+region_enabled = true
+region_rect = Rect2(148, 4171, 27, 37)
+
+[node name="OrangeCat" type="Sprite2D" parent="Background"]
+position = Vector2(1001.99994, 431.00003)
+scale = Vector2(1.462963, 1.3108108)
+texture = ExtResource("5_m1heb")
+region_enabled = true
+region_rect = Rect2(148, 4171, 27, 37)
+
+[node name="GreyCat" type="Sprite2D" parent="Background"]
+position = Vector2(883.00006, 406.99997)
+scale = Vector2(1.425926, 1.2837838)
+texture = ExtResource("6_bwvs6")
+region_enabled = true
+region_rect = Rect2(148, 4171, 27, 37)
+
+[node name="BlackCat2" type="Sprite2D" parent="Background"]
+position = Vector2(1022, 328)
+scale = Vector2(1.9276407, 1.7174945)
+texture = ExtResource("4_q4ww8")
+region_enabled = true
+region_rect = Rect2(148, 4171, 27, 37)
+
+[node name="OrangeCat2" type="Sprite2D" parent="Background"]
+position = Vector2(789.581, 332.0659)
+scale = Vector2(1.7467419, 1.4630201)
+texture = ExtResource("5_m1heb")
+region_enabled = true
+region_rect = Rect2(148, 4171, 27, 37)
+
+[node name="GreyCat2" type="Sprite2D" parent="Background"]
+position = Vector2(861.72455, 309.74493)
+scale = Vector2(1.6092267, 1.3916175)
+texture = ExtResource("6_bwvs6")
+region_enabled = true
+region_rect = Rect2(148, 4171, 27, 37)
+
+[node name="BlackCatWithText" type="Sprite2D" parent="Background"]
+position = Vector2(813, 549.00006)
+scale = Vector2(3.224138, 3.2333333)
+texture = ExtResource("7_eiglf")
+region_enabled = true
+region_rect = Rect2(507, 2450, 29, 30)
 
 [node name="Line2D" type="Line2D" parent="."]
 position = Vector2(0, -0.1620031)
