@@ -1,104 +1,91 @@
 extends Control
+signal song_selected(card_instance, card_data_played)
 
-signal crate_selected
-signal setlist_selected
-signal venue_selected(venue_data)
+@onready var title_label = $TitleLabel/loadTitle
+@onready var artist_label = $ArtistLabel/loadArtist
+@onready var risk_sticker = $SleeveBack/RiskSticker
+@onready var sleeve_back = $SleeveBack
+@onready var genre_border = $GenreBorder
+@onready var card_button = $Button
+@onready var energy_bars = [
+	$EnergyBars/Bar1,
+	$EnergyBars/Bar2,
+	$EnergyBars/Bar3,
+	$EnergyBars/Bar4,
+	$EnergyBars/Bar5,
+]
 
-@onready var crate_button = $GoToCrateDig
-@onready var setlist_button = $GoToSetlist
+const RISK_COLORS := {
+	"low": Color("#56c271"),
+	"medium": Color("#f29d38"),
+	"high": Color("#d9534f"),
+}
 
-var venue_buttons: Array = []
-var venue_lights: Array = []
-var venue_data: Array = []
-var flash_time := 0.0
-
-const GENRE_COLORS = {
+const GENRE_COLORS := {
 	"euro": Color(0.45, 0.82, 1.0, 1.0),
 	"rnb": Color(0.13, 0.24, 0.82, 1.0),
-	"pop": Color(1.0, 0.35, 0.73, 1.0),
-	"hiphop": Color(1.0, 0.2, 0.2, 1.0),
+	"hiphop": Color(0.759, 0.0, 0.077, 1.0),
+	"pop": Color(1.0, 0.627, 0.819, 1.0),
 	"edm": Color(0.35, 0.9, 0.45, 1.0)
 }
 
-func _ready() -> void:
-	venue_buttons = [
-		$GoToV1,
-		$GoToV2,
-		$GoToV3
-	]
-	venue_lights = [
-		[
-			$GenreLights1/GenreLightA,
-			$GenreLights1/GenreLightB
-		],
-		[
-			$GenreLights2/GenreLightA,
-			$GenreLights2/GenreLightB
-		],
-		[
-			$GenreLights3/GenreLightA,
-			$GenreLights3/GenreLightB
-		]
-	]
-	crate_button.pressed.connect(_on_crate_pressed)
-	setlist_button.pressed.connect(func(): setlist_selected.emit())
-	for i in range(venue_buttons.size()):
-		venue_buttons[i].pressed.connect(_on_venue_pressed.bind(i))
+const ENERGY_ACTIVE_COLOR := Color("00f27aff")
+const ENERGY_INACTIVE_COLOR := Color(1, 1, 1, 0.28)
+var current_song_data: Dictionary = {}
 
-func setup_world(options: Array, crowd_state: Dictionary, can_perform: bool = false):
-	venue_data = options
-	#crowd_label.text = "Crowd State  E:%d  T:%d  P:%d" % [crowd_state.energy, crowd_state.trust, crowd_state.patience]
-	for i in range(venue_buttons.size()):
-		var button = venue_buttons[i]
-		if i >= venue_data.size():
-			button.hide()
-			_update_light_pair(i, [])
-			continue
-		button.show()
-		var v = venue_data[i]
-		var genres = v.get("genres", ["Unknown"])
-		button.text = "%s\n%s" % [v.get("name", "Venue"), "/".join(genres)]
-		button.disabled = not can_perform
-		button.tooltip_text = "Pick a venue after building your 5-song setlist!" if not can_perform else "Start the show"
-		_update_light_pair(i, genres)
+func setup_card(song_data: Dictionary, options: Dictionary = {}) -> void:
+	current_song_data = song_data
+	var context = options.get("context", "collection")
+	var show_button = options.get("show_button", true)
+	title_label.text = song_data.get("title", "Unknown")
+	artist_label.text = "by " + song_data.get("artist", "Unknown")
+	_apply_risk_visual(song_data.get("risk", "Low"))
+	_apply_energy_visual(song_data.get("energy", 1))
+	_apply_genre_visual(song_data.get("genre", "Unknown"))
 
-func _on_crate_pressed() -> void:
-	crate_selected.emit()
+	if context == "performance":
+		card_button.tooltip_text = "Play this track"
+	elif context == "selection":
+		card_button.tooltip_text = "Add or remove from setlist"
+	else:
+		card_button.tooltip_text = "Inspect"
 
-func _on_venue_pressed(index: int):
-	if index < venue_data.size():
-		venue_selected.emit(venue_data[index])
+	if not card_button.pressed.is_connected(_on_button_pressed):
+		card_button.pressed.connect(_on_button_pressed)
+	card_button.disabled = not show_button
+	card_button.visible = show_button
+	card_button.focus_mode = Control.FOCUS_ALL
+	mouse_filter = Control.MOUSE_FILTER_STOP
+	card_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	modulate = Color.WHITE
 
-func _process(delta: float) -> void:
-	flash_time += delta * 4.0
-	for i in range(venue_buttons.size()):
-		if i >= venue_data.size():
-			continue
-		var genres = venue_data[i].get("genres", ["Unknown"])
-		_animate_light_pair(i, genres)
-
-func _update_light_pair(index: int, genres: Array) -> void:
-	if index >= venue_lights.size():
+func _apply_risk_visual(risk_value: Variant) -> void:
+	var risk_key = str(risk_value).to_lower()
+	var sticker_style := risk_sticker.get_theme_stylebox("panel") as StyleBoxFlat
+	if sticker_style == null:
 		return
-	for j in range(venue_lights[index].size()):
-		var light: ColorRect = venue_lights[index][j]
-		if j < genres.size():
-			light.visible = true
-			light.color = _genre_color(genres[j], 0.45)
-		else:
-			light.visible = false
+	var style_copy = sticker_style.duplicate() as StyleBoxFlat
+	style_copy.bg_color = RISK_COLORS.get(risk_key, Color("#56c271"))
+	risk_sticker.add_theme_stylebox_override("panel", style_copy)
 
-func _animate_light_pair(index: int, genres: Array) -> void:
-	if index >= venue_lights.size():
-		return
-	for j in range(venue_lights[index].size()):
-		var light: ColorRect = venue_lights[index][j]
-		if j >= genres.size():
-			continue
-		var pulse = 0.45 + 0.55 * (0.5 + 0.5 * sin(flash_time * (1.1 + j * 0.2) + index + j))
-		light.color = _genre_color(genres[j], pulse)
+func _apply_energy_visual(energy_value: Variant) -> void:
+	var energy = clampi(int(energy_value), 0, energy_bars.size())
+	for index in range(energy_bars.size()):
+		var bar = energy_bars[index]
+		bar.color = ENERGY_ACTIVE_COLOR if index < energy else ENERGY_INACTIVE_COLOR
 
-func _genre_color(genre: String, alpha: float) -> Color:
-	var normalized = genre.to_lower().replace(" ", "")
-	var base: Color = GENRE_COLORS.get(normalized, Color.WHITE)
-	return Color(base.r, base.g, base.b, alpha)
+func _apply_genre_visual(genre_value: Variant) -> void:
+	var genre_key = str(genre_value).to_lower().replace(" ", "")
+	var base_color: Color = GENRE_COLORS.get(genre_key, Color(0.75, 0.75, 0.8, 1.0))
+
+	var border_style := genre_border.get_theme_stylebox("panel") as StyleBoxFlat
+	if border_style != null:
+		var border_copy = border_style.duplicate() as StyleBoxFlat
+		border_copy.bg_color = Color(0, 0, 0, 0)
+		border_copy.border_color = base_color
+		genre_border.add_theme_stylebox_override("panel", border_copy)
+
+func _on_button_pressed() -> void:
+	if GameManager != null:
+		GameManager.play_sfx("place_card")
+	emit_signal("song_selected", self, current_song_data)
