@@ -31,11 +31,11 @@ const SONG_CARD_SCENE = preload("res://scenes/song_card.tscn")
 const CARDS_SHOWN_PER_TURN = 5
 const TARGET_CARD_WIDTH := 176.0
 const GENRE_COLORS = {
-	"Euro": Color(0.0, 0.8, 0.8, 0.65),
-	"RnB": Color(0.0, 0.2, 0.8, 0.65),
-	"Pop": Color(1.0, 0.5, 0.8, 0.65),
-	"Hiphop": Color(0.9, 0.15, 0.2, 0.65),
-	"EDM": Color(0.45, 1.0, 0.2, 0.65)
+	"euro": Color(0.0, 0.8, 0.8, 0.65),
+	"rnb": Color(0.0, 0.2, 0.8, 0.65),
+	"pop": Color(1.0, 0.5, 0.8, 0.65),
+	"hiphop": Color(0.9, 0.15, 0.2, 0.65),
+	"edm": Color(0.45, 1.0, 0.2, 0.65)
 }
 
 var playable_song_pool: Array = []
@@ -72,22 +72,28 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	flash_t += delta * 5.0
 	if current_venue_genres.is_empty():
-		_set_genre_lights(Color(1, 1, 1, 0.25))
+		_set_genre_lights([Color(1, 1, 1, 0.25)])
 		return
 
 	var blend = 0.5 + 0.5 * sin(flash_t)
-	var primary = GENRE_COLORS.get(current_venue_genres[0], Color.WHITE)
-	var pulse_color = primary
-	if current_venue_genres.size() > 1:
-		var secondary = GENRE_COLORS.get(current_venue_genres[1], Color.WHITE)
-		pulse_color = primary.lerp(secondary, blend)
-	else:
-		pulse_color = primary.darkened((1.0 - blend) * 0.2)
-	_set_genre_lights(pulse_color)
+	var light_colors: Array[Color] = []
+	for i in range(current_venue_genres.size()):
+		var base = _genre_color(current_venue_genres[i], Color.WHITE)
+		var pulse_alpha = 0.3 + 0.35 * (0.5 + 0.5 * sin(flash_t + (i * 0.6)))
+		light_colors.append(Color(base.r, base.g, base.b, pulse_alpha))
 
-func _set_genre_lights(color: Color) -> void:
-	for light in genre_lights:
-		light.color = color
+	if light_colors.size() == 1:
+		light_colors.append(light_colors[0].darkened((1.0 - blend) * 0.15))
+	_set_genre_lights(light_colors)
+
+func _set_genre_lights(colors: Array[Color]) -> void:
+	for i in range(genre_lights.size()):
+		var color = colors[min(i, colors.size() - 1)] if not colors.is_empty() else Color(1, 1, 1, 0.25)
+		genre_lights[i].color = color
+
+func _genre_color(genre_value: Variant, fallback: Color) -> Color:
+	var genre_key = str(genre_value).to_lower().replace(" ", "")
+	return GENRE_COLORS.get(genre_key, fallback)
 
 func _update_carousel_layout() -> void:
 	var center_padding = maxf((scroll_container.size.x - TARGET_CARD_WIDTH) * 0.5, 0.0)
