@@ -2,16 +2,14 @@ extends Control
 
 signal continue_pressed
 
-@onready var title_label: Label = $BackgroundLayer/Shell/VBox/TitleBlock/Title
-@onready var subtitle_label: Label = $BackgroundLayer/Shell/VBox/TitleBlock/Subtitle
-@onready var score_value_label: Label = $BackgroundLayer/Shell/VBox/Stats/ScoreCard/ScoreVBox/ScoreValue
-@onready var venue_value_label: Label = $BackgroundLayer/Shell/VBox/Stats/InfoColumn/VenueValue
-@onready var genre_value_label: Label = $BackgroundLayer/Shell/VBox/Stats/InfoColumn/GenreValue
-@onready var crowd_value_label: Label = $BackgroundLayer/Shell/VBox/Stats/InfoColumn/CrowdValue
-@onready var continue_button: Button = $BackgroundLayer/Shell/VBox/ContinueButton
-@onready var victory_flare: Control = $BackgroundLayer/FlairLayer/VictoryFlare
-@onready var fail_flare: Control = $BackgroundLayer/FlairLayer/FailFlare
-@onready var shell: Panel = $BackgroundLayer/Shell
+@onready var title_label: Label = $Backdrop/ColorRect/VictoryFlare/TitleBlock/Title
+@onready var subtitle_label: Label = $Backdrop/ColorRect/VictoryFlare/TitleBlock/Subtitle
+@onready var score_value_label: Label = $Backdrop/ColorRect/VictoryFlare/ScoreCard/ScoreVBox/ScoreValue
+@onready var crowd_value_label: Label = $Backdrop/ColorRect/VictoryFlare/InfoColumn/CrowdValue
+@onready var continue_button: Button = $Backdrop/ColorRect/VictoryFlare/ContinueButton
+@onready var victory_flare: Control = $Backdrop/ColorRect/VictoryFlare
+@onready var fail_flare: Control = $Backdrop/ColorRect/FailFlare
+@onready var shell: Control = $Backdrop/ColorRect
 
 var is_victory := false
 var anim_time := 0.0
@@ -19,13 +17,11 @@ var anim_time := 0.0
 func _ready() -> void:
 	continue_button.pressed.connect(_on_continue_pressed)
 
-func setup_result(victory: bool, final_score: int, venue_data: Dictionary, crowd_state: Dictionary, headline: String, summary: String) -> void:
+func setup_result(victory: bool, final_score: int, crowd_state: Dictionary, headline: String, summary: String) -> void:
 	is_victory = victory
 	title_label.text = headline
 	subtitle_label.text = summary
 	score_value_label.text = str(final_score)
-	venue_value_label.text = venue_data.get("name", "Unknown Venue")
-	genre_value_label.text = "/".join(venue_data.get("genres", []))
 	crowd_value_label.text = "E:%d  T:%d  P:%d" % [
 		crowd_state.get("energy", 0),
 		crowd_state.get("trust", 0),
