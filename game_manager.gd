@@ -32,7 +32,7 @@ const PERFORMANCE_SCENE = preload("res://scenes/song_deck_manager.tscn")
 const SELECTION_SCENE = preload("res://scenes/setlist_selection.tscn")
 const RESULT_SCENE = preload("res://scenes/result.tscn")
 const SONG_INTERMISSION_SECONDS = 8.0
-const SCORE_UPDATE_SECONDS = 10.0
+const SCORE_UPDATE_SECONDS = 14.0
 const SFX_FILES = {
 	"place_card": "place_card.wav",
 	"record_store_open": "record_store_open.wav",
@@ -323,15 +323,15 @@ func calculate_score_from_song(song_data: Dictionary) -> Dictionary:
 	var risk_value = _risk_to_value(risk)
 	var off_genre = not genre_match
 	var energy_jump = last_played_energy >= 0 and energy_diff >= 2
-	var risk_success = (risk_value == 1 and not off_genre) or (risk_value == 2 and (off_genre or energy_jump)) or (risk_value == 3 and off_genre and energy_jump)
+	var risk_success = (risk_value == 1) or (risk_value == 2 and (energy_jump or genre_match)) or (risk_value == 3 and (off_genre or energy_jump))
 
 	if risk_success:
-		risk_score += risk_value * 3
+		risk_score += risk_value * 2
 		if risk_value == 3 and off_genre:
 			_apply_genre_shift(genre)
 	else:
 		penalty_count += 1
-		risk_score -= max(3, risk_value * 3)
+		risk_score -= max(2, risk_value * 2)
 
 	if set_history.size() >= 2:
 		var prev_energy = set_history.back().get("energy", energy)
@@ -392,7 +392,7 @@ func _start_live_score_update(song_data: Dictionary, score_results: Dictionary) 
 		direction = 1 if score_results.points >= 0 else -1
 
 	var risk_multiplier = float(score_results.get("risk_multiplier", _risk_to_multiplier(song_data.get("risk", "Low"))))
-	var target_delta = (8.0 + absf(float(score_results.points)) * 2.0) * risk_multiplier * float(direction)
+	var target_delta = (4.0 + absf(float(score_results.points)) * 1.0) * risk_multiplier * float(direction)
 	live_score_target = current_score_float + target_delta
 	live_score_rate_per_second = absf(target_delta) / SCORE_UPDATE_SECONDS
 
