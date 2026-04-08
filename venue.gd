@@ -13,11 +13,11 @@ var venue_data: Array = []
 var flash_time := 0.0
 
 const GENRE_COLORS = {
-	"Euro": Color(0.1, 0.9, 0.9, 1.0),
-	"RnB": Color(0.3, 0.4, 1.0, 1.0),
-	"Pop": Color(1.0, 0.5, 0.8, 1.0),
-	"Hiphop": Color(1.0, 0.0, 0.0, 1.0),
-	"EDM": Color(0.3, 1.0, 0.3, 1.0)
+	"euro": Color(0.45, 0.82, 1.0, 1.0),
+	"rnb": Color(0.13, 0.24, 0.82, 1.0),
+	"pop": Color(1.0, 0.35, 0.73, 1.0),
+	"hiphop": Color(1.0, 0.2, 0.2, 1.0),
+	"edm": Color(0.35, 0.9, 0.45, 1.0)
 }
 
 func _ready() -> void:
@@ -99,5 +99,6 @@ func _animate_light_pair(index: int, genres: Array) -> void:
 		light.color = _genre_color(genres[j], pulse)
 
 func _genre_color(genre: String, alpha: float) -> Color:
-	var base: Color = GENRE_COLORS.get(genre, Color.WHITE)
+	var normalized = genre.to_lower().replace(" ", "")
+	var base: Color = GENRE_COLORS.get(normalized, Color.WHITE)
 	return Color(base.r, base.g, base.b, alpha)
