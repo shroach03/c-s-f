@@ -458,7 +458,7 @@ func _show_result_scene(victory: bool, headline: String, summary: String) -> voi
 	if result_scene.has_signal("continue_pressed"):
 		result_scene.continue_pressed.connect(_on_result_continue_pressed)
 	if result_scene.has_method("setup_result"):
-		result_scene.setup_result(victory, current_score, current_venue_data, current_crowd_state, headline, summary)
+		result_scene.setup_result(victory, current_score, current_crowd_state, headline, summary)
 
 func _end_night_and_return_world():
 	current_setlist.clear()
