@@ -129,9 +129,6 @@ func draw_next_hand() -> void:
 		if card.get_parent() != card_display_area:
 			card_display_area.add_child(card)
 			card_display_area.move_child(card, right_spacer.get_index())
-	if playable_song_pool.is_empty() and not source_song_pool.is_empty():
-		playable_song_pool = source_song_pool.duplicate(true)
-		playable_song_pool.shuffle()
 
 	while cards_on_display.size() < CARDS_SHOWN_PER_TURN and not playable_song_pool.is_empty():
 		var song_data = playable_song_pool.pop_front()
@@ -175,8 +172,6 @@ func _on_song_selected(card_instance, data: Dictionary) -> void:
 	if is_instance_valid(card_instance):
 		card_instance.queue_free()
 	card_moved_to_set.emit(card_instance, data)
-
-	draw_next_hand()
 
 	_set_index(clampi(current_index, 0, maxi(_card_count() - 1, 0)))
 
