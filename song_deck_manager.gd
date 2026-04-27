@@ -235,7 +235,7 @@ func initialize_deck_from_inventory(inventory: Array) -> void:
 	playable_song_pool = source_song_pool.duplicate(true)
 	playable_song_pool.shuffle()
 	draw_next_hand()
-	play_song_audio(current_venue_genre, 1)
+	play_song_audio(current_venue_genre, 2)
  
 func _on_song_selected(card_instance, data: Dictionary) -> void:
 	current_turn_count += 1
@@ -329,9 +329,9 @@ func _load_loop_stream(loop_name: String) -> AudioStream:
 	if _audio_cache.has(loop_name):
 		return _audio_cache[loop_name]
 
-	var path := "res://audio/loops/%s.wav" % loop_name
-	if not ResourceLoader.exists(path):
-		push_warning("SongDeckManager: Missing audio loop: " + path)
+	var path := _resolve_loop_path(loop_name)
+	if path == "":
+		push_warning("SongDeckManager: Missing audio loop for key: " + loop_name)
 		_audio_cache[loop_name] = null
 		return null
 
@@ -343,6 +343,37 @@ func _load_loop_stream(loop_name: String) -> AudioStream:
 
 func _normalize_genre_key(genre: String) -> String:
 	return genre.strip_edges().to_lower().replace(" ", "")
+
+func _resolve_loop_path(loop_name: String) -> String:
+	var loop_dir := "res://audio/loops"
+	var direct_candidates := [
+		"%s/%s.wav" % [loop_dir, loop_name],
+		"%s/%s.ogg" % [loop_dir, loop_name],
+		"%s/%s.mp3" % [loop_dir, loop_name],
+	]
+	for candidate in direct_candidates:
+		if ResourceLoader.exists(candidate):
+			return candidate
+
+	var dir := DirAccess.open(loop_dir)
+	if dir == null:
+		return ""
+
+	var target_base := loop_name.to_lower()
+	dir.list_dir_begin()
+	var entry := dir.get_next()
+	while entry != "":
+		if not dir.current_is_dir():
+			var dot_index := entry.rfind(".")
+			if dot_index > 0:
+				var base_name := entry.substr(0, dot_index).to_lower()
+				var extension := entry.substr(dot_index + 1).to_lower()
+				if base_name == target_base and extension in ["wav", "ogg", "mp3"]:
+					dir.list_dir_end()
+					return "%s/%s" % [loop_dir, entry]
+		entry = dir.get_next()
+	dir.list_dir_end()
+	return ""
  
 func show_play_result(song_data: Dictionary, score_results: Dictionary, played_count: int) -> void:
 	var energy: int = song_data.get("energy", 2)
