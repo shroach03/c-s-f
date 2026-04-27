@@ -46,7 +46,11 @@ func _ready() -> void:
 		venue_buttons[i].pressed.connect(_on_venue_pressed.bind(i))
 
 func setup_world(options: Array, crowd_state: Dictionary, can_perform: bool = false):
-	venue_data = options
+	venue_data = []
+	for option in options:
+		var normalized_option: Dictionary = option.duplicate(true)
+		normalized_option["genres"] = _sanitize_genres(option.get("genres", []))
+		venue_data.append(normalized_option)
 	#crowd_label.text = "Crowd State  E:%d  T:%d  P:%d" % [crowd_state.energy, crowd_state.trust, crowd_state.patience]
 	for i in range(venue_buttons.size()):
 		var button = venue_buttons[i]
@@ -105,3 +109,14 @@ func _genre_color(genre: String, alpha: float) -> Color:
 	var normalized = genre.to_lower().replace(" ", "")
 	var base: Color = GENRE_COLORS.get(normalized, Color.WHITE)
 	return Color(base.r, base.g, base.b, alpha)
+
+func _sanitize_genres(genres: Array) -> Array:
+	var cleaned: Array = []
+	for genre_value in genres:
+		var genre_text := str(genre_value).strip_edges()
+		if genre_text == "":
+			continue
+		cleaned.append(genre_text)
+	if cleaned.is_empty():
+		cleaned.append("Unknown")
+	return cleaned
