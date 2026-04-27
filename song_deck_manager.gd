@@ -63,6 +63,9 @@ var _current_song_energy: int = 2   # 1–5
  
 var current_index := 0
 var record_width := 0.0
+var _audio_cache: Dictionary = {}
+var _current_soundtrack_genre: String = ""
+var _current_soundtrack_energy: int = 0
  
 func _ready() -> void:
 	if GameManager and not GameManager.score_updated.is_connected(_on_score_updated):
@@ -83,6 +86,7 @@ func _ready() -> void:
 	update_venue_ui()
 	_reset_last_card_panel()
 	cats_set_idle()
+	_configure_audio_players()
  
 func _process(delta: float) -> void:
 	var speed : float = lerp(0.8, 4.0, (current_energy - 1) / 4.0)
@@ -231,7 +235,7 @@ func initialize_deck_from_inventory(inventory: Array) -> void:
 	playable_song_pool = source_song_pool.duplicate(true)
 	playable_song_pool.shuffle()
 	draw_next_hand()
-	play_song_audio(current_venue_genre, 2)
+	play_song_audio(current_venue_genre, 1)
  
 func _on_song_selected(card_instance, data: Dictionary) -> void:
 	current_turn_count += 1
@@ -250,37 +254,95 @@ func update_venue_ui() -> void:
 	venue_genre_label.text = "Genres: %s" % "/".join(current_venue_genres)
  
 func play_song_audio(genre: String, energy: int) -> void:
-	var genre_key := genre.to_lower().replace(" ", "")
-	var base_stream = _load_wav("res://audio/loops/base.wav")
-	var layer1_stream = _load_wav("res://audio/loops/%s1.wav" % genre_key) if energy >= 2 and genre_key != "" else null
-	var layer2_stream = _load_wav("res://audio/loops/%s2.wav" % genre_key) if energy >= 4 and genre_key != "" else null
-	base_player.stop()
-	layer1_player.stop()
-	layer2_player.stop()
-	base_player.stream = base_stream
-	layer1_player.stream = layer1_stream
-	layer2_player.stream = layer2_stream
-	if base_stream:
-		base_player.play(0.0)
-	if layer1_stream:
-		layer1_player.play(0.0)
-	if layer2_stream:
-		layer2_player.play(0.0)
+	var genre_key := _normalize_genre_key(genre)
+	var clamped_energy := clampi(energy, 1, 5)
+	var base_stream := _load_loop_stream("base")
+	if base_stream == null:
+		return
+
+	var layer1_stream: AudioStream = null
+	var layer2_stream: AudioStream = null
+	if genre_key != "":
+		layer1_stream = _load_loop_stream("%s1" % genre_key)
+		layer2_stream = _load_loop_stream("%s2" % genre_key)
+
+	var soundtrack_changed := (
+		not base_player.playing
+		or base_player.stream != base_stream
+		or _current_soundtrack_genre != genre_key
+	)
+
+	if soundtrack_changed:
+		_restart_soundtrack(base_stream, layer1_stream, layer2_stream, clamped_energy)
+	else:
+		_update_layer_playback(layer1_player, layer1_stream, clamped_energy >= 2)
+		_update_layer_playback(layer2_player, layer2_stream, clamped_energy >= 4)
+
+	_current_soundtrack_genre = genre_key
+	_current_soundtrack_energy = clamped_energy
 
  
 func stop_song_audio() -> void:
 	base_player.stop()
 	layer1_player.stop()
 	layer2_player.stop()
+	_current_soundtrack_genre = ""
+	_current_soundtrack_energy = 0
 
-func _load_wav(path: String) -> AudioStreamWAV:
+func _configure_audio_players() -> void:
+	for player in [base_player, layer1_player, layer2_player]:
+		if not is_instance_valid(player):
+			continue
+		player.bus = &"Master"
+
+func _restart_soundtrack(base_stream: AudioStream, layer1_stream: AudioStream, layer2_stream: AudioStream, energy: int) -> void:
+	base_player.stop()
+	layer1_player.stop()
+	layer2_player.stop()
+	base_player.stream = base_stream
+	base_player.play(0.0)
+	_update_layer_playback(layer1_player, layer1_stream, energy >= 2, 0.0)
+	_update_layer_playback(layer2_player, layer2_stream, energy >= 4, 0.0)
+
+func _update_layer_playback(player: AudioStreamPlayer, stream: AudioStream, should_play: bool, start_position: float = -1.0) -> void:
+	if not is_instance_valid(player):
+		return
+	if stream == null or not should_play:
+		player.stop()
+		player.stream = null
+		return
+
+	var sync_position := start_position
+	if sync_position < 0.0 and base_player.playing:
+		sync_position = base_player.get_playback_position()
+	if sync_position < 0.0:
+		sync_position = 0.0
+
+	if player.stream != stream:
+		player.stop()
+		player.stream = stream
+		player.play(sync_position)
+	elif not player.playing:
+		player.play(sync_position)
+
+func _load_loop_stream(loop_name: String) -> AudioStream:
+	if _audio_cache.has(loop_name):
+		return _audio_cache[loop_name]
+
+	var path := "res://audio/loops/%s.wav" % loop_name
 	if not ResourceLoader.exists(path):
-		push_warning("SongDeckManager: Missing audio file: " + path)
+		push_warning("SongDeckManager: Missing audio loop: " + path)
+		_audio_cache[loop_name] = null
 		return null
-	var stream = load(path) as AudioStreamWAV
-	if stream:
+
+	var stream := load(path) as AudioStream
+	if stream is AudioStreamWAV:
 		stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	_audio_cache[loop_name] = stream
 	return stream
+
+func _normalize_genre_key(genre: String) -> String:
+	return genre.strip_edges().to_lower().replace(" ", "")
  
 func show_play_result(song_data: Dictionary, score_results: Dictionary, played_count: int) -> void:
 	var energy: int = song_data.get("energy", 2)
