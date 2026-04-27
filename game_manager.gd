@@ -293,16 +293,18 @@ func start_tutorial_phase() -> void:
 	add_child(tutorial)
 
 func _cleanup_phase_nodes():
-	var phase_children: Array = []
+	var children_to_remove: Array[Node] = []
 	for child in get_children():
-		if child.name in ["Crate_dig", "crate_dig", "SongDeckManager", "SetListSelection", "world", "Venue", "result", "Result"]:
-			phase_children.append(child)
-	for child in phase_children:
-		if child == active_world:
-			active_world = null
-		if child == active_deck_manager:
-			active_deck_manager = null
-		child.queue_free()
+		if child == sfx_player:
+			continue
+		children_to_remove.append(child)
+
+	active_world = null
+	active_deck_manager = null
+
+	for child in children_to_remove:
+		if is_instance_valid(child):
+			child.queue_free()
  
  
 func calculate_score_from_song(song_data: Dictionary) -> Dictionary:
