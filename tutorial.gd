@@ -5,6 +5,7 @@ signal song_chosen_for_set(card_instance, song_data)
 const SONG_CARD_SCENE = preload("res://scenes/song_card.tscn")
 const CARDS_SHOWN_PER_TURN = 5
 const TARGET_CARD_WIDTH := 176.0
+const TUTORIAL_SCORE_ANIMATION_SECONDS := 3.5
 const TUTORIAL_TRACKS_BY_GENRE := {
 	"Pop": [
 		"Fate of Ophelia",
@@ -75,6 +76,9 @@ var cards_on_display: Array = []
 var current_index := 0
 var record_width := 0.0
 var tutorial_score: int = 0
+var tutorial_score_float: float = 0.0
+var tutorial_score_target: float = 0.0
+var tutorial_score_rate_per_second: float = 0.0
 var tutorial_last_energy: int = -1
 var tutorial_picks: int = 0
 var tutorial_complete: bool = false
@@ -82,6 +86,7 @@ var tutorial_prompt_visible: bool = true
 var score_prompt_shown: bool = false
 var current_venue_genre: String = "Pop"
 var tutorial_step_index: int = 0
+var tutorial_score_animating: bool = false
 
 const TUTORIAL_STEPS := [
 	{
@@ -95,7 +100,34 @@ const TUTORIAL_STEPS := [
 		"body": "The outer border shows genre. The bars at the bottom shows energy, and the 'sticker' in the corner shows risk.",
 		"panel_position": Vector2(60, 70),
 		"panel_size": Vector2(430, 180),
-		"callout_text": "These are your song cards.",
+		"callout_text": "",
+		"callout_position": Vector2(90, 235),
+		"highlight_rect": Rect2(35, 255, 455, 225),
+	},
+	{
+		"title": "Song Cards",
+		"body": "In this tutorial, all of these songs are ___ songs, indicated by the outer border. For all songs cards, however, green = EDM, pink = Pop, light blue = Euro, red = Hip hop, and Blue = Rnb",
+		"panel_position": Vector2(60, 70),
+		"panel_size": Vector2(430, 180),
+		"callout_text": "",
+		"callout_position": Vector2(90, 235),
+		"highlight_rect": Rect2(35, 255, 455, 225),
+	},
+	{
+		"title": "Song Cards",
+		"body": "The bottom scale is the energy indicator. Every green-lit box tells you on a scale from 1-5 how much energy the song has. You want to play songs that fluctuate energies no more than 1.",
+		"panel_position": Vector2(60, 70),
+		"panel_size": Vector2(430, 180),
+		"callout_text": "",
+		"callout_position": Vector2(90, 235),
+		"highlight_rect": Rect2(35, 255, 455, 225),
+	},
+	{
+		"title": "Song Cards",
+		"body": "The risk 'sticker' in the corner indicates the impact the song will have on your score. Green = not much change, Orange = medium risk / impact, Red = very risky & can impact a score greatly.",
+		"panel_position": Vector2(60, 70),
+		"panel_size": Vector2(430, 180),
+		"callout_text": "",
 		"callout_position": Vector2(90, 235),
 		"highlight_rect": Rect2(35, 255, 455, 225),
 	},
@@ -139,11 +171,40 @@ func _ready() -> void:
 	_start_dj_cat_animation()
 	_show_intro_prompt()
 
+func _process(delta: float) -> void:
+	if not tutorial_score_animating:
+		return
+
+	if is_equal_approx(tutorial_score_float, tutorial_score_target):
+		_finish_live_score_animation()
+		return
+
+	if tutorial_score_rate_per_second <= 0.0:
+		tutorial_score_float = tutorial_score_target
+	else:
+		var score_step := tutorial_score_rate_per_second * delta
+		if tutorial_score_float < tutorial_score_target:
+			tutorial_score_float = minf(tutorial_score_float + score_step, tutorial_score_target)
+		else:
+			tutorial_score_float = maxf(tutorial_score_float - score_step, tutorial_score_target)
+
+	var rounded_score := int(round(tutorial_score_float))
+	if rounded_score != tutorial_score:
+		tutorial_score = rounded_score
+		score_label.text = "Score: %d" % tutorial_score
+
+	if is_equal_approx(tutorial_score_float, tutorial_score_target):
+		_finish_live_score_animation()
+
 func _start_tutorial_run() -> void:
 	tutorial_score = 0
+	tutorial_score_float = 0.0
+	tutorial_score_target = 0.0
+	tutorial_score_rate_per_second = 0.0
 	tutorial_last_energy = -1
 	tutorial_picks = 0
 	tutorial_complete = false
+	tutorial_score_animating = false
 	score_prompt_shown = false
 	score_label.text = "Score: 0"
 	current_venue_genre = _pick_tutorial_genre()
@@ -218,6 +279,8 @@ func _on_song_selected(card_instance, data: Dictionary) -> void:
 		return
 	if tutorial_prompt_visible:
 		return
+	if tutorial_score_animating:
+		return
 
 	tutorial_picks += 1
 	song_chosen_for_set.emit(card_instance, data)
@@ -226,9 +289,8 @@ func _on_song_selected(card_instance, data: Dictionary) -> void:
 		card_instance.queue_free()
 
 	var results := _score_tutorial_song(data)
-	tutorial_score += int(results.get("points", 0))
+	_start_live_score_update(results)
 	tutorial_last_energy = int(data.get("energy", 0))
-	score_label.text = "Score: %d" % tutorial_score
 	_set_last_card_panel(data, results)
 	_show_tutorial_feedback(data, results)
 	_set_index(clampi(current_index, 0, maxi(_card_count() - 1, 0)))
@@ -283,10 +345,13 @@ func _show_tutorial_feedback(song_data: Dictionary, results: Dictionary) -> void
 
 func _finish_tutorial() -> void:
 	tutorial_complete = true
-	var success := tutorial_score > 0
+	var final_score := int(round(tutorial_score_target))
+	tutorial_score = final_score
+	score_label.text = "Score: %d" % tutorial_score
+	var success := final_score > 0
 	feedback_label.text = "Tutorial done. %s Final score: %d." % [
 		"That run works." if success else "Try smoother picks next time.",
-		tutorial_score
+		final_score
 	]
 	feedback_label.add_theme_color_override(
 		"font_color",
@@ -344,8 +409,8 @@ func _scroll_to_current() -> void:
 
 func _update_nav_buttons() -> void:
 	var has_cards = _card_count() > 0
-	left_button.disabled = tutorial_prompt_visible or (not has_cards) or current_index <= 0
-	right_button.disabled = tutorial_prompt_visible or (not has_cards) or current_index >= _card_count() - 1
+	left_button.disabled = tutorial_prompt_visible or tutorial_score_animating or (not has_cards) or current_index <= 0
+	right_button.disabled = tutorial_prompt_visible or tutorial_score_animating or (not has_cards) or current_index >= _card_count() - 1
 
 func _on_back_to_world_pressed() -> void:
 	if GameManager != null:
@@ -484,7 +549,32 @@ func _dismiss_score_prompt() -> void:
 	if overlay:
 		overlay.queue_free()
 	_update_nav_buttons()
-	if tutorial_picks >= CARDS_SHOWN_PER_TURN:
+	if tutorial_picks >= CARDS_SHOWN_PER_TURN and not tutorial_score_animating:
+		_finish_tutorial()
+
+func _start_live_score_update(score_results: Dictionary) -> void:
+	var target_delta := float(score_results.get("points", 0))
+	if is_zero_approx(target_delta):
+		score_label.text = "Score: %d" % tutorial_score
+		if tutorial_picks >= CARDS_SHOWN_PER_TURN and not tutorial_prompt_visible:
+			_finish_tutorial()
+		return
+
+	tutorial_score_target += target_delta
+	var distance := absf(tutorial_score_target - tutorial_score_float)
+	tutorial_score_rate_per_second = distance / TUTORIAL_SCORE_ANIMATION_SECONDS
+	tutorial_score_animating = true
+	feedback_label.text = "Score is updating. Let it finish before the next pick."
+	_update_nav_buttons()
+
+func _finish_live_score_animation() -> void:
+	tutorial_score_float = tutorial_score_target
+	tutorial_score = int(round(tutorial_score_float))
+	score_label.text = "Score: %d" % tutorial_score
+	tutorial_score_rate_per_second = 0.0
+	tutorial_score_animating = false
+	_update_nav_buttons()
+	if tutorial_picks >= CARDS_SHOWN_PER_TURN and not tutorial_prompt_visible:
 		_finish_tutorial()
 
 func _build_shaded_overlay(parent: Control, highlight_rect_variant: Variant, shade_alpha: float = 0.68) -> void:
