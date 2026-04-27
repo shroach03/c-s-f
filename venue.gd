@@ -50,6 +50,9 @@ func setup_world(options: Array, crowd_state: Dictionary, can_perform: bool = fa
 	#crowd_label.text = "Crowd State  E:%d  T:%d  P:%d" % [crowd_state.energy, crowd_state.trust, crowd_state.patience]
 	for i in range(venue_buttons.size()):
 		var button = venue_buttons[i]
+		var tutorial_btn = get_node_or_null("GoToTutorial")
+		if tutorial_btn:
+			tutorial_btn.pressed.connect(func(): GameManager.start_tutorial_phase())
 		if i >= venue_data.size():
 			button.hide()
 			_update_light_pair(i, [])
