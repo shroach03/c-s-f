@@ -17,10 +17,6 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 1.0
-offset_top = -2.0
-offset_right = 1.0
-offset_bottom = -2.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.84313726, 0.65882355, 0.8117647, 1)
@@ -36,51 +32,44 @@ offset_right = 649.68
 offset_bottom = 386.91196
 color = Color(0, 0, 0, 1)
 
+; ── Pure decorative glow overlay (alpha-only animation, NO rotation, NO position change) ──
 [node name="VictoryFlare" type="ColorRect" parent="Backdrop/ColorRect"]
 layout_mode = 0
 offset_left = 27.0
 offset_top = 7.0
 offset_right = 413.0
 offset_bottom = 250.0
+mouse_filter = 2
 color = Color(1, 0.36, 0.76, 0.28)
 
-[node name="Stats" type="HBoxContainer" parent="Backdrop/ColorRect/VictoryFlare"]
+; ── All readable UI lives here — completely outside VictoryFlare ──
+[node name="UILayer" type="Control" parent="Backdrop/ColorRect"]
 layout_mode = 0
-offset_left = 1235.0
-offset_top = 3.0
-offset_right = 2331.0
-offset_bottom = 442.0
-size_flags_vertical = 3
-theme_override_constants/separation = 18
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 430.0
+offset_bottom = 260.0
+mouse_filter = 2
 
-[node name="ContinueButton" type="Button" parent="Backdrop/ColorRect/VictoryFlare"]
-custom_minimum_size = Vector2(0, 52)
+[node name="TitleBlock" type="VBoxContainer" parent="Backdrop/ColorRect/UILayer"]
 layout_mode = 0
-offset_left = 60.0
-offset_top = 284.0
-offset_right = 314.0
-offset_bottom = 336.0
-text = "Book Another Night"
-
-[node name="TitleBlock" type="VBoxContainer" parent="Backdrop/ColorRect/VictoryFlare"]
-layout_mode = 0
-offset_left = 2.0
-offset_top = -9.0
-offset_right = 423.0
-offset_bottom = 67.0
+offset_left = 4.0
+offset_top = 0.0
+offset_right = 425.0
+offset_bottom = 76.0
 theme_override_constants/separation = 6
 
-[node name="Title" type="Label" parent="Backdrop/ColorRect/VictoryFlare/TitleBlock"]
+[node name="Title" type="Label" parent="Backdrop/ColorRect/UILayer/TitleBlock"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 34
 text = "Set Complete!"
 
-[node name="Subtitle" type="Label" parent="Backdrop/ColorRect/VictoryFlare/TitleBlock"]
+[node name="Subtitle" type="Label" parent="Backdrop/ColorRect/UILayer/TitleBlock"]
 layout_mode = 2
 text = "You landed the room and closed the night strong."
 autowrap_mode = 3
 
-[node name="ScoreCard" type="Panel" parent="Backdrop/ColorRect/VictoryFlare"]
+[node name="ScoreCard" type="Panel" parent="Backdrop/ColorRect/UILayer"]
 custom_minimum_size = Vector2(220, 180)
 layout_mode = 0
 offset_left = 166.0
@@ -89,7 +78,7 @@ offset_right = 388.0
 offset_bottom = 256.0
 size_flags_vertical = 3
 
-[node name="ScoreVBox" type="VBoxContainer" parent="Backdrop/ColorRect/VictoryFlare/ScoreCard"]
+[node name="ScoreVBox" type="VBoxContainer" parent="Backdrop/ColorRect/UILayer/ScoreCard"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -102,18 +91,18 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 10
 
-[node name="ScoreLabel" type="Label" parent="Backdrop/ColorRect/VictoryFlare/ScoreCard/ScoreVBox"]
+[node name="ScoreLabel" type="Label" parent="Backdrop/ColorRect/UILayer/ScoreCard/ScoreVBox"]
 layout_mode = 2
 text = "FINAL SCORE"
 
-[node name="ScoreValue" type="Label" parent="Backdrop/ColorRect/VictoryFlare/ScoreCard/ScoreVBox"]
+[node name="ScoreValue" type="Label" parent="Backdrop/ColorRect/UILayer/ScoreCard/ScoreVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 54
 text = "0"
 vertical_alignment = 1
 
-[node name="InfoColumn" type="VBoxContainer" parent="Backdrop/ColorRect/VictoryFlare"]
+[node name="InfoColumn" type="VBoxContainer" parent="Backdrop/ColorRect/UILayer"]
 layout_mode = 0
 offset_left = 3.0
 offset_top = 90.0
@@ -123,23 +112,31 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 12
 
-[node name="CrowdLabel" type="Label" parent="Backdrop/ColorRect/VictoryFlare/InfoColumn"]
+[node name="CrowdLabel" type="Label" parent="Backdrop/ColorRect/UILayer/InfoColumn"]
 layout_mode = 2
 text = "Final Crowd State"
 
-[node name="CrowdValue" type="Label" parent="Backdrop/ColorRect/VictoryFlare/InfoColumn"]
+[node name="CrowdValue" type="Label" parent="Backdrop/ColorRect/UILayer/InfoColumn"]
 layout_mode = 2
-text = "Energy:50  
-Trust:50 
-Patience:50"
+text = "Energy:50  Trust:50  Patience:50"
 
-[node name="FailFlare" type="ColorRect" parent="Backdrop/ColorRect"]
+[node name="ContinueButton" type="Button" parent="Backdrop/ColorRect/UILayer"]
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 0
-offset_left = 28.0
-offset_top = 6.0
-offset_right = 417.0
-offset_bottom = 249.0
+offset_left = 60.0
+offset_top = 207.0
+offset_right = 314.0
+offset_bottom = 259.0
+text = "Book Another Night"
+
+[node name="FailFlare" type="ColorRect" parent="Backdrop"]
 z_index = -1
+layout_mode = 0
+offset_left = 279.0
+offset_top = 141.0
+offset_right = 668.0
+offset_bottom = 384.0
+mouse_filter = 2
 color = Color(1, 0.2, 0.2, 0.24)
 
 [node name="DJBoard" type="Sprite2D" parent="."]
