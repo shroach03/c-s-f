@@ -34,6 +34,7 @@ signal card_moved_to_set(card_instance, song_data)
 @onready var last_genre_label: Label = $Background/Genre
 @onready var last_risk_label: Label = $Background/Risk
 @onready var last_energy_label: Label = $Background/Energy
+@onready var dj_cat: AnimatedSprite2D = $Background/DJCat
 @onready var base_player: AudioStreamPlayer = $BasePlayer
 @onready var layer1_player: AudioStreamPlayer = $Layer1Player
 @onready var layer2_player: AudioStreamPlayer = $Layer2Player
@@ -87,6 +88,7 @@ func _ready() -> void:
 	_reset_last_card_panel()
 	cats_set_idle()
 	_configure_audio_players()
+	_start_dj_cat_animation()
  
 func _process(delta: float) -> void:
 	var speed : float = lerp(0.8, 4.0, (current_energy - 1) / 4.0)
@@ -257,8 +259,6 @@ func play_song_audio(genre: String, energy: int) -> void:
 	var genre_key := _normalize_genre_key(genre)
 	var clamped_energy := clampi(energy, 1, 5)
 	var base_stream := _load_loop_stream("base")
-	if base_stream == null:
-		return
 
 	var layer1_stream: AudioStream = null
 	var layer2_stream: AudioStream = null
@@ -266,17 +266,26 @@ func play_song_audio(genre: String, energy: int) -> void:
 		layer1_stream = _load_loop_stream("%s1" % genre_key)
 		layer2_stream = _load_loop_stream("%s2" % genre_key)
 
+	var has_any_stream := base_stream != null or layer1_stream != null or layer2_stream != null
+	if not has_any_stream:
+		return
+
+	var should_play_layer1 := layer1_stream != null and (clamped_energy >= 2 or base_stream == null)
+	var should_play_layer2 := layer2_stream != null and clamped_energy >= 4
+
 	var soundtrack_changed := (
-		not base_player.playing
+		not _is_any_soundtrack_player_active()
 		or base_player.stream != base_stream
+		or layer1_player.stream != layer1_stream
+		or layer2_player.stream != layer2_stream
 		or _current_soundtrack_genre != genre_key
 	)
 
 	if soundtrack_changed:
-		_restart_soundtrack(base_stream, layer1_stream, layer2_stream, clamped_energy)
+		_restart_soundtrack(base_stream, layer1_stream, layer2_stream, should_play_layer1, should_play_layer2)
 	else:
-		_update_layer_playback(layer1_player, layer1_stream, clamped_energy >= 2)
-		_update_layer_playback(layer2_player, layer2_stream, clamped_energy >= 4)
+		_update_layer_playback(layer1_player, layer1_stream, should_play_layer1)
+		_update_layer_playback(layer2_player, layer2_stream, should_play_layer2)
 
 	_current_soundtrack_genre = genre_key
 	_current_soundtrack_energy = clamped_energy
@@ -295,14 +304,24 @@ func _configure_audio_players() -> void:
 			continue
 		player.bus = &"Master"
 
-func _restart_soundtrack(base_stream: AudioStream, layer1_stream: AudioStream, layer2_stream: AudioStream, energy: int) -> void:
+func _start_dj_cat_animation() -> void:
+	if is_instance_valid(dj_cat):
+		dj_cat.visible = true
+		dj_cat.play("tail_wag")
+
+func _restart_soundtrack(
+	base_stream: AudioStream,
+	layer1_stream: AudioStream,
+	layer2_stream: AudioStream,
+	should_play_layer1: bool,
+	should_play_layer2: bool
+) -> void:
 	base_player.stop()
 	layer1_player.stop()
 	layer2_player.stop()
-	base_player.stream = base_stream
-	base_player.play(0.0)
-	_update_layer_playback(layer1_player, layer1_stream, energy >= 2, 0.0)
-	_update_layer_playback(layer2_player, layer2_stream, energy >= 4, 0.0)
+	_update_layer_playback(base_player, base_stream, base_stream != null, 0.0)
+	_update_layer_playback(layer1_player, layer1_stream, should_play_layer1, 0.0)
+	_update_layer_playback(layer2_player, layer2_stream, should_play_layer2, 0.0)
 
 func _update_layer_playback(player: AudioStreamPlayer, stream: AudioStream, should_play: bool, start_position: float = -1.0) -> void:
 	if not is_instance_valid(player):
@@ -313,8 +332,8 @@ func _update_layer_playback(player: AudioStreamPlayer, stream: AudioStream, shou
 		return
 
 	var sync_position := start_position
-	if sync_position < 0.0 and base_player.playing:
-		sync_position = base_player.get_playback_position()
+	if sync_position < 0.0:
+		sync_position = _get_soundtrack_anchor_position()
 	if sync_position < 0.0:
 		sync_position = 0.0
 
@@ -340,6 +359,15 @@ func _load_loop_stream(loop_name: String) -> AudioStream:
 		stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
 	_audio_cache[loop_name] = stream
 	return stream
+
+func _is_any_soundtrack_player_active() -> bool:
+	return base_player.playing or layer1_player.playing or layer2_player.playing
+
+func _get_soundtrack_anchor_position() -> float:
+	for player in [base_player, layer1_player, layer2_player]:
+		if is_instance_valid(player) and player.playing:
+			return player.get_playback_position()
+	return -1.0
 
 func _normalize_genre_key(genre: String) -> String:
 	return genre.strip_edges().to_lower().replace(" ", "")
