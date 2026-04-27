@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=3 uid="uid://xrgbab5yrpj3"]
+[gd_scene load_steps=52 format=3 uid="uid://xrgbab5yrpj3"]
 
 [ext_resource type="Script" uid="uid://du3rl714jue1q" path="res://scripts/song_deck_manager.gd" id="1_vbqqs"]
 [ext_resource type="Texture2D" uid="uid://d0c7t06kbhk2x" path="res://assets/Tilesheets/concert_B.png" id="2_8u0yk"]
@@ -7,8 +7,6 @@
 [ext_resource type="Texture2D" uid="uid://brfos7a8r4f43" path="res://assets/sprites/avatar/cat 2 (64х64).png" id="5_m1heb"]
 [ext_resource type="Texture2D" uid="uid://bve4asfyceka7" path="res://assets/sprites/avatar/cat 3 (64х64).png" id="6_bwvs6"]
 [ext_resource type="Texture2D" uid="uid://pj8wjv4bsv72" path="res://assets/sprites/avatar/black cat with text.png" id="7_eiglf"]
-[ext_resource type="AudioStream" uid="uid://b4xd4qvq1q51h" path="res://audio/loops/Base.wav" id="8_m1heb"]
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_eiglf"]
 atlas = ExtResource("4_q4ww8")
 region = Rect2(0, 828, 64, 69)
@@ -608,10 +606,10 @@ scale = Vector2(1, 0.9837997)
 points = PackedVector2Array(537, 0, 537, 659)
 
 [node name="BasePlayer" type="AudioStreamPlayer" parent="."]
-bus = &"Base"
+bus = &"Master"
 
 [node name="Layer1Player" type="AudioStreamPlayer" parent="."]
-bus = &"Layer1"
+bus = &"Master"
 
 [node name="Layer2Player" type="AudioStreamPlayer" parent="."]
-bus = &"Layer2"
+bus = &"Master"
