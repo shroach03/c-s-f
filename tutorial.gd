@@ -79,6 +79,7 @@ var tutorial_last_energy: int = -1
 var tutorial_picks: int = 0
 var tutorial_complete: bool = false
 var tutorial_prompt_visible: bool = true
+var score_prompt_shown: bool = false
 var current_venue_genre: String = "Pop"
 var tutorial_step_index: int = 0
 
@@ -90,28 +91,31 @@ const TUTORIAL_STEPS := [
 		"panel_size": Vector2(500, 180),
 	},
 	{
-		"title": "These are the song cards.",
-		"body": "The outer border shows genre. The bars at the bottom show energy. The sticker in the corner shows risk.",
+		"title": "Song Cards",
+		"body": "The outer border shows genre. The bars at the bottom shows energy, and the 'sticker' in the corner shows risk.",
 		"panel_position": Vector2(60, 70),
 		"panel_size": Vector2(430, 180),
 		"callout_text": "These are your song cards.",
 		"callout_position": Vector2(90, 235),
+		"highlight_rect": Rect2(35, 255, 455, 225),
 	},
 	{
-		"title": "What you are trying to do.",
-		"body": "Match the venue genre, avoid big energy jumps, and use high-risk songs when the crowd is ready. Risk multiplies the score swing, good or bad.",
+		"title": "Objective",
+		"body": "Match the song to the venue's preferred genre(s) and avoid too big of energy jumps. The risk level of the song is a score multiplier; more risk = more reward",
 		"panel_position": Vector2(60, 120),
 		"panel_size": Vector2(430, 200),
-		"callout_text": "Smooth energy steps and genre matches usually score better.",
+		"callout_text": "",
 		"callout_position": Vector2(70, 485),
+		"highlight_rect": Rect2(35, 255, 455, 225),
 	},
 	{
-		"title": "This is the Last Played panel.",
+		"title": "Last Played panel.",
 		"body": "It shows your current or last song. Green means a good choice. Red means the genre or energy move was off.",
-		"panel_position": Vector2(560, 185),
+		"panel_position": Vector2(720, 170),
 		"panel_size": Vector2(430, 190),
 		"callout_text": "This updates after every pick.",
-		"callout_position": Vector2(610, 390),
+		"callout_position": Vector2(805, 375),
+		"highlight_rect": Rect2(525, 260, 300, 200),
 	},
 ]
 
@@ -127,7 +131,6 @@ func _ready() -> void:
 
 	timer_label.visible = false
 	venue_name_label.text = "Tutorial Set"
-	venue_attribute_label.text = "Match the room. Build energy. Save the big one for last."
 	back_button.text = "Exit Tutorial"
 	_reset_last_card_panel()
 	_start_tutorial_run()
@@ -141,6 +144,7 @@ func _start_tutorial_run() -> void:
 	tutorial_last_energy = -1
 	tutorial_picks = 0
 	tutorial_complete = false
+	score_prompt_shown = false
 	score_label.text = "Score: 0"
 	current_venue_genre = _pick_tutorial_genre()
 	venue_genre_label.text = "Genre: %s" % current_venue_genre
@@ -229,6 +233,9 @@ func _on_song_selected(card_instance, data: Dictionary) -> void:
 	_show_tutorial_feedback(data, results)
 	_set_index(clampi(current_index, 0, maxi(_card_count() - 1, 0)))
 	_update_nav_buttons()
+	if tutorial_picks == 1 and not score_prompt_shown:
+		_show_score_prompt()
+		return
 
 	if tutorial_picks >= CARDS_SHOWN_PER_TURN:
 		_finish_tutorial()
@@ -238,7 +245,7 @@ func _score_tutorial_song(song_data: Dictionary) -> Dictionary:
 	var energy := int(song_data.get("energy", 0))
 	var risk := str(song_data.get("risk", "Low"))
 	var genre_match := song_genre.to_lower() == current_venue_genre.to_lower()
-	var energy_ok := tutorial_last_energy < 0 or abs(energy - tutorial_last_energy) <= 1
+	var energy_ok :int= tutorial_last_energy < 0 or abs(energy - tutorial_last_energy) <= 1
 	var energy_score := 1 if energy_ok else -1
 	var genre_score := 1 if genre_match else -1
 	var points := int(round((energy_score * 10.0 + genre_score * 15.0) * _tutorial_risk_multiplier(risk)))
@@ -351,10 +358,9 @@ func _start_dj_cat_animation() -> void:
 
 func _show_intro_prompt() -> void:
 	tutorial_step_index = 0
-	var overlay := ColorRect.new()
+	var overlay := Control.new()
 	overlay.name = "IntroOverlay"
 	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
-	overlay.color = Color(0.0, 0.0, 0.0, 0.68)
 	add_child(overlay)
 	_render_tutorial_step()
 
@@ -366,11 +372,12 @@ func _render_tutorial_step() -> void:
 		child.queue_free()
 
 	var step: Dictionary = TUTORIAL_STEPS[tutorial_step_index]
-
+	_build_shaded_overlay(overlay, step.get("highlight_rect", null))
 	var panel := PanelContainer.new()
 	panel.name = "IntroPanel"
 	panel.custom_minimum_size = step.get("panel_size", Vector2(420, 180))
 	panel.position = step.get("panel_position", Vector2(280, 90))
+	panel.add_theme_stylebox_override("panel", _make_opaque_panel_style())
 	overlay.add_child(panel)
 
 	var panel_vbox := VBoxContainer.new()
@@ -420,3 +427,83 @@ func _dismiss_intro_prompt() -> void:
 	if overlay:
 		overlay.queue_free()
 	_update_nav_buttons()
+
+func _show_score_prompt() -> void:
+	score_prompt_shown = true
+	tutorial_prompt_visible = true
+
+	var overlay := Control.new()
+	overlay.name = "ScoreOverlay"
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(overlay)
+	_build_shaded_overlay(overlay, Rect2(0, 120, 500, 50), 0.52)
+
+	var panel := PanelContainer.new()
+	panel.custom_minimum_size = Vector2(360, 170)
+	panel.position = Vector2(120, 150)
+	panel.add_theme_stylebox_override("panel", _make_opaque_panel_style())
+	overlay.add_child(panel)
+
+	var panel_vbox := VBoxContainer.new()
+	panel_vbox.offset_left = 16
+	panel_vbox.offset_top = 16
+	panel_vbox.offset_right = 16
+	panel_vbox.offset_bottom = 16
+	panel_vbox.add_theme_constant_override("separation", 12)
+	panel.add_child(panel_vbox)
+
+	var title := Label.new()
+	title.text = "This is your score."
+	title.add_theme_font_size_override("font_size", 22)
+	panel_vbox.add_child(title)
+
+	var body := Label.new()
+	body.text = "Your score changes after each pick based on genre match, energy flow, and risk. Let the score finish updating before you play the next song."
+	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.custom_minimum_size = Vector2(300, 80)
+	panel_vbox.add_child(body)
+
+	var next_button := Button.new()
+	next_button.text = "Got it"
+	next_button.custom_minimum_size = Vector2(120, 38)
+	next_button.size_flags_horizontal = Control.SIZE_SHRINK_END
+	next_button.pressed.connect(_dismiss_score_prompt)
+	panel_vbox.add_child(next_button)
+
+	var callout := Label.new()
+	callout.text = "Your score is updating here."
+	callout.position = Vector2(155, 120)
+	callout.custom_minimum_size = Vector2(220, 30)
+	overlay.add_child(callout)
+
+	_update_nav_buttons()
+
+func _dismiss_score_prompt() -> void:
+	tutorial_prompt_visible = false
+	var overlay := get_node_or_null("ScoreOverlay")
+	if overlay:
+		overlay.queue_free()
+	_update_nav_buttons()
+	if tutorial_picks >= CARDS_SHOWN_PER_TURN:
+		_finish_tutorial()
+
+func _build_shaded_overlay(parent: Control, highlight_rect_variant: Variant, shade_alpha: float = 0.68) -> void:
+	var full_size := get_viewport_rect().size
+	var highlight_rect := Rect2()
+	if highlight_rect_variant is Rect2:
+		highlight_rect = highlight_rect_variant
+
+	if highlight_rect.size == Vector2.ZERO:
+		var shade := ColorRect.new()
+		shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+
+func _make_opaque_panel_style() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.17, 0.13, 0.22, 1.0)
+	style.border_color = Color(0.17, 0.13, 0.22, 1.0)
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(10)
+	style.set_content_margin_all(8)
+	style.shadow_color = Color(0.0, 0.0, 0.0, 0.22)
+	style.shadow_size = 6
+	return style
